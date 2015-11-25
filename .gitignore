@@ -1,0 +1,7 @@
+scripts/db.cred
+.DS_Store
+app.config
+*.pyc
+venv/
+working/
+.vagrant/

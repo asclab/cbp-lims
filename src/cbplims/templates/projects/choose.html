@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Select project</h2>
+  <p>Please select your active project</p>
+
+  {% for project in projects %}
+  <a href="/projects/{{project.id}}/select">{{project.name}}</a><br/>
+  {% endfor %}
+
+  {% if admin %}
+  <br/>
+  - or - <br/>
+  <a href="/projects/new">Add a new project</a>
+  {% endif %}
+{% endblock %}
