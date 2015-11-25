@@ -20,4 +20,14 @@ body {
 
 .body {
 	padding: 12px 24px;
+	clear: both;
+	overflow:auto;
+}
+
+.sidebar {
+	width: 240px;
+	float:left;
+}
+.sidebody {
+	margin-left: 248px;
 }

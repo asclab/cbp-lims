@@ -3,7 +3,7 @@ import os
 import sys
 
 from functools import wraps
-from flask import Flask, redirect, render_template, session
+from flask import Flask, redirect, render_template, session, g
 
 import config
 conf = config.load_config()
@@ -62,7 +62,7 @@ def requires_project(f):
 
         if not 'pid' in session or not session['pid']:
             app.logger.debug("Needs project!")
-            return redirect('/projects/choose')
+            return redirect('/projects/switch')
         app.logger.debug("Project: <%s> %s", session['pid'], session['project'])
 
         return f(*args, **kwargs)
@@ -88,8 +88,14 @@ def requires_admin(f):
 
 @app.route("/")
 @requires_project
-def main():
+def index():
     return render_template("index.html", uptime=uptime.uptime_str())
+
+
+@app.route("/settings")
+@requires_project
+def settings():
+    return render_template("settings/index.html", uptime=uptime.uptime_str())
 
 
 @app.route("/test")

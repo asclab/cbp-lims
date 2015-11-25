@@ -1,18 +1,25 @@
 <!doctype html>
 <html>
 <head>
-<title>CBP-LIMS{% if session.pid %} :: {{session.project_name}} {% endif %}</title>
+<title>CBP-LIMS{% if session.pid %} :: {{session.project}} {% endif %}</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="topbar">
-  <b>CBP-LIMS</b>
+  <b><a href="/">CBP-LIMS</a></b>
   <div class="right">
     {% if not session.uid %}
       <a href="/signin">sign in</a>
     {% else %}
-      {{ session.project }} &nbsp; &nbsp; 
+      {% if g.is_admin %}
+      <a href="/admin">admin</a> &nbsp; &nbsp;
+      {% endif %}
+
+      {% if session.pid %}
+      {{ session.project }} <a href="/projects/switch" alt="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
+      {% endif %}
       {{ session.username }} &nbsp; &nbsp; 
+      <a href="/settings" alt="Settings">settings</a>&nbsp; &nbsp; 
       <a href="/signout">sign out</a>
     {% endif %}
   </div>

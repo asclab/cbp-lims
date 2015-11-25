@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="sidebar">
+<h2>Settings</h2>
+
+<b>User settings</b>
+
+<br/>
+<a href="/settings/profile">Profile</a><br/>
+<a href="/settings/changepassword">Change password</a>
+<br/>
+<br/>
+
+<b>Project settings</b>
+
+<br/>
+<br/>
+
+<b>Global settings</b>
+<br/>
+<a href="/settings/global/users">Users</a><br/>
+<a href="/settings/global/projects">Projects</a><br/>
+<br/>
+</div>
+<div class="sidebody">
+{% block adminbody %}{% endblock %}
+</div>
+
+{% endblock %}

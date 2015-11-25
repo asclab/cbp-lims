@@ -18,9 +18,9 @@ def select_project(pid):
     return redirect('/')
 
 
-@app.route("/projects/choose")
+@app.route("/projects/switch")
 @requires_user
-def choose_project():
+def switch_project():
     print session['uid']
 
     uid = session['uid']
@@ -28,7 +28,7 @@ def choose_project():
     avail = cbplims.projects.get_available_projects(uid)
     admin = cbplims.users.is_user_global_admin(uid)
 
-    return render_template("projects/choose.html", projects=avail, admin=admin)
+    return render_template("projects/switch.html", projects=avail, admin=admin)
 
 
 @app.route("/projects/new",  methods=['GET', 'POST'])
