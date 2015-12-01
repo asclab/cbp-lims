@@ -8,7 +8,7 @@ init() {
     venv/bin/pip install -r src/requirements.txt
 }
 
-start() {
+start_app() {
     cd src
     
     ../venv/bin/python app.py &> ../working/log
@@ -19,25 +19,37 @@ start() {
     done
 }
 
-mkdir -p working
 
-case "$1" in 
-    start)
+start() {
         if [ ! -e venv ]; then
             init
         fi
         if [ "$APP_ENV" == "dev" ]; then
             touch working/RELOAD
         fi
-        start
+        start_app
         if [ -e working/RELOAD ]; then
             rm working/RELOAD
         fi
+}
+
+mkdir -p working
+
+case "$1" in 
+    dev)
+        APP_ENV=dev
+        start
+        ;;
+    start)
+        start
         ;;
     init)
         init
         ;;
-
+    clean)
+        rm -rf venv
+        rm -rf working
+        ;;
     *)
         echo "Unknown option. Valid options: start init"
         exit 1
