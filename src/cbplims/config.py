@@ -78,7 +78,7 @@ def load_config(fnames=['../scripts/db.cred', '../app.config']):
         if os.path.exists(fname):
             with open(fname) as f:
                 for line in f:
-                    k, v = line.strip().split('=', 2)
+                    k, v = line.strip().split('=', 1)
                     config[k] = v
 
     config['DB_HOST'] = 'localhost'
