@@ -105,13 +105,15 @@ def foo():
     try:
         with conf.conn() as conn:
             cur = conn.cursor()
-            cur.execute("SELECT * FROM test;")
-            res = cur.fetchone()
-            cur.close()
-    except:
-        return "Error testing connection"
+            cur.execute("SELECT * FROM users;")
+            for record in cur:
+                res += str(record)+"<br/>"
 
-    return "Hello foo.4..\n<hr/>" + str(res) + "<hr/>" + "Uptime=" + uptime.uptime_str()
+            cur.close()
+    except Exception, e:
+        return "Testing\n<hr/>" + str(e) + "<hr/>" + "Uptime=" + uptime.uptime_str()
+
+    return "Testing\n<hr/>It works!<br/><br/>Users:<br/>" + str(res) + "<hr/>" + "Uptime=" + uptime.uptime_str()
 
 
 @app.route("/resetdb")
