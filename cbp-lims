@@ -51,7 +51,7 @@ case "$1" in
         rm -rf working
         ;;
     *)
-        echo "Unknown option. Valid options: start init"
+        echo "Unknown option. Valid options: start init dev clean"
         exit 1
         ;;
 esac
