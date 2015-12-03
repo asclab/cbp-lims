@@ -14,7 +14,7 @@
   {% for u in users %}
   <tr>
     <td><input type="checkbox"></td>
-    <td><a href="/settings/global/users/{{u.username}}">{{u.username}}</a></td>
+    <td><a href="/settings/global/users/{{u.id}}">{{u.username}}</a></td>
     <td>{{u.fullname}}</td>
     <td>&nbsp;</td> <!-- TODO: fill this out -->
     <td>{{u.is_global_admin}}</td>

@@ -7,7 +7,7 @@
   <a href="/projects/{{project.id}}/select">{{project.name}}</a><br/>
   {% endfor %}
 
-  {% if admin %}
+  {% if g.user.is_global_admin %}
   <br/>
   - or - <br/>
   <a href="/projects/new">Add a new project</a>

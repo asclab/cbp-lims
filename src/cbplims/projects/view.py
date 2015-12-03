@@ -26,9 +26,8 @@ def switch_project():
     uid = session['uid']
     app.logger.debug('userid: %s', uid)
     avail = cbplims.projects.get_available_projects(uid)
-    admin = cbplims.users.is_user_global_admin(uid)
 
-    return render_template("projects/switch.html", projects=avail, admin=admin)
+    return render_template("projects/switch.html", projects=avail)
 
 
 @app.route("/projects/new",  methods=['GET', 'POST'])
@@ -40,5 +39,3 @@ def new_project():
     pid = cbplims.projects.new_project(request.form['name'], session['pid'] if 'pid' in session else None, session['uid'])
     app.logger.debug("New project: %s", pid)
     return redirect('/')
-
-

@@ -32,6 +32,20 @@ def before_request_wrapper():
     g.uptime = uptime.uptime_str()
     g.dbconn = conf.get_db_conn()
 
+    if 'uid' in session and session['uid']:
+        g.user = users.get_user(session['uid'])
+    else:
+        g.user = None
+
+    if 'pid' in session and session['pid']:
+        g.project = projects.get_project(session['pid'])
+
+        # TODO: check to see if the user is a project_admin
+        g.is_project_admin = False
+    else:
+        g.project = None
+        g.is_project_admin = False
+
 
 # Be sure to close it
 @app.after_request
@@ -58,20 +72,18 @@ def handle_exception_wrapper(*args, **kwargs):
 app.handle_exception = handle_exception_wrapper
 
 
+# TODO: in the case we redirect, setup /signin, and /projects/choose
+#       to redirect back to the original requested page. For example:
+#       if we get a request for /samples/1, and we need to authenticate,
+#       after sign-in, we should jump to /samples/1
+#
+#       Store the original requestin the session!
+
 def requires_user(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-
-        # TODO: in the case we redirect, setup /signin, and /projects/choose
-        #       to redirect back to the original requested page. For example:
-        #       if we get a request for /samples/1, and we need to authenticate,
-        #       after sign-in, we should jump to /samples/1
-
-        if not 'uid' in session or not session['uid']:
-            app.logger.debug("Needs user!")
+        if not g.user:
             return redirect('/signin')
-
-        app.logger.debug("User: <%s> %s", session['uid'], session['username'])
 
         return f(*args, **kwargs)
     return decorated
@@ -80,22 +92,10 @@ def requires_user(f):
 def requires_project(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-
-        # TODO: in the case we redirect, setup /signin, and /projects/choose
-        #       to redirect back to the original requested page. For example:
-        #       if we get a request for /samples/1, and we need to authenticate,
-        #       after sign-in, we should jump to /samples/1
-
-        if not 'uid' in session or not session['uid']:
-            app.logger.debug("Needs user!")
+        if not g.user:
             return redirect('/signin')
-
-        app.logger.debug("User: <%s> %s", session['uid'], session['username'])
-
-        if not 'pid' in session or not session['pid']:
-            app.logger.debug("Needs project!")
+        if not g.project:
             return redirect('/projects/switch')
-        app.logger.debug("Project: <%s> %s", session['pid'], session['project'])
 
         return f(*args, **kwargs)
     return decorated
@@ -104,15 +104,14 @@ def requires_project(f):
 def requires_admin(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not 'uid' in session or not session['uid']:
+        if not g.user:
             return redirect('/signin')
 
-        if not users.is_user_global_admin(session['uid']):
-            if not 'pid' in session or not session['pid']:
-                return redirect('/projects/choose')
-
-            # TODO: check to see if the user is a project_admin
-            return redirect('/')
+        if not g.user.is_global_admin:
+            if not g.project:
+                return redirect('/projects/switch')
+            if not g.is_project_admin:
+                return redirect('/')
 
         return f(*args, **kwargs)
     return decorated
