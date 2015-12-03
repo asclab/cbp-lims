@@ -11,15 +11,11 @@
     {% if not session.uid %}
       <a href="/signin">sign in</a>
     {% else %}
-      {% if g.is_admin %}
-      <a href="/admin">admin</a> &nbsp; &nbsp;
-      {% endif %}
-
       {% if session.pid %}
-      {{ session.project }} <a href="/projects/switch" alt="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
+      {{ session.project }} <a href="/projects/switch" title="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
       {% endif %}
       {{ session.username }} &nbsp; &nbsp; 
-      <a href="/settings" alt="Settings">settings</a>&nbsp; &nbsp; 
+      <a href="/settings" title="Change project settings">settings</a>&nbsp; &nbsp; 
       <a href="/signout">sign out</a>
     {% endif %}
   </div>
