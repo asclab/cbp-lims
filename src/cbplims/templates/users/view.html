@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block body %}
+
+  
+  <h2> Here are the users - </h2>
+  
+  {% for u in users %}
+  {{u.username}},{{u.fullname}},{{u.is_global_admin}} <br>
+   
+  {% endfor %}
+
+
+{% endblock %}
