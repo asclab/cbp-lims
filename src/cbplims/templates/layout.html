@@ -1,20 +1,20 @@
 <!doctype html>
 <html>
 <head>
-<title>CBP-LIMS{% if session.pid %} :: {{session.project}} {% endif %}</title>
+<title>CBP-LIMS{% if g.project %} :: {{g.project.name}} {% endif %}</title>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 <div class="topbar">
   <b><a href="/">CBP-LIMS</a></b>
   <div class="right">
-    {% if not session.uid %}
+    {% if not g.user %}
       <a href="/signin">sign in</a>
     {% else %}
-      {% if session.pid %}
-      {{ session.project }} <a href="/projects/switch" title="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
+      {% if g.project %}
+      {{ g.project.name }} <a href="/projects/switch" title="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
       {% endif %}
-      {{ session.username }} &nbsp; &nbsp; 
+      {{ g.user.username }} &nbsp; &nbsp; 
       <a href="/settings" title="Change project settings">settings</a>&nbsp; &nbsp; 
       <a href="/signout">sign out</a>
     {% endif %}

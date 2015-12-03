@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, session
+from flask import redirect, request, render_template, session, g
 from cbplims import app, requires_user, requires_admin
 
 import cbplims.users
@@ -13,7 +13,6 @@ def select_project(pid):
 
     if project:
         session['pid'] = pid
-        session['project'] = project.name
 
     return redirect('/')
 
@@ -21,12 +20,7 @@ def select_project(pid):
 @app.route("/projects/switch")
 @requires_user
 def switch_project():
-    print session['uid']
-
-    uid = session['uid']
-    app.logger.debug('userid: %s', uid)
-    avail = cbplims.projects.get_available_projects(uid)
-
+    avail = cbplims.projects.get_available_projects(g.user.id)
     return render_template("projects/switch.html", projects=avail)
 
 
@@ -36,6 +30,6 @@ def new_project():
     if request.method == "GET":
         return render_template("projects/new.html")
 
-    pid = cbplims.projects.new_project(request.form['name'], session['pid'] if 'pid' in session else None, session['uid'])
+    pid = cbplims.projects.new_project(request.form['name'], g.project.id if g.project else None, g.user.id)
     app.logger.debug("New project: %s", pid)
     return redirect('/')

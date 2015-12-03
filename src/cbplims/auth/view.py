@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, session
+from flask import redirect, request, render_template, session, g
 from cbplims import app
 
 import cbplims.auth
@@ -7,9 +7,9 @@ import cbplims.auth
 @app.route("/signout")
 def signout():
     session.pop('uid', None)
-    session.pop('username', None)
     session.pop('pid', None)
-    session.pop('project', None)
+    g.user = None
+    g.project = None
     return render_template("signout.html")
 
 
@@ -22,9 +22,8 @@ def signin():
 
     if userid:
         session['uid'] = userid
-        session['username'] = request.form['username']
 
-        app.logger.debug('USER LOGIN: <%s> %s', session['uid'], session['username'])
+        app.logger.debug('USER LOGIN: <%s> %s', session['uid'], request.form['username'])
 
         return redirect('/')
 
