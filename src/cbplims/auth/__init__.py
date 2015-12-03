@@ -1,16 +1,16 @@
 # authentication methods
 import auth_pbkdf2
 import binascii
-from cbplims import conf
+from flask import g
 
 
 def authenticate(username, password):
     found_pass = None
-    with conf.conn() as conn:
-        cur = conn.cursor()
-        cur.execute('SELECT id, password FROM users WHERE username = %s', (username,))
-        record = cur.fetchone()
-        cur.close()
+
+    cur = g.dbconn.cursor()
+    cur.execute('SELECT id, password FROM users WHERE username = %s', (username,))
+    record = cur.fetchone()
+    cur.close()
 
     if not record:
         return False

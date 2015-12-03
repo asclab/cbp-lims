@@ -26,6 +26,38 @@ app.logger.setLevel(logging.DEBUG)
 import users
 
 
+# Let's just load a DB connection before each request
+@app.before_request
+def before_request_wrapper():
+    g.uptime = uptime.uptime_str()
+    g.dbconn = conf.get_db_conn()
+
+
+# Be sure to close it
+@app.after_request
+def after_request_wrapper(response):
+    try:
+        conf.put_db_conn(g.dbconn)
+    except Exception, e:
+        print e
+    return response
+
+
+__tmp = app.handle_exception
+
+
+## even if there is an exception
+def handle_exception_wrapper(*args, **kwargs):
+    try:
+        conf.put_db_conn(g.dbconn)
+    except Exception, e:
+        print e
+
+    return __tmp(*args, **kwargs)
+
+app.handle_exception = handle_exception_wrapper
+
+
 def requires_user(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -89,13 +121,13 @@ def requires_admin(f):
 @app.route("/")
 @requires_project
 def index():
-    return render_template("index.html", uptime=uptime.uptime_str())
+    return render_template("index.html")
 
 
 @app.route("/settings")
 @requires_project
 def settings():
-    return render_template("settings/index.html", uptime=uptime.uptime_str())
+    return render_template("settings/index.html")
 
 
 @app.route("/test")
@@ -103,13 +135,12 @@ def foo():
     res = ''
     conf.test()
     try:
-        with conf.conn() as conn:
-            cur = conn.cursor()
-            cur.execute("SELECT * FROM users;")
-            for record in cur:
-                res += str(record)+"<br/>"
+        cur = g.dbconn.cursor()
+        cur.execute("SELECT * FROM users;")
+        for record in cur:
+            res += str(record)+"<br/>"
 
-            cur.close()
+        cur.close()
     except Exception, e:
         return "Testing\n<hr/>" + str(e) + "<hr/>" + "Uptime=" + uptime.uptime_str()
 
@@ -120,6 +151,11 @@ def foo():
 def resetdb():
     conf.initdb()
     return redirect('/')
+
+
+@app.route("/error")
+def error_test():
+    raise Exception("Ouch!")
 
 
 @app.route("/exit")

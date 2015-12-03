@@ -22,6 +22,15 @@ class Config(dict):
         dict.__init__(self)
         self._pool = None
 
+    def get_db_conn(self):
+        if not self._pool:
+            self._pool = ThreadedConnectionPool(1, 5, database=self['DB_NAME'], user=self['DB_USER'], password=self['DB_PASS'], host=self['DB_HOST'], port=self['DB_PORT'])
+            self.test()
+        return self._pool.getconn()
+
+    def put_db_conn(self, conn):
+        self._pool.putconn(conn)
+
     def conn(self):
         if not self._pool:
             self._pool = ThreadedConnectionPool(1, 5, database=self['DB_NAME'], user=self['DB_USER'], password=self['DB_PASS'], host=self['DB_HOST'], port=self['DB_PORT'])
@@ -35,8 +44,10 @@ class Config(dict):
         with self.conn() as conn:
             cur = conn.cursor()
             try:
-                cur.execute("SELECT 1 FROM users;")
-                cur.fetchone()
+                cur.execute("SELECT value FROM meta_kv WHERE key = 'ping';")
+                val = cur.fetchone()
+                if val[0] != 'pong':
+                    init = True
             except:
                 init = True
         cur.close()
