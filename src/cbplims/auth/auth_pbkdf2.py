@@ -10,6 +10,15 @@ def generate_salt(n=16):
     return binascii.hexlify(rand_string)
 
 
+def generate_new_password_string(password, salt=None, hashfunc="sha256", iterations=100000):
+    if salt is None:
+        salt = generate_salt()
+
+    # PBDKF2_HMAC, using the embedded salt
+    dk = backported_pbkdf2_hmac(hashfunc, password, salt, iterations)
+    return "pbkdf2$%s$%s" % (salt, binascii.hexlify(dk))
+
+
 ####################################################################
 #    BACKPORTED From:  Python 2.7.8
 #    See: https://pypi.python.org/pypi/backports.pbkdf2/0.1
@@ -117,4 +126,5 @@ if __name__ == '__main__':
 
     print "Username     : %s" % sys.argv[1]
     salt = generate_salt() if len(sys.argv) < 4 else sys.argv[3]
-    print "Password hash: pbkdf2;%s;%s" % (salt, binascii.hexlify(backported_pbkdf2_hmac('sha256', sys.argv[2], salt, 100000)))
+    generate_new_password_string(sys.argv[2])
+    print "Password hash: %s" % (generate_new_password_string(sys.argv[2]))

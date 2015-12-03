@@ -41,3 +41,27 @@ def secure_compare(foo, bar):
             match = False
 
     return match
+
+
+def change_password(uid, password):
+    cur = g.dbconn.cursor()
+    cur.execute('SELECT password FROM users WHERE id = %s', (uid,))
+    record = cur.fetchone()
+    cur.close()
+
+    if not record:
+        return False
+
+    method, val = record[0].split("$", 1)
+
+    if method == 'krb5':
+        return False
+
+    pbkdf_pass = auth_pbkdf2.generate_new_password_string(password)
+
+    cur = g.dbconn.cursor()
+    cur.execute('UPDATE users SET password = %s WHERE id = %s', (pbkdf_pass, uid,))
+    g.dbconn.commit()
+    cur.close()
+
+    return True
