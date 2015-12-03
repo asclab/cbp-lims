@@ -40,3 +40,5 @@ def new_project():
     pid = cbplims.projects.new_project(request.form['name'], session['pid'] if 'pid' in session else None, session['uid'])
     app.logger.debug("New project: %s", pid)
     return redirect('/')
+
+
