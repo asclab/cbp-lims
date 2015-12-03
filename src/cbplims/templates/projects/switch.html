@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
   <h2>Select project</h2>
-  <p>Please select your active project</p>
+  <p><b>Please select your active project</b></p>
 
   {% for project in projects %}
   <a href="/projects/{{project.id}}/select">{{project.name}}</a><br/>

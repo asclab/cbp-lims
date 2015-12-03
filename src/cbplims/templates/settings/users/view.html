@@ -1,0 +1,25 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <div class="title">Users</div>
+
+  <table class="list">
+    <tr>
+        <th>&nbsp;</td>
+        <th>Username</th>
+        <th>Full name</th>
+        <th>Projects</th>
+        <th>Global admin</th>
+    </tr>
+  {% for u in users %}
+  <tr>
+    <td><input type="checkbox"></td>
+    <td>{{u.username}}</td>
+    <td>{{u.fullname}}</td>
+    <td>&nbsp;</td>
+    <td>{{u.is_global_admin}}</td>
+  </tr>
+  {% endfor %}
+  </table>
+
+{% endblock %}

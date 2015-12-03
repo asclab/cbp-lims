@@ -30,7 +30,7 @@ body {
     padding: 24px;
 }
 
-.sidebar .sidebar_title {
+.sidebar .title {
     font-weight: bold;
     font-size: 14pt;
 }
@@ -63,6 +63,20 @@ body {
 .sidebody {
     border-left: 1px solid #ccc;
     margin-left: 240px;
-    padding: 24px;
+    padding: 24px 36px;
 }
 
+.sidebody .title {
+    font-weight: bold;
+    font-size: 14pt;
+}
+
+table.list {
+    width: 100%;
+}
+
+table.list th {
+    text-align:left;
+    font-weight: bold;
+    background-color: #ccc;
+}
