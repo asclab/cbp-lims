@@ -171,6 +171,7 @@ def run(*args, **kwargs):
 import auth.view
 import projects.view
 import users.view
+import users.edit
 if False:
     # no-op to avoid PEP8 warning
     print auth, projects

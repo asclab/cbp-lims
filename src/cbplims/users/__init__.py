@@ -1,6 +1,10 @@
 from cbplims import app
+import cbplims.auth
+
 from flask import g
 from collections import namedtuple
+
+
 
 User = namedtuple('user', 'id username fullname is_global_admin')
 
@@ -33,7 +37,14 @@ def get_user(uid):
     return user
 
 
-def get_t():
-    user = []
-    user.append(User(1, 2, 3))
-    return user
+def add_user(full_name,username,email,is_admin,pwd):
+    cur = g.dbconn.cursor()
+    sql = 'INSERT INTO users (id,username, fullname, password, is_global_admin) VALUES (DEFAULT,%s,%s,%s,%s)'
+    pwd = cbplims.auth.auth_pbkdf2.generate_new_password_string(pwd)
+    # normally I use "try" and then a rollback if it does not work.
+    # don't know where the loggers are?
+    # app.logger.audti? 
+    cur.execute(sql, (username,full_name,pwd,is_admin) )
+    g.dbconn.commit()
+    cur.close()
+    return True

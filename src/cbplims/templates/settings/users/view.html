@@ -6,6 +6,7 @@
   <table class="list">
     <tr>
         <th>&nbsp;</td>
+        <th>Email</th>
         <th>Username</th>
         <th>Full name</th>
         <th>Projects</th>
@@ -14,6 +15,7 @@
   {% for u in users %}
   <tr>
     <td><input type="checkbox"></td>
+    <td>{{u.email}}</td>
     <td><a href="/settings/global/users/{{u.id}}">{{u.username}}</a></td>
     <td>{{u.fullname}}</td>
     <td>&nbsp;</td> <!-- TODO: fill this out -->
