@@ -20,6 +20,23 @@ def get_available_projects(user_id):
     return projects
 
 
+def get_project_auth_level(user_id, project_id):
+    app.logger.debug('Finding project permissions for project: %s, for user: %s', project_id, user_id)
+    cur = g.dbconn.cursor()
+
+    cur.execute('SELECT a.is_admin, a.is_view FROM groups a LEFT JOIN user_groups b ON a.id=b.group_id  WHERE b.user_id = %s AND a.project_id = %s;', (user_id, project_id,))
+
+    is_view = True
+    for record in cur:
+        if record[0]:
+            return 'admin'
+        if not record[1]:
+            is_view = False
+    cur.close()
+
+    return 'view' if is_view else 'rw'
+
+
 def get_project(project_id):
     cur = g.dbconn.cursor()
 

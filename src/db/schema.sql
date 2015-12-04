@@ -65,7 +65,7 @@ CREATE TABLE groups (
 	project_id INTEGER NOT NULL REFERENCES projects(id),
 	name VARCHAR(255) UNIQUE NOT NULL,
 	is_admin BOOLEAN DEFAULT FALSE,
-	is_readonly BOOLEAN DEFAULT FALSE,
+	is_view BOOLEAN DEFAULT FALSE,
 	UNIQUE (project_id, name)
 );
 
