@@ -3,7 +3,7 @@ import os
 import sys
 
 from functools import wraps
-from flask import Flask, redirect, render_template, session, g
+from flask import Flask, redirect, render_template, session, g, request
 
 import config
 conf = config.load_config()
@@ -29,47 +29,55 @@ import users
 # Let's just load a DB connection before each request
 @app.before_request
 def before_request_wrapper():
+    if request.path == '/resetdb':
+        return
+
     g.uptime = uptime.uptime_str()
     g.dbconn = conf.get_db_conn()
 
+    g.is_project_admin = False
+    g.is_project_view = False
+    g.user = None
+    g.project = None
+
     if 'uid' in session and session['uid']:
         g.user = users.get_user(session['uid'])
-    else:
-        g.user = None
 
     if 'pid' in session and session['pid']:
         g.project = projects.get_project(session['pid'])
-
-        # TODO: check to see if the user is a project_admin
-        g.is_project_admin = False
-    else:
-        g.project = None
-        g.is_project_admin = False
+        if g.project:
+            auth_level = projects.get_project_auth_level(g.user.id, g.project.id)
+            if auth_level == 'admin':
+                g.is_project_admin = True
+            elif auth_level == 'view':
+                g.is_project_view = True
 
 
 # Be sure to close it
-@app.after_request
-def after_request_wrapper(response):
-    try:
-        conf.put_db_conn(g.dbconn)
-    except Exception, e:
-        print e
-    return response
+@app.teardown_request
+def teardown_request_wrapper(err):
+    if err:
+        print "Error: %s " % err
 
-
-__tmp = app.handle_exception
-
-
-## even if there is an exception
-def handle_exception_wrapper(*args, **kwargs):
     try:
         conf.put_db_conn(g.dbconn)
     except Exception, e:
         print e
 
-    return __tmp(*args, **kwargs)
 
-app.handle_exception = handle_exception_wrapper
+# __tmp = app.handle_exception
+
+
+# ## even if there is an exception
+# def handle_exception_wrapper(*args, **kwargs):
+#     try:
+#         conf.put_db_conn(g.dbconn)
+#     except Exception, e:
+#         print e
+
+#     return __tmp(*args, **kwargs)
+
+# app.handle_exception = handle_exception_wrapper
 
 
 # TODO: in the case we redirect, setup /signin, and /projects/choose

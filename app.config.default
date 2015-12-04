@@ -1,4 +1,6 @@
-SECRET_KEY=La=ee==ffffjjj
-DB_USER=alexsql
-DB_PASS=eeeoooh
-DB_NAME=eeeoh
+SECRET_KEY=secret key goes here
+DB_USER=dbuser
+DB_PASS=dbpass
+DB_NAME=dbname
+#DB_HOST=127.0.0.1
+#DB_PORT=5432
