@@ -1,4 +1,5 @@
 import os
+import psycopg2
 from psycopg2.pool import ThreadedConnectionPool
 
 
@@ -21,6 +22,15 @@ class Config(dict):
     def __init__(self):
         dict.__init__(self)
         self._pool = None
+
+    def build_db_conn(self):
+        dsn = "dbname='%s' user='%s' password='%s'" % (self['DB_NAME'], self['DB_USER'], self['DB_PASS'], )
+        if 'DB_HOST' in self:
+            dsn += " host='%s'" % self['DB_HOST']
+        if 'DB_PORT' in self:
+            dsn += " port='%s'" % self['DB_PORT']
+
+        return psycopg2.connect(dsn)
 
     def get_db_conn(self):
         if not self._pool:

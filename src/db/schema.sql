@@ -20,7 +20,8 @@ DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS users;
 
 DROP TABLE IF EXISTS meta_kv;
-
+DROP TABLE IF EXISTS logger;
+DROP TYPE IF EXISTS LOGGER_LEVEL;
 
 -- meta
 -- Random information about this database e.g. schema version
@@ -28,6 +29,20 @@ DROP TABLE IF EXISTS meta_kv;
 CREATE TABLE meta_kv (
 	key VARCHAR(255) PRIMARY KEY,
 	value TEXT
+);
+
+-- logger
+-- Stores log information that would ordinarily be written to stderr
+CREATE TYPE LOGGER_LEVEL AS ENUM ('DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL');	
+
+CREATE TABLE logger (
+	id BIGSERIAL PRIMARY KEY,
+	msg_ts TIMESTAMP NOT NULL DEFAULT (now() at time zone 'UTC'),
+	level LOGGER_LEVEL NOT NULL,
+	filename VARCHAR(1024),
+	funcname VARCHAR(1024),
+	lineno INT,
+	msg TEXT
 );
 
 INSERT INTO meta_kv (key, value) VALUES ('ping', 'pong');

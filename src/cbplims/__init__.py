@@ -1,29 +1,46 @@
-import binascii
 import os
 import sys
+import atexit
+import logging
+import binascii
 
 from functools import wraps
 from flask import Flask, redirect, render_template, session, g, request
 
 import config
-conf = config.load_config()
-
 import support.uptime
+import support.dblogger
+
+conf = config.load_config()
+conf.test()  # test the db connection and init db if needed
+
+
 uptime = support.uptime.Uptime()
+
 
 app = Flask(__name__)
 app.secret_key = conf['SECRET_KEY'] if 'SECRET_KEY' in conf else binascii.hexlify(os.urandom(64))
 
 
 ### TODO: make this log to a configured filename
-import logging
 #import logging.handlers
 #file_handler = logging.handlers.RotatingFileHandler(os.path.realpath('../working/cbplims.log'), backupCount=5, maxBytes=1000000)
 #file_handler.setLevel(logging.DEBUG)
 #app.logger.addHandler(file_handler)
 app.logger.setLevel(logging.DEBUG)
 
+try:
+    dblogger = support.dblogger.DBLogger(conf.build_db_conn())
+    app.logger.addHandler(dblogger)
+    atexit.register(dblogger.close)
+except:
+    sys.stderr.write("Unable to setup DB Logger!\n")
+
+
 import users
+
+app.logger.debug("Starting up Flask app")
+
 
 
 # Let's just load a DB connection before each request
