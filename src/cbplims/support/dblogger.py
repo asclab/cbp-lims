@@ -2,7 +2,7 @@ import os.path
 import logging
 from collections import namedtuple
 
-LogRecord = namedtuple('LogRecord', 'id, tstamp, level, module, filename, funcname, linno, msg')
+LogRecord = namedtuple('LogRecord', 'id, tstamp, level, filename, funcname, lineno, msg')
 
 
 class DBLogger(logging.Handler):
@@ -21,8 +21,8 @@ class DBLogger(logging.Handler):
         self._conn.commit()
         cur.close()
 
-    def fetch_messages(self, last_id=None, max_lines=50):
-        sql = 'SELECT id, msg_ts, level, module, filename, funcname, lineno, msg FROM logger'
+    def fetch_messages(self, last_id=None, max_lines=100):
+        sql = 'SELECT id, msg_ts, level, filename, funcname, lineno, msg FROM logger'
         args = []
         if last_id:
             sql += ' WHERE id > %s'
@@ -42,4 +42,4 @@ class DBLogger(logging.Handler):
         for record in cur:
             records.append(LogRecord(*record))
 
-        return records
+        return records[::-1]

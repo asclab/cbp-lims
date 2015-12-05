@@ -1,0 +1,151 @@
+<html>
+<head>
+<style>
+#logview th {
+	text-align:left;
+	background-color: #ccc;
+	padding: 1px 4px;
+}
+#logview {
+	width: 100%;
+}
+#logview td {
+	padding: 1px 4px;
+}
+td.fixed {
+	white-space: nowrap;
+	vertical-align: top;
+}
+</style>
+</head>
+<body>
+<div>
+<a href="javascript:scroll_back(20);">&lt;&lt;</a>
+&nbsp;
+<a href="javascript:scroll_fwd(20);">&gt;&gt;</a>
+<!--
+&nbsp;
+first:<span id="first">&nbsp;</span>
+&nbsp;
+last: <span id="last">&nbsp;</span>
+&nbsp;
+pos: <span id="pos">&nbsp;</span>
+-->
+&nbsp;
+viewable:
+<select id="viewable" onchange="set_viewable(this);">
+	<option value="20">20</option>
+	<option value="50">50</option>
+	<option value="100">100</option>
+</select>
+&nbsp;
+<span id="viewable_val">&nbsp;</span>
+</div>
+<table id="logview">
+<thead>
+<tr>
+<th>#</th>
+<th>Date</th>
+<th>Level</th>
+<th>File</th>
+<th>Line</th>
+<th>Function</th>
+<th>Message</th>
+</tr>
+</thead>
+<tbody>
+{% for msg in messages %}
+<tr id="msg{{msg.id}}" style="display:none">
+<td class="fixed">{{ msg.id }}</td>
+<td class="fixed">{{ msg.tstamp }}</td>
+<td class="fixed">{{ msg.level }}</td>
+<td class="fixed">{{ msg.filename }}</td>
+<td class="fixed">{{ msg.lineno }}</td>
+<td class="fixed">{{ msg.funcname }}</td>
+<td width="100%">{{ msg.msg }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+<script>
+var viewable = 20;
+var first = -1;
+var last = -1;
+
+var pos = -1;
+
+function update_visible() {
+	if (first == -1) {
+		var i = 1;
+		var el = document.getElementById("msg"+i);
+
+		while (!el) {
+			i++
+			el = document.getElementById("msg"+i);
+		}
+		first = i;
+	}
+	if (last == -1) {
+		var i = first;
+		el = document.getElementById("msg"+i);
+		while (el) {
+			i++
+			el = document.getElementById("msg"+i);
+		}
+		last = i;
+	}
+
+	if (pos == -1) {
+		pos = last - viewable;
+	}
+
+	if (pos > (last-viewable)) {
+		pos = last - viewable;
+	}
+
+	for (i=first; i<last; i++) {
+		var el = document.getElementById("msg"+i);
+		if (el) {
+			el.style.display="none";
+		}
+	}
+
+	for (i=pos; i<(pos+viewable); i++) {
+		var el = document.getElementById("msg"+i);
+		if (el) {
+			console.log("visible: "+i);
+			el.style.display="table-row";
+		}
+	}
+
+	// document.getElementById("pos").innerText=pos+" / "+(pos + viewable);
+	// document.getElementById("first").innerText=first;
+	// document.getElementById("last").innerText=last;
+	// document.getElementById("viewable_val").innerText=viewable;
+}
+
+function scroll_back(n) {
+	pos = pos - n;
+	if (pos < first) {
+		pos = first;
+	}
+	update_visible();
+}
+
+function scroll_fwd(n) {
+	pos = pos + n;
+	if (pos > (last-viewable)) {
+		pos = last - viewable;
+	}
+	update_visible();
+}
+
+function set_viewable(el) {
+	viewable = parseInt(el.value);
+	update_visible();
+}
+
+update_visible();
+</script>
+</body>
+</html>

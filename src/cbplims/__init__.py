@@ -1,5 +1,6 @@
 import os
 import sys
+import json
 import atexit
 import logging
 import binascii
@@ -34,6 +35,7 @@ try:
     app.logger.addHandler(dblogger)
     atexit.register(dblogger.close)
 except:
+    dblogger = None
     sys.stderr.write("Unable to setup DB Logger!\n")
 
 
@@ -177,14 +179,32 @@ def resetdb():
     return redirect('/')
 
 
-@app.route("/error")
-def error_test():
-    raise Exception("Ouch!")
+@app.route("/log")
+def view_dblogger():
+    if not dblogger:
+        return "Log not available"
+
+    app.logger.debug(str(request.args))
+
+    if 'last' in request.args:
+        try:
+            messages = dblogger.fetch_messages(int(request.args['last']))
+            app.logger.debug(dir(messages[0]))
+            app.logger.debug(str([x._asdict() for x in messages]))
+            return json.dumps([x._asdict() for x in messages])
+        except Exception, e:
+            return e
+    else:
+        messages = dblogger.fetch_messages()
+        return render_template('dblogger.html', messages=messages)
 
 
-@app.route("/exit")
-def exit():
-    sys.exit(1)
+@app.route("/restart")
+def restart_app():
+    try:
+        return "Restarting app"
+    finally:
+        sys.exit(1)
 
 
 def run(*args, **kwargs):
