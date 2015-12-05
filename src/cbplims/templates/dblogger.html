@@ -2,27 +2,33 @@
 <head>
 <style>
 #logview th {
-	text-align:left;
-	background-color: #ccc;
-	padding: 1px 4px;
+    text-align:left;
+    background-color: #ccc;
+    padding: 1px 4px;
 }
 #logview {
-	width: 100%;
+    width: 100%;
 }
 #logview td {
-	padding: 1px 4px;
+    padding: 1px 4px;
 }
 td.fixed {
-	white-space: nowrap;
-	vertical-align: top;
+    white-space: nowrap;
+    vertical-align: top;
 }
 </style>
 </head>
 <body>
 <div>
-<a href="javascript:scroll_back(20);">&lt;&lt;</a>
+<a href="javascript:scroll_back(viewable);">&lt;&lt;</a>
 &nbsp;
-<a href="javascript:scroll_fwd(20);">&gt;&gt;</a>
+<a href="javascript:scroll_back(1);">&lt;</a>
+&nbsp;
+<a href="javascript:scroll_fwd(1);">&gt;</a>
+&nbsp;
+<a href="javascript:scroll_fwd(viewable);">&gt;&gt;</a>
+&nbsp;
+<a href="javascript:toggle_updates(this);" id="autoupdate">Pause updates</a>
 <!--
 &nbsp;
 first:<span id="first">&nbsp;</span>
@@ -32,11 +38,12 @@ last: <span id="last">&nbsp;</span>
 pos: <span id="pos">&nbsp;</span>
 -->
 &nbsp;
-viewable:
+&nbsp;
+Show
 <select id="viewable" onchange="set_viewable(this);">
-	<option value="20">20</option>
-	<option value="50">50</option>
-	<option value="100">100</option>
+    <option value="20">20</option>
+    <option value="50">50</option>
+    <option value="100">100</option>
 </select>
 &nbsp;
 <span id="viewable_val">&nbsp;</span>
@@ -68,6 +75,7 @@ viewable:
 </tbody>
 </table>
 <script>
+var autoupdate = true;
 var viewable = 20;
 var first = -1;
 var last = -1;
@@ -75,80 +83,169 @@ var last = -1;
 var pos = -1;
 
 function update_visible() {
-	if (first == -1) {
-		var i = 1;
-		var el = document.getElementById("msg"+i);
+    if (first == -1) {
+        var i = 1;
+        var el = document.getElementById("msg"+i);
 
-		while (!el) {
-			i++
-			el = document.getElementById("msg"+i);
-		}
-		first = i;
-	}
-	if (last == -1) {
-		var i = first;
-		el = document.getElementById("msg"+i);
-		while (el) {
-			i++
-			el = document.getElementById("msg"+i);
-		}
-		last = i;
-	}
+        while (!el) {
+            i++
+            el = document.getElementById("msg"+i);
+        }
+        first = i;
+    }
+    if (last == -1) {
+        var i = first;
+        el = document.getElementById("msg"+i);
+        while (el) {
+            i++
+            el = document.getElementById("msg"+i);
+        }
+        last = i;
+    }
 
-	if (pos == -1) {
-		pos = last - viewable;
-	}
+    if (pos == -1) {
+        pos = last - viewable;
+    }
 
-	if (pos > (last-viewable)) {
-		pos = last - viewable;
-		if (pos < first) {
-			pos = first;
-		}
-	}
+    if (pos > (last-viewable)) {
+        pos = last - viewable;
+        if (pos < first) {
+            pos = first;
+        }
+    }
 
-	for (i=first; i<last; i++) {
-		var el = document.getElementById("msg"+i);
-		if (el) {
-			el.style.display="none";
-		}
-	}
+    for (i=first; i<last; i++) {
+        var el = document.getElementById("msg"+i);
+        if (el) {
+            el.style.display="none";
+        }
+    }
 
-	for (i=pos; i<(pos+viewable); i++) {
-		var el = document.getElementById("msg"+i);
-		if (el) {
-			console.log("visible: "+i);
-			el.style.display="table-row";
-		}
-	}
+    for (i=pos; i<(pos+viewable); i++) {
+        var el = document.getElementById("msg"+i);
+        if (el) {
+            el.style.display="table-row";
+        }
+    }
 
-	// document.getElementById("pos").innerText=pos+" / "+(pos + viewable);
-	// document.getElementById("first").innerText=first;
-	// document.getElementById("last").innerText=last;
-	// document.getElementById("viewable_val").innerText=viewable;
+    // document.getElementById("pos").innerText=pos+" / "+(pos + viewable);
+    // document.getElementById("first").innerText=first;
+    // document.getElementById("last").innerText=last;
+    // document.getElementById("viewable_val").innerText=viewable;
 }
 
 function scroll_back(n) {
-	pos = pos - n;
-	if (pos < first) {
-		pos = first;
-	}
-	update_visible();
+    pos = pos - n;
+    if (pos < first) {
+        pos = first;
+    }
+    update_visible();
 }
 
 function scroll_fwd(n) {
-	pos = pos + n;
-	if (pos > (last-viewable)) {
-		pos = last - viewable;
-	}
-	update_visible();
+    pos = pos + n;
+    if (pos > (last-viewable)) {
+        pos = last - viewable;
+    }
+    update_visible();
 }
 
 function set_viewable(el) {
-	viewable = parseInt(el.value);
-	update_visible();
+    viewable = parseInt(el.value);
+    update_visible();
+}
+
+
+function toggle_updates(el) {
+    if (autoupdate) {
+        autoupdate = false;
+        document.getElementById("autoupdate").innerText="Auto update";
+    } else {
+        autoupdate = true;
+        setTimeout(update,100);
+        document.getElementById("autoupdate").innerText="Pause updates";
+    }
+}
+
+function fetchJSONFile(path, callback) {
+    var httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === 4) {
+            if (httpRequest.status === 200) {
+                var data = JSON.parse(httpRequest.responseText);
+                if (callback) callback(data);
+            }
+        }
+    };
+    httpRequest.open('GET', path);
+    httpRequest.send(); 
+}
+
+function update() {
+    fetchJSONFile('/log?last='+(last-1), function(data){
+        // do something with your data
+        if (data && data.length > 0) {
+            for (i=0;i<data.length;i++) {
+                tbody=document.getElementById('logview').getElementsByTagName("tbody")[0]
+
+                trow = document.createElement("tr")
+                trow.style.display="none";
+                trow.id="msg"+data[i].id;
+
+                var td = document.createElement("td")
+                td.className="fixed";
+                td.innerText=data[i].id;
+                trow.appendChild(td);
+                
+                td = document.createElement("td")
+                td.className="fixed";
+                td.innerText=data[i].tstamp;
+                trow.appendChild(td);
+                
+                td = document.createElement("td")
+                td.className="fixed";
+                td.innerText=data[i].level;
+                trow.appendChild(td);
+                
+                td = document.createElement("td")
+                td.className="fixed";
+                td.innerText=data[i].filename;
+                trow.appendChild(td);
+                
+                td = document.createElement("td")
+                td.className="fixed";
+                td.innerText=data[i].lineno;
+                trow.appendChild(td);
+                
+                td = document.createElement("td")
+                td.className="fixed";
+                td.innerText=data[i].funcname;
+                trow.appendChild(td);
+                
+                td = document.createElement("td")
+                td.innerText=data[i].msg;
+                trow.appendChild(td);
+                
+                tbody.appendChild(trow);
+                last++;
+            }
+            if (autoupdate) {
+                pos = last;
+                update_visible();
+                setTimeout(update,500);
+            }
+        } else {
+            if (autoupdate) {
+                setTimeout(update,1000);
+            }
+        }
+    });
 }
 
 update_visible();
+if (autoupdate) {
+    setTimeout(update,1000);
+}
 </script>
 </body>
 </html>

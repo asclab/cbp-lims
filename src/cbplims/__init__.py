@@ -53,7 +53,7 @@ app.logger.debug("Starting up Flask app")
 # Let's just load a DB connection before each request
 @app.before_request
 def before_request_wrapper():
-    if request.path == '/resetdb':
+    if request.path in ['/resetdb', '/log', '/restart']:
         return
 
     g.uptime = uptime.uptime_str()
@@ -203,13 +203,17 @@ def view_dblogger():
 
     # app.logger.debug(str(request.args))
 
+    def json_str(obj):
+        print "Serializing: %s" % obj
+        return str(obj)
+
     if 'last' in request.args:
         try:
             messages = dblogger.fetch_messages(int(request.args['last']))
-            app.logger.debug(dir(messages[0]))
-            app.logger.debug(str([x._asdict() for x in messages[:1]]))
-            return json.dumps([x._asdict() for x in messages])
+            s = json.dumps([x._asdict() for x in messages], default=json_str)
+            return s
         except Exception, e:
+            print e
             return e
     else:
         messages = dblogger.fetch_messages()

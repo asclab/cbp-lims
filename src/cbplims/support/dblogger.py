@@ -40,6 +40,7 @@ class DBLogger(logging.Handler):
         records = []
 
         for record in cur:
-            records.append(LogRecord(*record))
+            # only use the first 1000 characters of a message
+            records.append(LogRecord(record[0], record[1], record[2], record[3], record[4], record[5], record[6][:1000],))
 
         return records[::-1]
