@@ -1,5 +1,6 @@
 import os
 import psycopg2
+import app
 from psycopg2.pool import ThreadedConnectionPool
 
 
@@ -67,30 +68,36 @@ class Config(dict):
             self.initdb()
 
     def initdb(self):
-        with self.conn() as conn:
-            print "init-db"
-            cur = conn.cursor()
-            with open('db/schema.sql') as f:
-                buf = ''
-                for line in f:
-                    if '--' in line:
-                        line = line[:line.find('--')]
+        if self._pool:
+            self._pool.closeall()
+            self._pool = None
 
-                    line = line.strip()
+        print "Init-DB"
 
-                    if buf:
-                        buf += ' ' + line
-                    else:
-                        buf = line
+        conn = self.build_db_conn()
+        cur = conn.cursor()
 
-                    if buf and buf[-1] == ';':
-                        print buf
-                        cur.execute(buf)
-                        buf = ''
+        with open('db/schema.sql') as f:
+            buf = ''
+            for line in f:
+                if '--' in line:
+                    line = line[:line.find('--')]
 
-            cur.close()
-            conn.commit()
-            print "init-db-out"
+                line = line.strip()
+
+                if buf:
+                    buf += ' ' + line
+                else:
+                    buf = line
+
+                if buf and buf[-1] == ';':
+                    print buf
+                    cur.execute(buf)
+                    buf = ''
+
+        cur.close()
+        conn.commit()
+        conn.close()
 
 
 def load_config(fnames=['../scripts/db.cred', '../app.config']):

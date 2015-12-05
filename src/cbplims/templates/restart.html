@@ -1,0 +1,22 @@
+<html>
+<head>
+</head>
+<body>
+<h1>Restarting app...</h1>
+<div id="status">5...</div>
+<script>
+var secs = 5
+function countdown() {
+	secs = secs - 1;
+	if (secs == 0) {
+		location.href='/';
+		return;
+	}
+	document.getElementById("status").innerText+=" "+secs+"..."; 
+	setTimeout(countdown, 1000);
+}
+
+setTimeout(countdown, 1000);
+</script>
+</body>
+</html>

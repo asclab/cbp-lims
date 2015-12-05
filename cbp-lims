@@ -13,7 +13,7 @@ start_app() {
     
     ../venv/bin/python app.py &> ../working/log
     while [ -e ../working/RELOAD ]; do
-        sleep 5
+        sleep 2
         echo "$(date) RESTARTING" >> ../working/log
         ../venv/bin/python app.py >> ../working/log  2>&1
     done

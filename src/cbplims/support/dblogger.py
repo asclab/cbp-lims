@@ -12,7 +12,7 @@ class DBLogger(logging.Handler):
 
     def close(self):
         self._conn.close()
-        logging.Hander.close(self)
+        logging.Handler.close(self)
 
     def emit(self, record):
         sql = 'INSERT INTO logger (level, filename, funcname, lineno, msg) VALUES (%s, %s, %s, %s, %s)'

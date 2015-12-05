@@ -101,6 +101,9 @@ function update_visible() {
 
 	if (pos > (last-viewable)) {
 		pos = last - viewable;
+		if (pos < first) {
+			pos = first;
+		}
 	}
 
 	for (i=first; i<last; i++) {

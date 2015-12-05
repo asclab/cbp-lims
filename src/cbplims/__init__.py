@@ -4,6 +4,7 @@ import json
 import atexit
 import logging
 import binascii
+import threading
 
 from functools import wraps
 from flask import Flask, redirect, render_template, session, g, request
@@ -33,7 +34,12 @@ app.logger.setLevel(logging.DEBUG)
 try:
     dblogger = support.dblogger.DBLogger(conf.build_db_conn())
     app.logger.addHandler(dblogger)
-    atexit.register(dblogger.close)
+
+    def close_dblogger():
+        dblogger.close()
+
+    atexit.register(close_dblogger)
+
 except:
     dblogger = None
     sys.stderr.write("Unable to setup DB Logger!\n")
@@ -42,7 +48,6 @@ except:
 import users
 
 app.logger.debug("Starting up Flask app")
-
 
 
 # Let's just load a DB connection before each request
@@ -76,10 +81,12 @@ def before_request_wrapper():
 @app.teardown_request
 def teardown_request_wrapper(err):
     if err:
+        app.logger.error(err)
         print "Error: %s " % err
 
     try:
-        conf.put_db_conn(g.dbconn)
+        if g.dbconn:
+            conf.put_db_conn(g.dbconn)
     except Exception, e:
         print e
 
@@ -175,6 +182,16 @@ def foo():
 
 @app.route("/resetdb")
 def resetdb():
+    app.logger.info("Reloading DB at user request")
+
+    global dblogger
+    if dblogger:
+        dblogger.close()
+        app.logger.removeHandler(dblogger)
+
+        dblogger = support.dblogger.DBLogger(conf.build_db_conn())
+        app.logger.addHandler(dblogger)
+
     conf.initdb()
     return redirect('/')
 
@@ -184,13 +201,13 @@ def view_dblogger():
     if not dblogger:
         return "Log not available"
 
-    app.logger.debug(str(request.args))
+    # app.logger.debug(str(request.args))
 
     if 'last' in request.args:
         try:
             messages = dblogger.fetch_messages(int(request.args['last']))
             app.logger.debug(dir(messages[0]))
-            app.logger.debug(str([x._asdict() for x in messages]))
+            app.logger.debug(str([x._asdict() for x in messages[:1]]))
             return json.dumps([x._asdict() for x in messages])
         except Exception, e:
             return e
@@ -201,10 +218,12 @@ def view_dblogger():
 
 @app.route("/restart")
 def restart_app():
-    try:
-        return "Restarting app"
-    finally:
-        sys.exit(1)
+    app.logger.info("Restarting app at user request")
+    func = request.environ.get('werkzeug.server.shutdown')
+    if func is None:
+        raise RuntimeError('Not running with the Werkzeug Server')
+    func()
+    return render_template('restart.html')
 
 
 def run(*args, **kwargs):
