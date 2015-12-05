@@ -22,11 +22,11 @@ def users_add():
         return render_template("settings/users/add.html", username=username)
 
 
-@app.route("/settings/global/user_del" , methods=['GET'])
+@app.route("/settings/global/<int:pid>/user_del" , methods=['GET'])
 @requires_admin
-def users_del():
+def users_del(pid):
     if request.method == "GET":
-        id = request.args.get('id')
-        go = cbplims.users.del_user(id)
+        go = cbplims.users.del_user(pid)
         # put into logger, return false will go to erro page. 
     return redirect('./settings/global/users')
+
