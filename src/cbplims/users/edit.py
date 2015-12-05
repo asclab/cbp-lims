@@ -1,4 +1,4 @@
-from flask import render_template, request, session, g
+from flask import render_template, request, session, g, redirect
 from cbplims import app, requires_admin
 
 import cbplims.users
@@ -20,3 +20,13 @@ def users_add():
         pwd = request.form['pwd']
         pwd=cbplims.users.add_user(full_name,username,email,is_admin[0],pwd)
         return render_template("settings/users/add.html", username=username)
+
+
+@app.route("/settings/global/user_del" , methods=['GET'])
+@requires_admin
+def users_del():
+    if request.method == "GET":
+        id = request.args.get('id')
+        go = cbplims.users.del_user(id)
+        # put into logger, return false will go to erro page. 
+    return redirect('./settings/global/users')

@@ -48,3 +48,11 @@ def add_user(full_name,username,email,is_admin,pwd):
     g.dbconn.commit()
     cur.close()
     return True
+
+def del_user(id):
+    cur = g.dbconn.cursor()
+    sql = 'DELETE FROM users WHERE id = %s '
+    cur.execute(sql, (id,) )
+    g.dbconn.commit()
+    cur.close()
+    return True
