@@ -22,7 +22,7 @@
     <td>&nbsp;</td> <!-- TODO: fill this out -->
     <td>{{u.is_global_admin}}</td>
     <td><a href="/settings/global/{{u.id}}/user_edit"> edit</a></td>
-    <td><input type="submit" form = "form_del" class="submitLink" value="{{u.id}}" id="id" name="id">  </td>
+    <td><button type="submit" form = "form_del" class="submitLink" value="{{u.id}}" id="id" name="id">  Delete {{u.username}}</button></td>
   </tr>
   {% endfor %}
   </table>
