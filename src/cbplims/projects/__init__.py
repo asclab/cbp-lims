@@ -53,25 +53,31 @@ def get_project(project_id):
 
 def new_project(name, parent_id, user_id):
     cur = g.dbconn.cursor()
-
-    cur.execute('INSERT INTO projects (name, parent_id) VALUES (%s, %s) RETURNING id', (name, parent_id))
-    row = cur.fetchone()
-    project_id = row[0]
-
-    app.logger.debug("New project: %s (%s)", project_id, name)
-
-    cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
-    row = cur.fetchone()
-    group_id = row[0]
-
-    app.logger.debug("New group: %s (%s)", group_id, '%s Admins' % name)
-
-    cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (user_id, group_id))
-
-    cur.close()
-    g.dbconn.commit()
-
-    return project_id
+    # no parents
+    try:
+        if int(parent_id) == -1:
+            cur.execute('INSERT INTO projects (name) VALUES (%s) RETURNING id', (name, ))
+            row = cur.fetchone()
+            project_id = row[0]
+            app.logger.debug("New project: %s (%s)", project_id, name)
+            cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
+            row = cur.fetchone()
+            group_id = row[0]
+            app.logger.debug("New group: %s (%s)", group_id, '%s Admins' % name)
+            cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (user_id, group_id))
+        else:
+            cur.execute('INSERT INTO projects (name, parent_id) VALUES (%s, %s) RETURNING id', (name, parent_id))
+            row = cur.fetchone()
+            project_id = row[0]
+            app.logger.debug("New project: %s (%s)", project_id, name)
+        cur.close()
+        g.dbconn.commit()
+    except Exception as err:
+        g.dbconn.rollback()
+        cur.close()
+        return (str(err))
+    
+    return  ("Inserted " + str(project_id))
 
 def avail_projects():
     cur = g.dbconn.cursor()
@@ -87,19 +93,3 @@ def avail_projects():
     cur.close()
     return projects
 
-def add_projects(name,parent):
-    cur = g.dbconn.cursor()
-    try:
-        if int(parent) == -1:
-            cur.execute("INSERT INTO projects (name) VALUES (%s) RETURNING id",(name,))
-        else:
-            cur.execute("INSERT INTO projects (name,parent_id) VALUES (%s,%s) RETURNING id",(name,parent))
-        g.dbconn.commit()
-        row = cur.fetchone()
-        cur.close()
-        out = "Inserted " + str(row[0])
-        return (out)
-    except Exception as err:
-        g.dbconn.rollback()
-        cur.close()
-        return (str(err))

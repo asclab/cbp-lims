@@ -44,7 +44,7 @@ def add_project():
     elif request.method == "POST":
         project_name = request.form['project_name']
         parent = request.form['parent']
-        msg =cbplims.projects.add_projects(project_name,parent)
+        msg =cbplims.projects.new_project(project_name,parent,g.user.id)
         avail = cbplims.projects.avail_projects()
         return render_template("projects/add.html",parents=avail,msg=msg)
     #pid = cbplims.projects.new_project(request.form['name'], g.project.id if g.project else None, g.user.id)
