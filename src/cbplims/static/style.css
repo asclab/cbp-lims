@@ -80,3 +80,15 @@ table.list th {
     font-weight: bold;
     background-color: #ccc;
 }
+
+.submitLink {
+  background-color: transparent;
+  text-decoration: underline;
+  border: none;
+  color: green;
+  cursor: pointer;
+}
+
+submitLink:focus {
+  outline: none;
+}
