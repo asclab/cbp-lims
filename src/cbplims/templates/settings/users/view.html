@@ -3,7 +3,7 @@
 
   <div class="title">Users</div>
 
-<form method="POST" id="form_del" action="/settings/global/users/delete"></form>
+
   <table class="list">
     <tr>
         <th>&nbsp;</td>
@@ -22,7 +22,11 @@
     <td>&nbsp;</td> <!-- TODO: fill this out -->
     <td>{{u.is_global_admin}}</td>
     <td><a href="/settings/global/{{u.id}}/user_edit"> edit</a></td>
-    <td><button type="submit" form = "form_del" class="submitLink" value="{{u.id}}" id="id" name="id">  Delete {{u.username}}</button></td>
+    <td>
+      <form method="POST" action="/settings/global/users/{{u.id}}/delete">
+      <button type="submit" class="submitLink">  Delete {{u.username}}</button>
+      </form>
+    </td>
   </tr>
   {% endfor %}
   </table>
