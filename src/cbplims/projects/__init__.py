@@ -72,3 +72,34 @@ def new_project(name, parent_id, user_id):
     g.dbconn.commit()
 
     return project_id
+
+def avail_projects():
+    cur = g.dbconn.cursor()
+    projects = []
+    sql = "SELECT id, name, parent_id FROM projects"
+    try:
+        cur.execute(sql)
+        record = cur.fetchone()
+        for record in cur:
+            projects.append(Project(record[0], record[1], record[2]))
+    except:
+        return projects
+    cur.close()
+    return projects
+
+def add_projects(name,parent):
+    cur = g.dbconn.cursor()
+    try:
+        if int(parent) == -1:
+            cur.execute("INSERT INTO projects (name) VALUES (%s) RETURNING id",(name,))
+        else:
+            cur.execute("INSERT INTO projects (name,parent_id) VALUES (%s,%s) RETURNING id",(name,parent))
+        g.dbconn.commit()
+        row = cur.fetchone()
+        cur.close()
+        out = "Inserted " + str(row[0])
+        return (out)
+    except Exception as err:
+        g.dbconn.rollback()
+        cur.close()
+        return (str(err))

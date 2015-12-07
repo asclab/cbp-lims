@@ -33,3 +33,22 @@ def new_project():
     pid = cbplims.projects.new_project(request.form['name'], g.project.id if g.project else None, g.user.id)
     app.logger.debug("New project: %s", pid)
     return redirect('/')
+
+
+@app.route("/projects/add",  methods=['GET', 'POST'])
+@requires_admin
+def add_project():
+    if request.method == "GET":
+        avail = cbplims.projects.avail_projects()
+        return render_template("projects/add.html",parents=avail)
+    elif request.method == "POST":
+        project_name = request.form['project_name']
+        parent = request.form['parent']
+        msg =cbplims.projects.add_projects(project_name,parent)
+        avail = cbplims.projects.avail_projects()
+        return render_template("projects/add.html",parents=avail,msg=msg)
+    #pid = cbplims.projects.new_project(request.form['name'], g.project.id if g.project else None, g.user.id)
+    #app.logger.debug("New project: %s", pid)
+    return redirect('/')
+
+
