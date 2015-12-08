@@ -51,12 +51,12 @@ def get_project(project_id):
     return None
 
 
-def new_project(name, parent_id, user_id):
+def new_project(name, parent_id, user_id, code):
     cur = g.dbconn.cursor()
     # no parents
     try:
         if int(parent_id) == -1:
-            cur.execute('INSERT INTO projects (name) VALUES (%s) RETURNING id', (name, ))
+            cur.execute('INSERT INTO projects (name,code) VALUES (%s,%s) RETURNING id', (name,code ))
             row = cur.fetchone()
             project_id = row[0]
             app.logger.debug("New project: %s (%s)", project_id, name)
@@ -66,7 +66,7 @@ def new_project(name, parent_id, user_id):
             app.logger.debug("New group: %s (%s)", group_id, '%s Admins' % name)
             cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (user_id, group_id))
         else:
-            cur.execute('INSERT INTO projects (name, parent_id) VALUES (%s, %s) RETURNING id', (name, parent_id))
+            cur.execute('INSERT INTO projects (name, parent_id, code) VALUES (%s, %s, %s) RETURNING id', (name, parent_id, code))
             row = cur.fetchone()
             project_id = row[0]
             app.logger.debug("New project: %s (%s)", project_id, name)
@@ -82,14 +82,16 @@ def new_project(name, parent_id, user_id):
 def avail_projects():
     cur = g.dbconn.cursor()
     projects = []
-    sql = "SELECT id, name, parent_id FROM projects"
+    sql = "SELECT id, name, parent_id FROM projects;"
     try:
         cur.execute(sql)
-        record = cur.fetchone()
+        
         for record in cur:
             projects.append(Project(record[0], record[1], record[2]))
-    except:
-        return projects
+            
+    except Exception as err:
+        cur.close()
+        return (str(err))
     cur.close()
     return projects
 
@@ -125,7 +127,7 @@ def promote_projects_child(parent_id,child_id):
     cur.execute(sql, (parent_id, ))
     row = cur.fetchone()
     grand_parent_id = row[0]
-    #return ("id="+str(child_id) + "parent=" + str(parent_id) + "gparent" + str(grand_parent_id) )
+    
     sql2 = "UPDATE projects SET parent_id = %s WHERE id = %s;"
     cur.execute(sql2, (grand_parent_id, child_id))
     g.dbconn.commit()

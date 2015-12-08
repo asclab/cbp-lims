@@ -67,7 +67,8 @@ CREATE TABLE projects (
 	parent_id INTEGER REFERENCES projects(id),	-- This may or may not be needed, I really want to get rid of it - 
 	name VARCHAR(1024) NOT NULL,
 	code VARCHAR(255) NOT NULL,
-	data TEXT, -- arbitrary configuration values
+	is_active BOOLEAN DEFAULT TRUE,
+    data JSON, -- arbitrary configuration values
 	UNIQUE (parent_id, name)
  );
 
