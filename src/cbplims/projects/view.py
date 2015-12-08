@@ -51,4 +51,10 @@ def add_project():
     #app.logger.debug("New project: %s", pid)
     return redirect('/')
 
-
+@app.route("/projects/list")
+@requires_admin
+def list_project():
+    if request.method == "GET":
+        avail = cbplims.projects.get_projects_recursive()
+        return render_template("projects/list.html",parents=avail)
+    return redirect('/')

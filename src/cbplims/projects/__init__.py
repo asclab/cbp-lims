@@ -93,3 +93,27 @@ def avail_projects():
     cur.close()
     return projects
 
+
+
+def get_projects_recursive(parent_id=None, indent=0, project_list=None):
+    indent += 1
+    if not project_list:
+        project_list = []
+
+    cur = g.dbconn.cursor()
+
+    if parent_id:
+        sql = "SELECT id, name, parent_id FROM projects WHERE parent_id = %s ORDER BY name;"
+        args = [parent_id,]
+    else:
+        sql = "SELECT id, name, parent_id FROM projects WHERE parent_id is NULL ORDER BY name;"
+        args = []
+
+    cur.execute(sql, args)
+
+    for record in cur:
+        project_list.append((indent, Project(*record)))
+        get_projects_recursive(record[0], indent, project_list)
+
+    cur.close()
+    return project_list

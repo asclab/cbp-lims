@@ -92,3 +92,7 @@ table.list th {
 submitLink:focus {
   outline: none;
 }
+
+.projectIndent {
+    background-color: #505050 ;
+}
