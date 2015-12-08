@@ -1,5 +1,5 @@
 from collections import namedtuple
-Project = namedtuple('Project', 'id name parent_id')
+Project = namedtuple('Project', 'id name parent_id code is_active')
 
 from cbplims import app
 from flask import g
@@ -51,7 +51,7 @@ def get_project(project_id):
     return None
 
 
-def new_project(name, parent_id, user_id, code):
+def new_project(name, code, parent_id=-1):
     cur = g.dbconn.cursor()
     # no parents
     try:
@@ -64,7 +64,7 @@ def new_project(name, parent_id, user_id, code):
             row = cur.fetchone()
             group_id = row[0]
             app.logger.debug("New group: %s (%s)", group_id, '%s Admins' % name)
-            cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (user_id, group_id))
+            cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (g.user.id, group_id))
         else:
             cur.execute('INSERT INTO projects (name, parent_id, code) VALUES (%s, %s, %s) RETURNING id', (name, parent_id, code))
             row = cur.fetchone()
@@ -82,12 +82,12 @@ def new_project(name, parent_id, user_id, code):
 def avail_projects():
     cur = g.dbconn.cursor()
     projects = []
-    sql = "SELECT id, name, parent_id FROM projects;"
+    sql = "SELECT id, name, parent_id, code, is_active FROM projects;"
     try:
         cur.execute(sql)
         
         for record in cur:
-            projects.append(Project(record[0], record[1], record[2]))
+            projects.append(Project(record[0], record[1], record[2], record[3], record[4]))
             
     except Exception as err:
         cur.close()
@@ -105,10 +105,10 @@ def get_projects_recursive(parent_id=None, indent=0, project_list=None):
     cur = g.dbconn.cursor()
 
     if parent_id:
-        sql = "SELECT id, name, parent_id FROM projects WHERE parent_id = %s ORDER BY name;"
+        sql = "SELECT id, name, parent_id, code, is_active FROM projects WHERE parent_id = %s ORDER BY name;"
         args = [parent_id,]
     else:
-        sql = "SELECT id, name, parent_id FROM projects WHERE parent_id is NULL ORDER BY name;"
+        sql = "SELECT id, name, parent_id, code, is_active FROM projects WHERE parent_id is NULL ORDER BY name;"
         args = []
 
     cur.execute(sql, args)
@@ -133,5 +133,13 @@ def promote_projects_child(parent_id,child_id):
     g.dbconn.commit()
     cur.close()
     return
-    
+
+def change_state_project(id,state):
+    cur = g.dbconn.cursor()
+    sql = "UPDATE projects SET is_active = %s WHERE id = %s;"
+    cur.execute(sql, (state, id))
+    g.dbconn.commit()
+    cur.close()
+    return 1
+
     

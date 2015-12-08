@@ -45,7 +45,7 @@ def add_project():
         project_name = request.form['project_name']
         parent = request.form['parent']
         project_code = request.form['project_code']
-        msg =cbplims.projects.new_project(project_name,parent,g.user.id,project_code)
+        msg =cbplims.projects.new_project(project_name,project_code, parent)
         avail = cbplims.projects.avail_projects()
         return render_template("projects/add.html",parents=avail,msg=msg)
     #pid = cbplims.projects.new_project(request.form['name'], g.project.id if g.project else None, g.user.id)
@@ -66,4 +66,13 @@ def promote_project(pid):
     if request.method == "POST":
         id = request.form['id']
         msg = cbplims.projects.promote_projects_child(pid,id)
+        return redirect('projects/list')
+
+@app.route("/projects/<int:pid>/changeState",  methods=['POST'])
+@requires_admin
+def changeState(pid):
+    if request.method == "POST":
+        state = request.form['state']
+        msg = cbplims.projects.change_state_project(pid,state)
+        #return render_template("projects/add.html",msg=msg )
         return redirect('projects/list')
