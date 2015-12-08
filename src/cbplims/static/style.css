@@ -95,4 +95,10 @@ submitLink:focus {
 
 .projectIndent {
     background-color: #505050 ;
+    width: 40px;
 }
+
+.projectSpan {
+    width: 40px;
+}
+

@@ -58,3 +58,11 @@ def list_project():
         avail = cbplims.projects.get_projects_recursive()
         return render_template("projects/list.html",parents=avail)
     return redirect('/')
+
+@app.route("/projects/<int:pid>/promote",  methods=['POST'])
+@requires_admin
+def promote_project(pid):
+    if request.method == "POST":
+        id = request.form['id']
+        msg = cbplims.projects.promote_projects_child(pid,id)
+        return redirect('projects/list')

@@ -117,3 +117,19 @@ def get_projects_recursive(parent_id=None, indent=0, project_list=None):
 
     cur.close()
     return project_list
+
+def promote_projects_child(parent_id,child_id):
+    # get grandparent
+    cur = g.dbconn.cursor()
+    sql = "SELECT parent_id FROM projects WHERE id = %s;"
+    cur.execute(sql, (parent_id, ))
+    row = cur.fetchone()
+    grand_parent_id = row[0]
+    #return ("id="+str(child_id) + "parent=" + str(parent_id) + "gparent" + str(grand_parent_id) )
+    sql2 = "UPDATE projects SET parent_id = %s WHERE id = %s;"
+    cur.execute(sql2, (grand_parent_id, child_id))
+    g.dbconn.commit()
+    cur.close()
+    return
+    
+    
