@@ -102,3 +102,8 @@ submitLink:focus {
     width: 40px;
 }
 
+form {
+     display:inline;
+     margin:0px;
+     padding:0px;
+}
