@@ -74,5 +74,4 @@ def changeState(pid):
     if request.method == "POST":
         state = request.form['state']
         msg = cbplims.projects.change_state_project(pid,state)
-        #return render_template("projects/add.html",msg=msg )
         return redirect('projects/list')

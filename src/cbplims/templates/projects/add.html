@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>New project</h2>
+{{msg}} <br>
+  <form action="/projects/add" method="POST">
+    <table>
+        <tr><td>Choose Parent</td>
+        <td>
+        <select id="parent" name = "parent">
+            <option value="-1">This is primary</option>  
+             {% for p in parents %}
+          <option value="{{p.id}}">{{p.name}} :: {{p.code}}</option>
+          {% endfor %}
+        </select>
+      
+        </td></tr>
+      <tr><td>Name</td><td><input type="text" id="project_name" name="project_name"/></td></tr>
+      <tr><td>Code</td><td><input type="text" id="project_code" name="project_code"/></td></tr>
+      <tr><td>&nbsp;</td><td><input type="submit" value="Add project"/></td></tr>
+    </table>
+  </form>
+{% endblock %}

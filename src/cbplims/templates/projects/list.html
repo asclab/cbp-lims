@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Here are the projects</h2>
+
+<style type="text/css">
+form {
+     display:inline;
+     margin:0px;
+     padding:0px;
+}
+</style>
+
+
+    {% for p in parents  %}
+	<div>
+	{% for n in range(p[0]) %}
+	    <span class="projectIndent"> &nbsp;</span>
+	{% endfor %}
+	<span class="projectSpan">ID={{p[1].id}}</span>
+	<span class="projectSpan">Name={{p[1].name}}</span>
+	<span class="projectSpan">Parent={{p[1].parent_id}}</span>
+	<span class="projectSpan">Code={{p[1].code}}</span>
+		{% if p[0] > 1 %}
+		<span class="projectSpan">
+            <form method="POST" action="/projects/{{p[1].parent_id}}/promote">
+                <input type="hidden" id="id" name="id" value={{p[1].id}}>  
+                <button type="submit" class="submitLink">promote</button> 
+            </form>
+        </span>
+	        {% endif %} 
+		  <span class="projectSpan">
+            <form method="POST" action="/projects/{{p[1].id}}/changeState">
+			   {% if p[1].is_active == true %}
+                <button type="submit" class="submitLink" name="state" id="state" value="FALSE">dis-activate</button>
+				{% else %}
+				<button type="submit" class="submitLink" name="state" id="state" value="TRUE">re-activate</button>
+				{% endif %}
+            </form>
+        </span>
+	
+	</div>
+    {% endfor %}
+
+
+{% endblock %}

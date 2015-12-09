@@ -40,13 +40,13 @@ def get_project_auth_level(user_id, project_id):
 def get_project(project_id):
     cur = g.dbconn.cursor()
 
-    cur.execute('SELECT id, name, parent_id FROM projects WHERE id = %s;', (project_id,))
+    cur.execute('SELECT id, name, parent_id, code, is_active FROM projects WHERE id = %s;', (project_id,))
 
     record = cur.fetchone()
     cur.close()
 
     if record:
-        return Project(record[0], record[1], record[2])
+        return Project(record[0], record[1], record[2], record[3], record[4])
 
     return None
 
@@ -70,6 +70,7 @@ def new_project(name, code, parent_id=-1):
             row = cur.fetchone()
             project_id = row[0]
             app.logger.debug("New project: %s (%s)", project_id, name)
+            cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
         cur.close()
         g.dbconn.commit()
     except Exception as err:
