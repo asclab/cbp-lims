@@ -5,8 +5,8 @@
 
 <ul>
 <li class="header">User settings</li>
-<li><a href="/settings/profile">Profile</a></li>
-<li><a href="/settings/changepassword">Change password</a></li>
+<li><a href="/settings/global/{{g.user.id}}/user_edit">Edit profile</a></li>
+
 
 
 <li class="header">Project settings</li>
@@ -24,7 +24,11 @@
 
 <li class="header">Global settings</li>
 <li><a href="/settings/global/users">Users</a></li>
-<li><a href="/settings/global/projects">Projects</a></li>
+<li><a href="/projects/list">Projects</a></li>
+<li><a href="/projects/add">Add Project</a></li>
+<li><a href="/groups/list">Groups</a></li>
+<li><a href="/groups/add">Add Groups</a></li>
+<li><a href="/groups/user_group">Associate user with a group</a></li>
 <li class="sep">&nbsp;</li>
 <li>Global audit log</li>
 

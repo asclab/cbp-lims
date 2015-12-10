@@ -24,7 +24,7 @@ body {
 }
 
 .sidebar {
-    width: 192px;
+    width: 250px;
     float:left;
     border-right: 1px solid #ccc;
     padding: 24px;
@@ -62,7 +62,7 @@ body {
 
 .sidebody {
     border-left: 1px solid #ccc;
-    margin-left: 240px;
+    margin-left: 298px;
     padding: 24px 36px;
 }
 

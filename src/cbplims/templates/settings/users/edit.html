@@ -16,14 +16,7 @@ edit  user:  <b> {{info.username}}</b> <hr>
  <input type="checkbox" id="is_admin" name="is_admin" value="True"> Is this an admin?<br>
 
 <hr>
-Choose Group (s)<br>
 
-    <select id="groups" name = "groups" multiple>
-        {% for g in groups %}
-            <option value="{{g.id}}">{{g.name}}</option>
-        {% endfor %}
-    </select>
-<br>
  <input type="submit" value="Submit">
 </form>
 
