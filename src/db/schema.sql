@@ -202,4 +202,4 @@ CREATE TABLE audit (
 );
 
 -- default root password is 'password' - you should chnage that.
-INSERT INTO users (id, username, fullname, password, is_global_admin) VALUES (1, 'root', 'Global Admin', 'pbkdf2$42e34a6e0e22ad2bb256b69768761e67$c1b40e85590b87bc93f1a56374c67aaf8487537799f9a534bf0baa6b556e17d8', TRUE);
+INSERT INTO users (username, fullname, password, is_global_admin) VALUES ('root', 'Global Admin', 'pbkdf2$42e34a6e0e22ad2bb256b69768761e67$c1b40e85590b87bc93f1a56374c67aaf8487537799f9a534bf0baa6b556e17d8', TRUE);
