@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Here are the groups</h2>
+<font color="red">{{msg}}</font>
+<table border="1">
+    <tr>
+        
+         <td>ID</td>
+         <td>Project Name</td>
+         <td>Name</td>
+         <td>Is Admin</td>
+         <td>Is View</td>
+         <td> User </td>
+    </tr>
+    
+    
+    
+     {% for g in groups %}
+    <tr>
+        
+         <td>{{g.id}}</td>
+         <td>{{g.project_name}}</td>
+         <td>{{g.name}}</td>
+         <td>{{g.is_admin}}</td>
+         <td>{{g.is_view}}</td>
+         <td>{{g.username}}</td>
+    </tr>
+     {% endfor %}
+</table>
+
+<hr>
+<div>
+<form action="/groups/add" method="POST">
+<table border="1">    
+
+    <tr>    
+    <td>Please select project </td>
+            <td><select id="project" name = "project">                  
+                 {% for p in projects %}
+              <option value="{{p.id}}">{{p.name}} :: {{p.code}}</option>
+              {% endfor %}
+            </select></td>
+    </tr>
+    
+    <tr> 
+    <td>Please select role </td>
+            <td><select id="role" name = "role">              
+              <option value="2">Admins</option>
+              <option value="1">Edit</option>
+              <option value="0">View Only</option>
+            </select></td>
+    </tr>
+    
+
+    
+    <tr>
+        <td></td>
+        <td><input type="submit" value="Add Group"/></td>
+    </tr>
+
+
+
+</table>
+</div>
+</form>
+{% endblock %}

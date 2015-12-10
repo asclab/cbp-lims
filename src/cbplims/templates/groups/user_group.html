@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Here are the groups</h2>
+<font color="red">{{msg}}</font>
+<form action="/groups/user_group" method="POST">
+<table border="1">
+    <tr>
+        
+         <td>ID</td>
+         <td>Project Name</td>
+         <td>Name</td>
+         <td>Is Admin</td>
+         <td>Is View</td>
+         <td>Add</td>
+    </tr>
+    
+    
+    
+     {% for g in groups %}
+    <tr>
+        
+         <td>{{g.id}}</td>
+         <td>{{g.project_name}}</td>
+         <td>{{g.name}}</td>
+         <td>{{g.is_admin}}</td>
+         <td>{{g.is_view}}</td>
+         <td><input type="radio" name="add" id="add" value="{{g.id}}"></td>
+    </tr>
+     {% endfor %}
+</table>
+
+<hr>
+<div>
+
+<table border="1">    
+
+    <tr>    
+    <td>Please select user </td>
+            <td><select id="user" name = "user">                  
+                 {% for u in users %}
+              <option value="{{u.id}}">{{u.username}} :: {{u.fullname}}</option>
+              {% endfor %}
+            </select></td>
+    </tr>
+    
+ 
+
+    
+    <tr>
+        <td></td>
+        <td><input type="submit" value="Add User to Group"/></td>
+    </tr>
+
+
+
+</table>
+</div>
+</form>
+<script>
+$('input[type="checkbox"]').on('change', function() {
+    $('input[name="' + this.name + '"]').not(this).prop('checked', false);
+});    
+    
+</script>
+{% endblock %}
