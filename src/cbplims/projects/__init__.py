@@ -8,13 +8,13 @@ from flask import g
 def get_available_projects(user_id):
     app.logger.debug('Finding project for user: %s', user_id)
     cur = g.dbconn.cursor()
-
-    cur.execute('SELECT a.id, a.name, a.parent_id FROM projects a LEFT JOIN groups b ON a.id=b.project_id LEFT JOIN user_groups c ON b.id=c.group_id  WHERE c.user_id = %s;', (user_id,))
+                         
+    cur.execute('SELECT a.id, a.name, a.parent_id, a.code, a.is_active FROM projects a LEFT JOIN groups b ON a.id=b.project_id LEFT JOIN user_groups c ON b.id=c.group_id  WHERE c.user_id = %s;', (user_id,))
 
     projects = []
     for record in cur:
         print record
-        projects.append(Project(record[0], record[1], record[2]))
+        projects.append(Project(record[0], record[1], record[2], record[3], record[4]))
     cur.close()
 
     return projects
@@ -57,20 +57,16 @@ def new_project(name, code, parent_id=-1):
     try:
         if int(parent_id) == -1:
             cur.execute('INSERT INTO projects (name,code) VALUES (%s,%s) RETURNING id', (name,code ))
-            row = cur.fetchone()
-            project_id = row[0]
-            app.logger.debug("New project: %s (%s)", project_id, name)
-            cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
-            row = cur.fetchone()
-            group_id = row[0]
-            app.logger.debug("New group: %s (%s)", group_id, '%s Admins' % name)
-            cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (g.user.id, group_id))
         else:
             cur.execute('INSERT INTO projects (name, parent_id, code) VALUES (%s, %s, %s) RETURNING id', (name, parent_id, code))
-            row = cur.fetchone()
-            project_id = row[0]
-            app.logger.debug("New project: %s (%s)", project_id, name)
-            cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
+        row = cur.fetchone()
+        project_id = row[0]
+        app.logger.debug("New project: %s (%s)", project_id, name)
+        cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
+        row = cur.fetchone()
+        group_id = row[0]
+        app.logger.debug("New group: %s (%s)", group_id, '%s Admins' % name)
+        cur.execute('INSERT INTO user_groups (user_id, group_id) VALUES (%s, %s)', (g.user.id, group_id))
         cur.close()
         g.dbconn.commit()
     except Exception as err:
