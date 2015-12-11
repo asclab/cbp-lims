@@ -2,27 +2,41 @@
 {% block body %}
   <h2>Here are the projects</h2>
 
+<font color="red">{{msg}}</font>
 
-
-
+<table border = "1">
+	<tr>
+		<td></td>
+		<td>ID</td>
+		<td>Name</td>
+		<td>Parent</td>
+		<td>Code</td>
+		<td>Change order</td>
+		<td>Change State</td>
+		<td>Edit</td>
+	</tr>
     {% for p in parents  %}
-	<div>
+	<tr>
+	<td>	
 	{% for n in range(p[0]) %}
 	    <span class="projectIndent"> &nbsp;</span>
 	{% endfor %}
-	<span class="projectSpan">ID={{p[1].id}}</span>
-	<span class="projectSpan">Name={{p[1].name}}</span>
-	<span class="projectSpan">Parent={{p[1].parent_id}}</span>
-	<span class="projectSpan">Code={{p[1].code}}</span>
+	</td>
+	<td>{{p[1].id}}</td>
+	<td>{{p[1].name}}</td>
+	<td>{{p[1].parent_id}}</td>
+	<td>{{p[1].code}}</td>
 		{% if p[0] > 1 %}
-		<span class="projectSpan">
+		<td>
             <form method="POST" action="/projects/{{p[1].parent_id}}/promote">
                 <input type="hidden" id="id" name="id" value={{p[1].id}}>  
                 <button type="submit" class="submitLink">promote</button> 
             </form>
-        </span>
-	        {% endif %} 
-		  <span class="projectSpan">
+        </td>
+	    {% else %}    
+			<td></td>
+			{% endif %} 
+		  <td>
             <form method="POST" action="/projects/{{p[1].id}}/changeState">
 			   {% if p[1].is_active == true %}
                 <button type="submit" class="submitLink" name="state" id="state" value="FALSE">dis-activate</button>
@@ -30,10 +44,24 @@
 				<button type="submit" class="submitLink" name="state" id="state" value="TRUE">re-activate</button>
 				{% endif %}
             </form>
-        </span>
+        </td>
+		  
+		<td>
+            <form method="POST" action="/projects/{{p[1].id}}/edit">
+				<input type="hidden" id="name" name="name" value={{p[1].name}}>
+				<input type="hidden" id="do" name="do" value=0>
+                <button type="submit" class="submitLink" name="code" id="code" value="{{p[1].code}}">edit</button>
+            </form>
+        </td>
 	
-	</div>
+	</tr>
     {% endfor %}
-
+	
+</table>
+<hr>
+<br>
+<a href="/projects/add">Add Project</a> <br>
+<a href="/groups/list">List Groups</a> <br>
+<a href="/groups/add">Add Groups</a>
 
 {% endblock %}

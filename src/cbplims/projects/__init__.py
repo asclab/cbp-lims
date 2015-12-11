@@ -139,3 +139,14 @@ def change_state_project(id, state):
     g.dbconn.commit()
     cur.close()
     return 1
+
+def update_projects(project_id,project_name,project_code):
+    cur = g.dbconn.cursor()
+    sql = "UPDATE projects SET name = %s, code = %s WHERE id = %s;"
+    try:
+        cur.execute(sql, (project_name, project_code, project_id) )
+        cur.close()
+        return "updated: " + project_name
+    except Exception as err:
+        cur.close()
+        return (str(err))

@@ -73,3 +73,19 @@ def changeState(pid):
         state = request.form['state']
         msg = cbplims.projects.change_state_project(pid,state)
         return redirect('projects/list')
+
+
+@app.route("/projects/<int:pid>/edit",  methods=['GET', 'POST'])
+@requires_admin
+def edit_project(pid):
+    if request.method == "POST":
+        project_name = request.form['name']
+        project_code = request.form['code']
+        do = request.form['do']
+        if int(do)== 0:
+            #msg = "hi: " + str(project_code) + " " + str(project_name) + " " + str(pid)
+            return render_template("projects/edit.html",project_name=project_name, project_id=pid, project_code=project_code)
+        else:
+            msg = cbplims.projects.update_projects(pid,project_name,project_code)
+            avail = cbplims.projects.get_projects_recursive()
+            return render_template("projects/list.html",parents=avail, msg=msg)
