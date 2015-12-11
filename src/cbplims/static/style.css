@@ -130,3 +130,14 @@ form {
     margin: 0;
     padding: 0;
 }
+
+ul.msg {
+    background-color: #d9edf7;
+    padding: 0;
+    margin: 0;
+}
+
+.msg li {
+    list-style: none;
+    padding:8px 12px;
+}
