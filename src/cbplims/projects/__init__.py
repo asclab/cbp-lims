@@ -59,18 +59,8 @@ def view_project(project_id):
     cur.execute (sql,(project_id,))
     record = cur.fetchone()
     cur.close()
-    cur = g.dbconn.cursor()
-    groups = []
-    sql2 = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name FROM groups a '
-           'LEFT JOIN projects b ON a.project_id = b.id WHERE b.id = %s'
-           )
-    cur.execute(sql2, (project_id,))
-    for record2 in cur:
-        groups.append(Group(*record2))
-    
-    cur.close()
     if record:
-        return (Project2(*record),groups)
+        return (Project2(*record))
     
     return None
     

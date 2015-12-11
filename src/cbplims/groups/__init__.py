@@ -36,6 +36,7 @@ def get_groups(pid):
     return groups
     
 
+
 def avail_alluser():
     Group2 = namedtuple('Group2', 'id name is_admin is_view project_name username')
     cur = g.dbconn.cursor()
@@ -99,3 +100,22 @@ def add_user_groups(user,group):
         g.dbconn.rollback()
         cur.close()
         return (str(err))
+    
+def get_specific_group(project_id):
+    
+    Group = namedtuple('Group', 'id name is_admin is_view project_name')
+    cur = g.dbconn.cursor()
+
+    groups = []
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name FROM groups a '
+           'LEFT JOIN projects b ON a.project_id = b.id WHERE b.id = %s'
+           )
+    cur.execute(sql, (project_id,))
+    for record in cur:
+        groups.append(Group(*record))
+    
+    cur.close()
+    if record:
+        return (groups)
+    
+    return None

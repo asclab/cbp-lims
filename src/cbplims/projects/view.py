@@ -23,7 +23,8 @@ def switch_project():
 @app.route("/projects/<int:pid>/view")
 @requires_user
 def view_project(pid):
-    (info, groups) = cbplims.projects.view_project(pid)
+    info = cbplims.projects.view_project(pid)
+    groups = cbplims.groups.get_specific_group(pid)
     return render_template("projects/view.html", info=info, groups=groups)
 
 
