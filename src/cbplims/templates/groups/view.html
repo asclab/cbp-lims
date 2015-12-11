@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Here are the groups</h2>
+
+<table border="1">
+    <tr>
+        
+         <td>ID</td>
+         <td>Project Name</td>
+         <td>Name</td>
+         <td>Is Admin</td>
+         <td>Is View</td>
+         <td>Username</td>
+    </tr>
+    
+    
+    
+     {% for g in groups %}
+    <tr>
+        
+         <td>{{g.id}}</td>
+         <td>{{g.project_name}}   </td>
+         <td><a href="/groups/{{g.id}}/view"> {{g.name}} </a> </td>
+         <td>{{g.is_admin}}</td>
+         <td>{{g.is_view}}</td>
+         <td>{{g.username}}</td>
+    </tr>
+     {% endfor %}
+</table>
+<br>
+<hr>
+<a href="/groups/user_group">Associate user with a group</a> <br>
+
+<a href="/projects/list">List Project</a> <br>   
+<a href="/projects/add">Add Project</a> <br>
+<a href="/groups/list">List Groups</a> <br>
+<a href="/groups/add">Add Groups</a>
+{% endblock %}

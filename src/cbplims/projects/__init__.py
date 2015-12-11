@@ -40,7 +40,7 @@ def get_project(project_id):
     cur = g.dbconn.cursor()
 
     cur.execute('SELECT id, name, parent_id, code, is_active FROM projects WHERE id = %s;', (project_id,))
-
+    
     record = cur.fetchone()
     cur.close()
 
@@ -49,6 +49,31 @@ def get_project(project_id):
 
     return None
 
+
+def view_project(project_id):
+    Project2 = namedtuple('Project2', 'id name parent_id code is_active parent_name')
+    Group = namedtuple('Group', 'id name is_admin is_view project_name')
+    
+    cur = g.dbconn.cursor()
+    sql='SELECT a.id, a.name, a.parent_id, a.code, a.is_active, b.name FROM projects a LEFT JOIN projects b ON a.parent_id = b.parent_id WHERE a.id = %s;'
+    cur.execute (sql,(project_id,))
+    record = cur.fetchone()
+    cur.close()
+    cur = g.dbconn.cursor()
+    groups = []
+    sql2 = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name FROM groups a '
+           'LEFT JOIN projects b ON a.project_id = b.id WHERE b.id = %s'
+           )
+    cur.execute(sql2, (project_id,))
+    for record2 in cur:
+        groups.append(Group(*record2))
+    
+    cur.close()
+    if record:
+        return (Project2(*record),groups)
+    
+    return None
+    
 
 def new_project(name, code, parent_id=-1):
     cur = g.dbconn.cursor()

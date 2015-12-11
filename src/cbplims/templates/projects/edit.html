@@ -1,0 +1,11 @@
+  <h2>Edit project {{project_name}}</h2>
+   <font color="red">{{msg}} </font><br>
+  <form action="/projects/{{project_id}}/edit" method="POST">
+    <input type="hidden" id="do" name="do" value=1>
+    <table>
+ 
+      <tr><td>Name</td><td><input type="text" id="name" name="name" value="{{project_name}}"/></td></tr>
+      <tr><td>Code</td><td><input type="text" id="code" name="code" value="{{project_code}}"/></td></tr>
+      <tr><td>&nbsp;</td><td><input type="submit" value="Edit {{project_name}}"/></td></tr>
+    </table>
+  </form>

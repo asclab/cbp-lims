@@ -23,6 +23,12 @@ def switch_project():
     avail = cbplims.projects.get_available_projects(g.user.id)
     return render_template("projects/switch.html", projects=avail)
 
+@app.route("/projects/<int:pid>/view")
+@requires_user
+def view_project(pid):
+    (info,groups) = cbplims.projects.view_project(pid)
+    return render_template("projects/view.html", info=info, groups=groups)
+
 
 @app.route("/projects/new",  methods=['GET', 'POST'])
 @requires_admin

@@ -23,7 +23,7 @@
 	{% endfor %}
 	</td>
 	<td>{{p[1].id}}</td>
-	<td>{{p[1].name}}</td>
+	<td><a href="/projects/{{p[1].id}}/view">{{p[1].name}}</a></td>
 	<td>{{p[1].parent_id}}</td>
 	<td>{{p[1].code}}</td>
 		{% if p[0] > 1 %}

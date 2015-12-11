@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Project {{info.name}}</h2>
+
+<b> Parent: </b> {{info.parent_name}} <br>
+<b> Code:   </b> {{info.code}} <br>
+<b> Status:   </b>
+<form method="POST" action="/projects/{{info.id}}/changeState">
+			   {% if info.is_active == true %}
+                Active <button type="submit" class="submitLink" name="state" id="state" value="FALSE">dis-activate</button>
+				{% else %}
+				Not Active <button type="submit" class="submitLink" name="state" id="state" value="TRUE">re-activate</button>
+				{% endif %}
+            </form>
+
+<br>
+<hr>
+<br>
+ 
+ Groups associated with project
+ 
+    <table border="1">
+    <tr>
+        
+         <td>ID</td>
+         <td>Project Name</td>
+         <td>Name</td>
+         <td>Is Admin</td>
+         <td>Is View</td>
+         <td>User</td>
+    </tr>
+    
+    
+    
+     {% for g in groups %}
+    <tr>
+        
+         <td>{{g.id}}</td>
+         <td>{{g.project_name}}</td>
+         <td>{{g.name}}</td>
+         <td>{{g.is_admin}}</td>
+         <td>{{g.is_view}}</td>
+         <td>{{g.username}}</td>
+    </tr>
+     {% endfor %}
+</table>
+    
+<hr>
+<a href="/projects/list">List Project</a> <br>   
+<a href="/projects/add">Add Project</a> <br>
+<a href="/groups/list">List Groups</a> <br>
+<a href="/groups/add">Add Groups</a>
+
+{% endblock %}

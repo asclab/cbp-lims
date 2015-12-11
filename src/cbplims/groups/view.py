@@ -45,3 +45,10 @@ def user_group():
         projects = cbplims.projects.avail_projects()
         users = cbplims.users.get_users()
         return render_template("groups/user_group.html",groups=groups, projects=projects, users=users, msg=msg )
+
+
+@app.route("/groups/<int:pid>/view")
+@requires_user
+def view_groups(pid):
+    groups = cbplims.groups.get_groups(pid)
+    return render_template("groups/view.html",groups=groups )
