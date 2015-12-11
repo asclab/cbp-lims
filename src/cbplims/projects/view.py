@@ -43,38 +43,41 @@ def new_project():
 def add_project():
     if request.method == "GET":
         avail = cbplims.projects.avail_projects()
-        return render_template("projects/add.html",parents=avail)
+        return render_template("projects/add.html", parents=avail)
     elif request.method == "POST":
         project_name = request.form['project_name']
         parent = request.form['parent']
         project_code = request.form['project_code']
-        msg =cbplims.projects.new_project(project_name,project_code, parent)
+        msg = cbplims.projects.new_project(project_name, project_code, parent)
         avail = cbplims.projects.avail_projects()
-        return render_template("projects/add.html",parents=avail,msg=msg)
+        return render_template("projects/add.html", parents=avail, msg=msg)
     return redirect('/')
+
 
 @app.route("/projects/list")
 @requires_admin
 def list_project():
     if request.method == "GET":
         avail = cbplims.projects.get_projects_recursive()
-        return render_template("projects/list.html",parents=avail)
+        return render_template("projects/list.html", parents=avail)
     return redirect('/')
+
 
 @app.route("/projects/<int:pid>/promote",  methods=['POST'])
 @requires_admin
 def promote_project(pid):
     if request.method == "POST":
-        id = request.form['id']
-        msg = cbplims.projects.promote_projects_child(pid,id)
+        new_id = request.form['id']
+        cbplims.projects.promote_projects_child(pid, new_id)
         return redirect('projects/list')
+
 
 @app.route("/projects/<int:pid>/changeState",  methods=['POST'])
 @requires_admin
 def changeState(pid):
     if request.method == "POST":
         state = request.form['state']
-        msg = cbplims.projects.change_state_project(pid,state)
+        cbplims.projects.change_state_project(pid, state)
         return redirect('projects/list')
 
 
@@ -85,10 +88,10 @@ def edit_project(pid):
         project_name = request.form['name']
         project_code = request.form['code']
         do = request.form['do']
-        if int(do)== 0:
+        if int(do) == 0:
             #msg = "hi: " + str(project_code) + " " + str(project_name) + " " + str(pid)
-            return render_template("projects/edit.html",project_name=project_name, project_id=pid, project_code=project_code)
+            return render_template("projects/edit.html", project_name=project_name, project_id=pid, project_code=project_code)
         else:
-            msg = cbplims.projects.update_projects(pid,project_name,project_code)
+            msg = cbplims.projects.update_projects(pid, project_name, project_code)
             avail = cbplims.projects.get_projects_recursive()
-            return render_template("projects/list.html",parents=avail, msg=msg)
+            return render_template("projects/list.html", parents=avail, msg=msg)
