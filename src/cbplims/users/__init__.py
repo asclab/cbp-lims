@@ -28,7 +28,6 @@ def get_user(uid):
         return None
 
     user = User(*record)
-    app.logger.debug(str(user))
     cur.close()
 
     return user
@@ -36,23 +35,31 @@ def get_user(uid):
 
 def add_user(full_name, username, is_admin, pwd):
     cur = g.dbconn.cursor()
-    sql = 'INSERT INTO users (id,username, fullname, password, is_global_admin) VALUES (DEFAULT,%s,%s,%s,%s)'
+    sql = 'INSERT INTO users (username, fullname, password, is_global_admin) VALUES (%s,%s,%s,%s) RETURNING id'
     pwd = cbplims.auth.auth_pbkdf2.generate_new_password_string(pwd)
 
     # normally I use "try" and then a rollback if it does not work.
     # don't know where the loggers are?
     # app.logger.audti?
 
+    app.logger.debug("Adding new user: %s, %s, %s", full_name, username, is_admin)
+
     cur.execute(sql, (username, full_name, pwd, is_admin))
+    row = cur.fetchone()
+    user_id = row[0]
+
     g.dbconn.commit()
     cur.close()
-    return True
+
+    return user_id
 
 
-def del_user(id):
+def del_user(uid):
+    app.logger.debug("Deleting user: %s", uid)
+
     cur = g.dbconn.cursor()
     sql = 'DELETE FROM users WHERE id = %s '
-    cur.execute(sql, (id,))
+    cur.execute(sql, (uid,))
     g.dbconn.commit()
     cur.close()
     return True

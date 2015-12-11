@@ -48,8 +48,6 @@ def add_project():
         msg =cbplims.projects.new_project(project_name,project_code, parent)
         avail = cbplims.projects.avail_projects()
         return render_template("projects/add.html",parents=avail,msg=msg)
-    #pid = cbplims.projects.new_project(request.form['name'], g.project.id if g.project else None, g.user.id)
-    #app.logger.debug("New project: %s", pid)
     return redirect('/')
 
 @app.route("/projects/list")
