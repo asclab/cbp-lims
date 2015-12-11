@@ -31,5 +31,8 @@ uptime: {{g.uptime}}
 <br/><a href="/resetdb">reset db</a>
 <br/><a href="/restart">restart app</a>
 <br/><a href="/log" target="_new">view log</a>
+{% if g.user.is_global_admin %}
+<br/><a href="/dbconsole" target="_new">db console</a>
+{% endif %}
 </body>
 </html>
