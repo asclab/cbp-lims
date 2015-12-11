@@ -23,6 +23,36 @@
         <tr><th>Active?</th><td>{% if user.is_active %}active{% endif %}</td></tr>
       {% endif %}
     </table>
+    
+    <hr>
+    Groups you belong to: <br>
+    <br>
+    <table border="1">
+    <tr>
+        
+         <td>ID</td>
+         <td>Project Name</td>
+         <td>Name</td>
+         <td>Is Admin</td>
+         <td>Is View</td>
+         <td>User</td>
+    </tr>
+    
+    
+    
+     {% for g in groups %}
+    <tr>
+        
+         <td>{{g.id}}</td>
+         <td>{{g.project_name}}</td>
+         <td>{{g.name}}</td>
+         <td>{{g.is_admin}}</td>
+         <td>{{g.is_view}}</td>
+         <td>{{g.username}}</td>
+    </tr>
+     {% endfor %}
+</table>
+    
 
       {% if not profile %}
 <br> <a href="/groups/user_group">Associate user with a group</a>

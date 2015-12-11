@@ -119,3 +119,26 @@ def get_specific_group(project_id):
         return (groups)
     
     return None
+
+def get_user_group(user_id):
+    
+    Group = namedtuple('Group', 'id name is_admin is_view project_name username')
+    cur = g.dbconn.cursor()
+
+    groups = []
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username FROM groups a '
+           'LEFT JOIN projects b ON a.project_id = b.id '
+           'LEFT JOIN user_groups c ON c.group_id=a.id '
+           'LEFT JOIN users d ON d.id = c.user_id '
+           'WHERE d.id = %s'
+           'ORDER BY a.name;'
+           )
+    cur.execute(sql, (user_id,))
+    for record in cur:
+        groups.append(Group(*record))
+    
+    cur.close()
+    if record:
+        return (groups)
+    
+    return None
