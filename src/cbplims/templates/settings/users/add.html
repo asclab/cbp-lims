@@ -1,26 +1,26 @@
 {% extends "settings/layout.html" %}
 {% block adminbody %}
-
-{% if username %}
-{{username}} added do you want to add another user? <br>
-{% endif %}
-
-
-
-Add user:   <hr>
-
-<form action = "/settings/global/user_add" method="post">
-
- username: <input type="text" id="username" name="username"> </input> <br>
- Full Name: <input type="text" id="full_name" name="full_name"> </input> <br>
-
- password (no validation yet): <input type="password" id="pwd" name="pwd"> </input><br>
- <input type="checkbox" id="is_admin" name="is_admin" value="True"> Is this an admin?<br>
-
-<hr>
-
- <input type="submit" value="Submit">
-</form>
+    <div>&nbsp;</div>
+    <div class="title">{% if profile %}Edit profile{% elif user %}Edit user - {{ user.username }}{% else %}Add user{% endif %}</div>
+    <br/>
+    <form action="{% if profile %}/settings/profile/edit{% elif user %}/settings/global/users/{{user.id}}/edit{% else %}/settings/global/users/add{% endif %}" method="POST">
+    <table class="item_view">
+        <tr><th>Username</th><td>{% if user %}{{ user.username }}{% else %}<input type="text" id="username" name="username">{% endif %}</td>{% if not user %}<td>(SUnet ID, if available; otherwise email)</td>{% endif %}</tr>
+        <tr><th>Full name</th><td><input type="text" id="fullname" name="fullname" value="{{ user.fullname }}"></td></tr>
+        {% if not profile or user.allow_password_change %}
+        <tr><th>Password</th><td><input type="password" id="password" name="password"></td></tr>
+        <tr><th>Password (confirm)</th><td><input type="password" id="password_confirm" name="password_confirm"></td></tr>
+        {% endif %}
+        {% if not profile %}
+        <tr><th>Global admin</th><td><input type="checkbox" id="is_admin" name="is_admin" value="1" {% if user and user.is_global_admin %}checked{% endif %}></td></tr>
+        <tr><th>Allow password change</th><td><input type="checkbox" id="allow_password_change" name="allow_password_change" value="1" {% if not user or user.allow_password_change %}checked{% endif %}></td></tr>
+        {% endif %}
+        <tr><td>&nbsp;</td><td align="center">
+            <input type="submit" value="{% if user %}Update{% else %}Add user{% endif %}">
+            <input type="button" value="Cancel" onclick="location.href='{% if profile %}/settings/profile{% elif user %}/settings/global/users/{{user.id}}{% else %}/settings/global/users{% endif %}'">
+        </td></tr>
+    </table>
+    </form>
 
 
 

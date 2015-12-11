@@ -53,11 +53,16 @@ app.logger.debug("Starting up Flask app")
 # Let's just load a DB connection before each request
 @app.before_request
 def before_request_wrapper():
-    # if request.path in ['/resetdb', '/restart']:
-        # return
+    if request.path in ['/resetdb', '/restart']:
+        return
+
+    if not request.path in ['/log', '/dbconsole']:
+        if not request.path[:7] == '/static':
+            app.logger.debug(request.method+" "+request.path)
 
     g.uptime = uptime.uptime_str()
     g.dbconn = conf.get_db_conn()
+    g.debug = True if 'APP_ENV' in os.environ and os.environ['APP_ENV'] == 'dev' else False
 
     g.is_project_admin = False
     g.is_project_view = False
@@ -66,6 +71,11 @@ def before_request_wrapper():
 
     if 'uid' in session and session['uid']:
         g.user = users.get_user(session['uid'])
+        g.allow_switch_project = True
+        if not g.user.is_global_admin:
+            avail = projects.get_available_projects(g.user.id)
+            if len(avail) == 1:
+                g.allow_switch_project = False
 
     if 'pid' in session and session['pid']:
         g.project = projects.get_project(session['pid'])
@@ -88,6 +98,7 @@ def teardown_request_wrapper(err):
         if g.dbconn:
             conf.put_db_conn(g.dbconn)
     except Exception, e:
+        app.logger.error(e)
         print e
 
 
@@ -170,7 +181,7 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/settings")
+@app.route("/settings/")
 @requires_project
 def settings():
     return render_template("settings/index.html")

@@ -55,7 +55,9 @@ CREATE TABLE users (
 	username VARCHAR(255) UNIQUE NOT NULL,
 	fullname VARCHAR(1024) NOT NULL,
 	password VARCHAR(1024) NOT NULL,
-	is_global_admin BOOLEAN DEFAULT FALSE
+	is_global_admin BOOLEAN DEFAULT FALSE,
+	is_active BOOLEAN DEFAULT TRUE,
+	allow_password_change BOOLEAN DEFAULT TRUE
 );
 
 

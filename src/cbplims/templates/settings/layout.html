@@ -5,10 +5,10 @@
 
 <ul>
 <li class="header">User settings</li>
-<li><a href="/settings/global/{{g.user.id}}/user_edit">Edit profile</a></li>
+<li><a href="/settings/profile">Profile</a></li>
 
 
-
+{% if g.user.is_global_admin or g.is_project_admin %}
 <li class="header">Project settings</li>
 
 <li class="sep">&nbsp;</li>
@@ -21,8 +21,10 @@
 <li>Sample types</li>
 <li class="sep">&nbsp;</li>
 <li>Audit log</li>
+{% endif %}
 
 
+{% if g.user.is_global_admin %}
 <li class="header">Global settings</li>
 <li class="sep">&nbsp;</li>
 <li><a href="/settings/global/users">Users</a></li>
@@ -30,7 +32,7 @@
 <li><a href="/projects/list">Projects</a></li>
 <li class="sep">&nbsp;</li>
 <li>Global audit log</li>
-
+{% endif %}
 </ul>
 
 </div>

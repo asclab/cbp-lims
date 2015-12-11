@@ -10,6 +10,12 @@ import cbplims.projects
 def switch_project():
     if request.method == "GET":
         avail = cbplims.projects.get_available_projects(g.user.id)
+
+        if len(avail) == 1 and not g.user.is_global_admin:
+            app.logger.debug("Auto-selected only project: %s", avail[0])
+            session['pid'] = avail[0].id
+            return redirect('/')
+
         return render_template("projects/switch.html", projects=avail)
 
     project = cbplims.projects.get_project(request.form['project_id'])

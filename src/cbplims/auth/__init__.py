@@ -8,7 +8,7 @@ def authenticate(username, password):
     found_pass = None
 
     cur = g.dbconn.cursor()
-    cur.execute('SELECT id, password FROM users WHERE username = %s', (username,))
+    cur.execute('SELECT id, password FROM users WHERE username = %s AND is_active=TRUE', (username,))
     record = cur.fetchone()
     cur.close()
 

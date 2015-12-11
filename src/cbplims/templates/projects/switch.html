@@ -1,15 +1,29 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h2>Select project</h2>
-  <p><b>Please select your active project</b></p>
+<div class="modal">
+    <div class="title">Select project</div>
+    Please select your active project
+    <br/>
+    <form action="/projects/switch" method="POST" id="form">
+        <center>
+            <br/>
+            <select name="project_id" style="width:80%;" ondblclick="document.getElementById('form').submit();" size="{% if products|length < 5 %}5{% elif products|length < 10 %}{{products|length +1}}{% else %}10{% endif %}">
+            {% for project in projects %}
+                <option value="{{project.id}}">{{project.name}}</option>
+            {% endfor %}
+            </select>
+            <br/>
+            <br/>
+            <input type="submit" value="Select project"/>
+            {% if g.project %}
+            <input type="button" value="Cancel" onclick="location.href='/'"/>
+            {% endif %}
 
-  {% for project in projects %}
-  <a href="/projects/{{project.id}}/select">{{project.name}}</a><br/>
-  {% endfor %}
-
-  {% if g.user.is_global_admin %}
-  <br/>
-  - or - <br/>
-  <a href="/projects/add">Add a new project</a>
-  {% endif %}
+        </center>
+    </form>
+    </p>
+    {% if g.user.is_global_admin %}
+        <p><center><a href="/projects/add">Add a new project</a></center></p>
+    {% endif %}
+</div>
 {% endblock %}

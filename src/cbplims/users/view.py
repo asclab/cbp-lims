@@ -5,9 +5,29 @@ import cbplims.users
 import cbplims.projects
 
 
-@app.route("/settings/global/users")
+@app.route("/settings/global/users", methods=['GET', 'POST'])
 @requires_admin
-def users_view():
+def users_list():
+    if request.method == 'POST':
+        app.logger.debug("Users form method: %s", request.form["method"])
+
+        user_ids = request.form.getlist("user_id")
+
+        if request.form["method"] == "Delete":
+            app.logger.debug("Deleting user_id(s): %s", ','.join(user_ids))
+            for uid in user_ids:
+                cbplims.users.del_user(uid)
+
+        elif request.form["method"] == "Disable":
+            app.logger.debug("Disabling user_id(s): %s", ','.join(user_ids))
+            for uid in user_ids:
+                cbplims.users.disable_user(uid)
+
+        elif request.form["method"] == "Enable":
+            app.logger.debug("Enabling user_id(s): %s", ','.join(user_ids))
+            for uid in user_ids:
+                cbplims.users.enable_user(uid)
+
     users = cbplims.users.get_users()
     return render_template("settings/users/list.html", users=users)
 
@@ -16,44 +36,65 @@ def users_view():
 @requires_admin
 def users_add():
     if request.method == "GET":
-        projects = cbplims.projects.get_available_projects(g.user.id)
-        return render_template("settings/users/add.html", projects=projects)
+        return render_template("settings/users/add.html", user=None)
+
     elif request.method == "POST":
-        full_name = request.form['full_name']
+        # TODO: check password match
+        fullname = request.form['fullname']
         username = request.form['username']
-
         is_admin = request.form.getlist('is_admin')
-        if not is_admin:
-            is_admin.append("False")
-        pwd = request.form['pwd']
-        pwd = cbplims.users.add_user(full_name, username, is_admin[0], pwd)
-        return render_template("settings/users/add.html", username=username)
+        allow_password_change = request.form.getlist('allow_password_change')
+
+        password = request.form['password']
+        cbplims.users.add_user(fullname, username, password, True if is_admin else False, True if allow_password_change else False)
+
+        return redirect('/settings/global/users')
 
 
-@app.route("/settings/global/users/<int:uid>/delete", methods=['POST'])
-@requires_admin
-def users_del(uid):
-    if request.method == "POST":
-        cbplims.users.del_user(uid)
+@app.route("/settings/profile")
+@requires_user
+def users_profile_view():
+    return render_template("settings/users/view.html", user=g.user, profile=True)
+
+
+@app.route("/settings/profile/edit", methods=['GET', 'POST'])
+@requires_user
+def users_profile_edit():
+    if request.method == "GET":
+        return render_template("settings/users/add.html", user=g.user, profile=True)
         # put into logger, return false will go to erro page.
-    return redirect('./settings/global/users')
+
+    elif request.method == "POST":
+        # TODO: check password match
+        fullname = request.form['fullname']
+
+        cbplims.users.edit_user(g.user.id, fullname, request.form["password"])
+
+        return redirect('/settings/profile')
+
+
+@app.route("/settings/global/users/<int:uid>")
+@requires_admin
+def users_view(uid):
+    user = cbplims.users.get_user(uid)
+    return render_template("settings/users/view.html", user=user)
 
 
 @app.route("/settings/global/users/<int:uid>/edit", methods=['GET', 'POST'])
-@requires_user
+@requires_admin
 def users_edit(uid):
     if request.method == "GET":
-        info = cbplims.users.get_user(uid)
+        user = cbplims.users.get_user(uid)
+        return render_template("settings/users/add.html", user=user)
         # put into logger, return false will go to erro page.
+
     elif request.method == "POST":
-        full_name = request.form['full_name']
-        username = request.form['username']
+        # TODO: check password match
+        fullname = request.form['fullname']
         is_admin = request.form.getlist('is_admin')
-        if not is_admin:
-            is_admin.append("False")
-        #pwd_n = request.form['pwd_n']
-        #pwd_o=request.form['pwd_o']
-        ## needs to add a check that admin does not need to match old pwd with new
-        #pwd=cbplims.users.add_user(full_name,username,is_admin[0],pwd_n)
+        allow_password_change = request.form.getlist('allow_password_change')
+
+        app.logger.debug("userid:%s, fullname:%s, is_admin:%s, allow_password_change:%s", uid, fullname, is_admin, allow_password_change)
+        cbplims.users.edit_user(uid, fullname, request.form["password"], True if is_admin else False, True if allow_password_change else False)
+
         return redirect('/settings/global/users')
-    return render_template("settings/users/edit.html", info=info)

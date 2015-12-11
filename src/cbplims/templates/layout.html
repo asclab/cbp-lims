@@ -12,7 +12,11 @@
       <a href="/signin">sign in</a>
     {% else %}
       {% if g.project %}
-      {{ g.project.name }} <a href="/projects/switch" title="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
+          {{ g.project.name }}
+          {% if g.allow_switch_project %}
+          <a href="/projects/switch" title="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
+          {% endif %}
+           &nbsp; &nbsp;
       {% endif %}
       {{ g.user.username }} &nbsp; &nbsp; 
       <a href="/settings" title="Change project settings">settings</a>&nbsp; &nbsp; 
@@ -26,13 +30,16 @@
 <div class="body">
   {% block body %}{% endblock %}
 </div>
-<hr/>
+<div class="footer">
+{% if g.debug %}
 uptime: {{g.uptime}}
-<br/><a href="/resetdb">reset db</a>
-<br/><a href="/restart">restart app</a>
 <br/><a href="/log" target="_new">view log</a>
 {% if g.user.is_global_admin %}
-<br/><a href="/dbconsole" target="_new">db console</a>
+<br/><a href="/resetdb">reset db (wipe)</a>
+<br/><a href="/restart">force app restart</a>
+<br/><a href="/dbconsole" target="_new">open db console</a>
 {% endif %}
+{% endif %}
+</div>
 </body>
 </html>

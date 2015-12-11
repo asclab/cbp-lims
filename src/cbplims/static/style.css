@@ -23,6 +23,29 @@ body {
     overflow:auto;
 }
 
+.footer {
+    border-top: 1px solid #555;
+    padding: 8px 12px;
+    margin-top:24px;
+}
+
+.modal {
+    border: 1px solid #555;
+    background-color: #ddd;
+    padding: 8px 12px;
+    margin-top:24px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 320px;
+}
+
+.modal .title {
+    font-weight: bold;
+    font-size: 14pt;
+
+}
+
+
 .sidebar {
     width: 250px;
     float:left;
@@ -79,6 +102,19 @@ table.list th {
     text-align:left;
     font-weight: bold;
     background-color: #ccc;
+}
+
+table.list .disabled {
+    background-color: #ccc;
+    font-style: italic;
+}
+
+table.item_view th{
+    text-align:left;
+    font-weight: bold;
+    background-color: #ccc;
+    padding:8px;
+
 }
 
 .projectIndent {

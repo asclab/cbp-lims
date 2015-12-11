@@ -1,0 +1,38 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <div class="title">Users</div>
+
+  <br/>
+  <form method="POST" action="/settings/global/users">
+  <div>
+    <div style="float:left;">
+      <input type="submit" name="method" value="Delete"/>
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+    <div style="float:right;">
+      <input type="button" name="method" value="Add user" onclick="location.href='/settings/global/users/add'"/>
+    </div>
+  </div>
+  <table class="list">
+    <tr>
+        <th>&nbsp;</td>
+        <th>Username</th>
+        <th>Full name</th>
+        <th>Projects</th>
+        <th>Global admin</th>
+    </tr>
+  {% for u in users %}
+  <tr{% if not u.is_active %} class="disabled"{% endif %}>
+    <td><input type="checkbox" name="user_id" id="uid_{{u.id}}" value="{{u.id}}"></td>
+    <td><a href="/settings/global/users/{{u.id}}">{{u.username}}</a></td>
+    <td>{{u.fullname}}</td>
+    <td>&nbsp;</td> <!-- TODO: fill this out -->
+    <td>{% if u.is_global_admin %}Admin{% else %}&nbsp;{% endif %}</td>
+  </tr>
+  {% endfor %}
+  </table>
+  </form>
+  <hr>
+{% endblock %}
