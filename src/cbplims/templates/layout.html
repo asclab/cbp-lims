@@ -12,15 +12,21 @@
       <a href="/signin">sign in</a>
     {% else %}
       {% if g.project %}
-          {{ g.project.name }}
+        <div style="display:inline-block;">
+          <div style="float:left">{{ g.project.name }}</div>
           {% if g.allow_switch_project %}
-          <a href="/projects/switch" title="Switch active project">&lt;&middot;&middot;&gt;</a>&nbsp; &nbsp; 
+          <div style="float:right; margin-top:4px;">
+            &nbsp;<a href="/projects/switch" title="Switch active project" style="text-decoration: none;">&#x25BE;</a>
+          </div>
           {% endif %}
+        </div>
            &nbsp; &nbsp;
       {% endif %}
+      <div style="display:inline-block; float:right;">
       {{ g.user.username }} &nbsp; &nbsp; 
       <a href="/settings" title="Change project settings">settings</a>&nbsp; &nbsp; 
       <a href="/signout">sign out</a>
+      </div>
     {% endif %}
   </div>
 </div>
