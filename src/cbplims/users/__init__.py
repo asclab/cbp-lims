@@ -35,7 +35,7 @@ def get_user(uid):
 
 def add_user(full_name, username, is_admin, pwd):
     cur = g.dbconn.cursor()
-    sql = 'INSERT INTO users (username, fullname, password, is_global_admin) VALUES (%s,%s,%s,%s) RETURNING id'
+    sql = 'INSERT INTO users (id,username, fullname, password, is_global_admin) VALUES (DEFAULT,%s,%s,%s,%s) RETURNING id'
     pwd = cbplims.auth.auth_pbkdf2.generate_new_password_string(pwd)
 
     # normally I use "try" and then a rollback if it does not work.
