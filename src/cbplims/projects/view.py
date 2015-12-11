@@ -5,28 +5,25 @@ import cbplims.users
 import cbplims.projects
 
 
-@app.route("/projects/<int:pid>/select")
-@requires_user
-def select_project(pid):
-    project = cbplims.projects.get_project(pid)
-    app.logger.debug('selected project: %s => %s', pid, project)
-
-    if project:
-        session['pid'] = pid
-
-    return redirect('/')
-
-
-@app.route("/projects/switch")
+@app.route("/projects/switch", methods=['GET', 'POST'])
 @requires_user
 def switch_project():
-    avail = cbplims.projects.get_available_projects(g.user.id)
-    return render_template("projects/switch.html", projects=avail)
+    if request.method == "GET":
+        avail = cbplims.projects.get_available_projects(g.user.id)
+        return render_template("projects/switch.html", projects=avail)
+
+    project = cbplims.projects.get_project(request.form['project_id'])
+    app.logger.debug('selected project: %s => %s', request.form['project_id'], project)
+
+    if project:
+        session['pid'] = project.id
+    return redirect('/')
+
 
 @app.route("/projects/<int:pid>/view")
 @requires_user
 def view_project(pid):
-    (info,groups) = cbplims.projects.view_project(pid)
+    (info, groups) = cbplims.projects.view_project(pid)
     return render_template("projects/view.html", info=info, groups=groups)
 
 
