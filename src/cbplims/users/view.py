@@ -3,7 +3,7 @@ from cbplims import app, requires_admin, requires_user
 
 import cbplims.users
 import cbplims.projects
-
+import cbplims.groups
 
 @app.route("/settings/global/users", methods=['GET', 'POST'])
 @requires_admin
@@ -54,7 +54,8 @@ def users_add():
 @app.route("/settings/profile")
 @requires_user
 def users_profile_view():
-    return render_template("settings/users/view.html", user=g.user, profile=True)
+    groups = cbplims.groups.get_user_group(g.user.id)
+    return render_template("settings/users/view.html", user=g.user, profile=True, groups=groups)
 
 
 @app.route("/settings/profile/edit", methods=['GET', 'POST'])
