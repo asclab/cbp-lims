@@ -53,8 +53,8 @@ app.logger.debug("Starting up Flask app")
 # Let's just load a DB connection before each request
 @app.before_request
 def before_request_wrapper():
-    if request.path in ['/resetdb', '/log', '/restart']:
-        return
+    # if request.path in ['/resetdb', '/restart']:
+        # return
 
     g.uptime = uptime.uptime_str()
     g.dbconn = conf.get_db_conn()
@@ -151,6 +151,19 @@ def requires_admin(f):
     return decorated
 
 
+def requires_global_admin(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not g.user:
+            return redirect('/signin')
+
+        if not g.user.is_global_admin:
+            return redirect('/')
+
+        return f(*args, **kwargs)
+    return decorated
+
+
 @app.route("/")
 @requires_project
 def index():
@@ -197,6 +210,7 @@ def resetdb():
 
 
 @app.route("/log")
+@requires_admin
 def view_dblogger():
     if not dblogger:
         return "Log not available"
@@ -218,6 +232,45 @@ def view_dblogger():
     else:
         messages = dblogger.fetch_messages()
         return render_template('dblogger.html', messages=messages)
+
+
+@app.route("/dbconsole", methods=['GET', 'POST'])
+@requires_global_admin
+def dbconsole():
+    if request.method == "GET":
+        return render_template("dbconsole.html", records=[])
+
+    elif request.method == "POST":
+        query = request.form["query"].strip()
+        records = []
+        names = []
+        msg = ""
+
+        if query:
+            app.logger.debug("SQL: %s", query)
+
+            try:
+                cur = g.dbconn.cursor()
+                cur.execute(query)
+
+                if cur.rowcount == 1:
+                    msg = "1 record"
+                else:
+                    msg = "%s records" % cur.rowcount
+
+                if query.upper()[:6] == "SELECT":
+                    records = list(cur.fetchall())
+                    names = [x[0] for x in cur.description]
+                else:
+                    g.dbconn.commit()
+
+            except Exception, e:
+                app.logger.error(e)
+                msg = str(e)
+
+            cur.close()
+
+        return render_template('dbconsole.html', records=records, names=names, query=query, msg=msg)
 
 
 @app.route("/restart")

@@ -1,0 +1,51 @@
+<html>
+<head>
+<style>
+th {
+    text-align:left;
+    background-color: #ccc;
+    padding: 1px 4px;
+}
+table {
+    width: 100%;
+}
+td {
+    padding: 1px 4px;
+}
+td.fixed {
+    white-space: nowrap;
+    vertical-align: top;
+}
+</style>
+</head>
+<body>
+<form action="/dbconsole" method="POST">
+<textarea name="query" style="width: 100%; height: 60px;">{{query}}</textarea>
+<br/>
+<input type="submit" value="Submit"/>
+</form>
+<div>
+    {{msg}}
+</div>
+{% if records %}
+<table id="logview">
+<thead>
+<tr>
+{% for name in names %}
+<th>{{ name }}</th>
+{% endfor %}
+</tr>
+</thead>
+<tbody>
+{% for record in records %}
+<tr>
+{% for val in record %}
+<td>{{ val }}</td>
+{% endfor %}
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+</body>
+</html>
