@@ -85,6 +85,7 @@ CREATE TABLE groups (
 	name VARCHAR(255) UNIQUE NOT NULL,
 	is_admin BOOLEAN DEFAULT FALSE,
 	is_view BOOLEAN DEFAULT FALSE,
+    is_active BOOLEAN DEFAULT TRUE,
 	UNIQUE (project_id, name)
 );
 

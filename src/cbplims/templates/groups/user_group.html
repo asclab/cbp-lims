@@ -1,5 +1,5 @@
-{% extends "layout.html" %}
-{% block body %}
+{% extends "settings/layout.html" %}
+{% block adminbody %}
   <h2>Here are the groups</h2>
 <font color="red">{{msg}}</font>
 <form action="/groups/user_group" method="POST">
@@ -17,14 +17,24 @@
     
     
      {% for g in groups %}
-    <tr>
+        {% if g.is_active == true %}
+                <tr>
+            {% else %}
+                <tr class="notactive">
+            {% endif %}
         
          <td>{{g.id}}</td>
          <td>{{g.project_name}}</td>
          <td>{{g.name}}</td>
          <td>{{g.is_admin}}</td>
          <td>{{g.is_view}}</td>
-         <td><input type="radio" name="add" id="add" value="{{g.id}}"></td>
+                {% if g.is_active == true %}
+                 <td>
+                    <input type="radio" name="add" id="add" value="{{g.id}}">
+                     {% else %}
+                 <td>
+                    {% endif %}
+                </td>
     </tr>
      {% endfor %}
 </table>
@@ -59,7 +69,7 @@
 
 <hr>
 <br>
-<a href="groups/user_group">Associate user with group</a> <br>
+<a href="/groups/user_group">Associate user with group</a> <br>
 <a href="/projects/add">Add Project</a> <br>
 <a href="/groups/list">List Groups</a> <br>
 <a href="/groups/add">Add Groups</a>

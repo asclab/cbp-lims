@@ -1,3 +1,5 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}  
   <h2>Edit project {{project_name}}</h2>
    <font color="red">{{msg}} </font><br>
   <form action="/projects/{{project_id}}/edit" method="POST">
@@ -9,3 +11,5 @@
       <tr><td>&nbsp;</td><td><input type="submit" value="Edit {{project_name}}"/></td></tr>
     </table>
   </form>
+  
+  {% endblock %}

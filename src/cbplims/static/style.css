@@ -130,3 +130,20 @@ form {
     margin: 0;
     padding: 0;
 }
+
+.notactive{
+    text-decoration: line-through;
+    color: red;
+}
+
+.divider{
+    width:5px;
+    height:auto;
+    display:inline-block;
+    
+}
+
+.msg{
+    font-weight: bold;
+    color: green;
+}

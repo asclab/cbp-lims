@@ -4,12 +4,12 @@ from flask import g
 
 
 
-Group = namedtuple('Group', 'id name is_admin is_view project_name')
+Group = namedtuple('Group', 'id name is_admin is_view project_name is_active')
 
 def avail_groups():
     cur = g.dbconn.cursor()
     groups = []
-    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name FROM groups a '
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, a.is_active FROM groups a '
            'LEFT JOIN projects b ON a.project_id = b.id '
            )
     cur.execute(sql)
@@ -19,10 +19,10 @@ def avail_groups():
     return groups
 
 def get_groups(pid):
-    Group2 = namedtuple('Group2', 'id name is_admin is_view project_name username')
+    Group2 = namedtuple('Group2', 'id name is_admin is_view project_name username is_active')
     cur = g.dbconn.cursor()
     groups = []
-    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username FROM groups a '
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username, a.is_active FROM groups a '
            'LEFT JOIN projects b ON a.project_id = b.id '
            'LEFT JOIN user_groups c ON c.group_id=a.id '
            'LEFT JOIN users d ON d.id = c.user_id '
@@ -38,10 +38,10 @@ def get_groups(pid):
 
 
 def avail_alluser():
-    Group2 = namedtuple('Group2', 'id name is_admin is_view project_name username')
+    Group2 = namedtuple('Group2', 'id name is_admin is_view project_name username is_active')
     cur = g.dbconn.cursor()
     groups = []
-    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username FROM groups a '
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username, a.is_active FROM groups a '
            'LEFT JOIN projects b ON a.project_id = b.id '
            'LEFT JOIN user_groups c ON c.group_id=a.id '
            'LEFT JOIN users d ON d.id = c.user_id '
@@ -103,11 +103,11 @@ def add_user_groups(user,group):
     
 def get_specific_group(project_id):
     
-    Group = namedtuple('Group', 'id name is_admin is_view project_name')
+    Group = namedtuple('Group', 'id name is_admin is_view project_name is_active')
     cur = g.dbconn.cursor()
 
     groups = []
-    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name FROM groups a '
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, a.is_active FROM groups a '
            'LEFT JOIN projects b ON a.project_id = b.id WHERE b.id = %s'
            )
     cur.execute(sql, (project_id,))
@@ -122,11 +122,11 @@ def get_specific_group(project_id):
 
 def get_user_group(user_id):
     
-    Group = namedtuple('Group', 'id name is_admin is_view project_name username')
+    Group = namedtuple('Group', 'id name is_admin is_view project_name username is_active')
     cur = g.dbconn.cursor()
 
     groups = []
-    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username FROM groups a '
+    sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, d.username, a.is_active FROM groups a '
            'LEFT JOIN projects b ON a.project_id = b.id '
            'LEFT JOIN user_groups c ON c.group_id=a.id '
            'LEFT JOIN users d ON d.id = c.user_id '
@@ -142,3 +142,19 @@ def get_user_group(user_id):
         return (groups)
     
     return None
+
+
+
+def change_state_group(gid,state):
+    cur = g.dbconn.cursor()
+    sql = "UPDATE groups SET is_active = %s WHERE id = %s;"
+    try:
+        cur.execute(sql, (state,gid))
+        g.dbconn.commit()
+        cur.close()
+        return ("state was changed: " + gid)
+    except Exception as err:
+        cur.close()
+        return (str(err))
+    
+

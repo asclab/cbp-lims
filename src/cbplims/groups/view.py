@@ -52,3 +52,22 @@ def user_group():
 def view_groups(pid):
     groups = cbplims.groups.get_groups(pid)
     return render_template("groups/view.html",groups=groups )
+
+
+@app.route("/groups/state", methods=['POST'])
+@requires_admin
+def state_groups():
+    msg = ''
+    if request.method == 'POST':
+        group_ids = request.form.getlist("group_id")
+    
+        if request.form["method"] == "Enable":
+            for gid in group_ids:
+                msg = cbplims.groups.change_state_group(gid,'TRUE')
+
+        if request.form["method"] == "Disable":
+            for gid in group_ids:
+                msg = cbplims.groups.change_state_group(gid,'FALSE') 
+        
+        groups = cbplims.groups.avail_groups()
+        return render_template("groups/list.html", groups=groups, msg=msg )

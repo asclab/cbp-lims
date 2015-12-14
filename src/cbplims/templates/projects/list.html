@@ -1,22 +1,40 @@
-{% extends "layout.html" %}
-{% block body %}
+{% extends "settings/layout.html" %}
+{% block adminbody %}
   <h2>Here are the projects</h2>
 
-<font color="red">{{msg}}</font>
+<div class="msg">{{msg}}</div>
 
-<table border = "1">
+<form method="POST" action="/projects/state">
+<div>
+    <div style="float:left;">
+      <input type="submit" name="method" value="Delete"/>
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+    <div style="float:right;">
+      <input type="button" name="method" value="Add Project" onclick="location.href='/projects/add'"/>
+    </div>
+  </div>
+<br>
+
+
+<table border = "1" class="list">
 	<tr>
 		<td></td>
 		<td>ID</td>
 		<td>Name</td>
 		<td>Parent</td>
 		<td>Code</td>
-		<td>Change order</td>
-		<td>Change State</td>
 		<td>Edit</td>
+		<td></td>
 	</tr>
     {% for p in parents  %}
-	<tr>
+	{% if p[1].is_active == true %}
+		<tr>
+	{% else %}
+	<tr class="notactive">
+	{% endif %}
+
 	<td>	
 	{% for n in range(p[0]) %}
 	    <span class="projectIndent"> &nbsp;</span>
@@ -25,41 +43,20 @@
 	<td>{{p[1].id}}</td>
 	<td><a href="/projects/{{p[1].id}}/view">{{p[1].name}}</a></td>
 	<td>{{p[1].parent_id}}</td>
-	<td>{{p[1].code}}</td>
-		{% if p[0] > 1 %}
+	<td>{{p[1].code}}</td> 
 		<td>
-            <form method="POST" action="/projects/{{p[1].parent_id}}/promote">
-                <input type="hidden" id="id" name="id" value={{p[1].id}}>  
-                <button type="submit" class="submitLink">promote</button> 
-            </form>
+		<a href="/projects/{{p[1].id}}/edit?code={{p[1].code}}&name={{p[1].name}}"> edit </a>
         </td>
-	    {% else %}    
-			<td></td>
-			{% endif %} 
-		  <td>
-            <form method="POST" action="/projects/{{p[1].id}}/changeState">
-			   {% if p[1].is_active == true %}
-                <button type="submit" class="submitLink" name="state" id="state" value="FALSE">dis-activate</button>
-				{% else %}
-				<button type="submit" class="submitLink" name="state" id="state" value="TRUE">re-activate</button>
-				{% endif %}
-            </form>
-        </td>
-		  
-		<td>
-            <form method="POST" action="/projects/{{p[1].id}}/edit">
-				<input type="hidden" id="name" name="name" value={{p[1].name}}>
-				<input type="hidden" id="do" name="do" value=0>
-                <button type="submit" class="submitLink" name="code" id="code" value="{{p[1].code}}">edit</button>
-            </form>
-        </td>
-	
+		
+	<td><input type="checkbox" name="project_ids" value="{{p[1].id}}"> </td>
 	</tr>
     {% endfor %}
 	
 </table>
+</form>
 <hr>
 <br>
+<a href="/groups/user_group">Associate user with group</a> <br>
 <a href="/projects/add">Add Project</a> <br>
 <a href="/groups/list">List Groups</a> <br>
 <a href="/groups/add">Add Groups</a>

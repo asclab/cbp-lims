@@ -150,10 +150,16 @@ def promote_projects_child(parent_id, child_id):
 def change_state_project(id, state):
     cur = g.dbconn.cursor()
     sql = "UPDATE projects SET is_active = %s WHERE id = %s;"
-    cur.execute(sql, (state, id))
-    g.dbconn.commit()
-    cur.close()
-    return 1
+    
+    try:
+        cur.execute(sql, (state,id))
+        g.dbconn.commit()
+        cur.close()
+        return ("state was changed: " + id)
+    except Exception as err:
+        cur.close()
+        return (str(err))
+
 
 def update_projects(project_id,project_name,project_code):
     cur = g.dbconn.cursor()
