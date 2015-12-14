@@ -18,7 +18,7 @@ def avail_groups():
     cur.close()    
     return groups
 
-def get_groups(pid):
+def view_groups(gid):
     Group2 = namedtuple('Group2', 'id name is_admin is_view project_name username is_active')
     cur = g.dbconn.cursor()
     groups = []
@@ -29,7 +29,7 @@ def get_groups(pid):
            'WHERE a.id = %s'
            'ORDER BY a.name;'
            )
-    cur.execute(sql,(pid,))
+    cur.execute(sql,(gid,))
     for record in cur:
         groups.append(Group2(*record))
     cur.close()    
@@ -52,6 +52,33 @@ def avail_alluser():
         groups.append(Group2(*record))
     cur.close()    
     return groups
+
+def edit_group(gid,name,role):
+    cur = g.dbconn.cursor()
+    is_admin = "FALSE"
+    is_view = "FALSE"
+    
+    if int(role) == 2:
+        role = "Admins"
+        is_admin = "TRUE"
+    elif int(role) == 1:
+        role = "Edit"
+    else:
+        role = "View"
+        is_view = "TRUE"
+    
+    sql = "UPDATE groups SET name = %s, is_admin = %s, is_view = %s WHERE id = %s;"
+    try: 
+        cur.execute(sql, (name,is_admin,is_view,gid))
+        g.dbconn.commit()
+        cur.close()
+        return "Group was updated "
+    except Exception as err:
+        g.dbconn.rollback()
+        cur.close()
+        return (str(err))
+    
+    
 
 
 def add_groups(project_id,role):

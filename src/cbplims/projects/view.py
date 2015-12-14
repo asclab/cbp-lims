@@ -93,7 +93,7 @@ def changeState():
             for pid in project_ids:
                 msg = cbplims.projects.change_state_project(pid, 'FALSE')
                 
-        #
+            
         avail = cbplims.projects.get_projects_recursive()
         return render_template("projects/list.html", parents=avail, msg=msg)
 

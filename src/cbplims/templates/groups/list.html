@@ -24,6 +24,7 @@
          <td>ID</td>
          <td>Project Name</td>
          <td>Name</td>
+		 <td>Edit</td>
          <td>Is Admin</td>
          <td>Is View</td>
          <td></td>
@@ -42,9 +43,18 @@
         
          <td>{{g.id}}</td>
          <td>{{g.project_name}}   </td>
-         <td><a href="/groups/{{g.id}}/view"> {{g.name}} </a> </td>
-         <td>{{g.is_admin}}</td>
+         
+		 <td><a href="/groups/{{g.id}}/view"> {{g.name}} </a> </td>
+		 
+		 {% if g.is_active == true %}
+		 <td><a href="/groups/{{g.id}}/edit">edit</a></td>
+         {% else %}
+		 <td></td>
+		 {% endif %}
+		 
+		 <td>{{g.is_admin}}</td>
          <td>{{g.is_view}}</td>
+		 
          <td><input type="checkbox" name="group_id" value="{{g.id}}"> </td>
     </tr>
      {% endfor %}

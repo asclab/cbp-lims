@@ -50,7 +50,7 @@ def user_group():
 @app.route("/groups/<int:pid>/view")
 @requires_user
 def view_groups(pid):
-    groups = cbplims.groups.get_groups(pid)
+    groups = cbplims.groups.view_groups(pid)
     return render_template("groups/view.html",groups=groups )
 
 
@@ -69,5 +69,19 @@ def state_groups():
             for gid in group_ids:
                 msg = cbplims.groups.change_state_group(gid,'FALSE') 
         
+        groups = cbplims.groups.avail_groups()
+        return render_template("groups/list.html", groups=groups, msg=msg )
+    
+@app.route("/groups/<int:gid>/edit",  methods=['GET', 'POST'])
+@requires_admin
+def edit_group(gid):
+    msg = ''
+    if request.method == "GET":
+        group = cbplims.groups.view_groups(gid)
+        return render_template("groups/edit.html", group=group[0])
+    else:
+        group_name = request.form['name']
+        group_role = request.form['role']
+        msg = cbplims.groups.edit_group(gid,group_name,group_role)
         groups = cbplims.groups.avail_groups()
         return render_template("groups/list.html", groups=groups, msg=msg )
