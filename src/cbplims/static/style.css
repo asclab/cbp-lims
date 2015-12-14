@@ -131,6 +131,7 @@ form {
     padding: 0;
 }
 
+<<<<<<< HEAD
 .notactive{
     text-decoration: line-through;
     color: red;
@@ -147,3 +148,15 @@ form {
     font-weight: bold;
     color: green;
 }
+=======
+ul.msg {
+    background-color: #d9edf7;
+    padding: 0;
+    margin: 0;
+}
+
+.msg li {
+    list-style: none;
+    padding:8px 12px;
+}
+>>>>>>> da424d3b9ac77b838e670e89adbec26a0a0d22bf

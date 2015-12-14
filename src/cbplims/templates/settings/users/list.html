@@ -2,6 +2,11 @@
 {% block adminbody %}
 
   <div class="title">Users</div>
+  <ul class="msg">
+    {% for m in msg %}
+    <li>{{m}}</li>
+    {% endfor %}
+  </ul>
 
   <br/>
   <form method="POST" action="/settings/global/users">

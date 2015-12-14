@@ -8,6 +8,7 @@ import cbplims.groups
 @app.route("/settings/global/users", methods=['GET', 'POST'])
 @requires_admin
 def users_list():
+    msg = []
     if request.method == 'POST':
         app.logger.debug("Users form method: %s", request.form["method"])
 
@@ -16,11 +17,17 @@ def users_list():
         if request.form["method"] == "Delete":
             app.logger.debug("Deleting user_id(s): %s", ','.join(user_ids))
             for uid in user_ids:
+                if int(uid) == g.user.id:
+                    msg.append("You can't delete yourself!")
+                    continue
                 cbplims.users.del_user(uid)
 
         elif request.form["method"] == "Disable":
             app.logger.debug("Disabling user_id(s): %s", ','.join(user_ids))
             for uid in user_ids:
+                if int(uid) == g.user.id:
+                    msg.append("You can't disable yourself!")
+                    continue
                 cbplims.users.disable_user(uid)
 
         elif request.form["method"] == "Enable":
@@ -29,7 +36,7 @@ def users_list():
                 cbplims.users.enable_user(uid)
 
     users = cbplims.users.get_users()
-    return render_template("settings/users/list.html", users=users)
+    return render_template("settings/users/list.html", users=users, msg=msg)
 
 
 @app.route("/settings/global/users/add",  methods=['GET', 'POST'])

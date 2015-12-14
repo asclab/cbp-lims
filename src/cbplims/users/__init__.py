@@ -112,7 +112,7 @@ def disable_user(uid):
 
 
 def enable_user(uid):
-    app.logger.debug("Diabling user: %s", uid)
+    app.logger.debug("Enabling user: %s", uid)
 
     cur = g.dbconn.cursor()
     sql = 'UPDATE users SET is_active=TRUE WHERE id = %s '
