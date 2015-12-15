@@ -2,15 +2,31 @@
 {% block adminbody %}
   <h2>Here are the groups</h2>
 <font color="red">{{msg}}</font>
-<table border="1">
+
+<form method="POST" action="/groups/state">
+<div>
+    <div style="float:left;">
+      <input type="submit" name="method" value="Delete"/>
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+    <div style="float:right;">
+      
+	  <input type="button" name="method" value="Associate User to Group" onclick="location.href='/groups/user_group'"/>
+    </div>
+  </div>
+<br>
+
+
+<table border="1" class="list">
     <tr>
         
          <td>ID</td>
          <td>Project Name</td>
          <td>Name</td>
-         <td>Is Admin</td>
-         <td>Is View</td>
+         <td>Rights</td>
          <td> User </td>
+         <td></td>
     </tr>
     
     
@@ -25,12 +41,24 @@
          <td>{{g.id}}</td>
          <td>{{g.project_name}}</td>
          <td>{{g.name}}</td>
-         <td>{{g.is_admin}}</td>
-         <td>{{g.is_view}}</td>
+         
+         <td>
+			   {% if g.is_admin == true %}
+					Admin
+			   {% elif g.is_view == true %}
+					View only
+			   {% else %}
+					Edit
+			   {% endif %}	
+			
+		 </td>
+         
          <td>{{g.username}}</td>
+         <td><input type="checkbox" name="group_id" value="{{g.id}}"> </td>
     </tr>
      {% endfor %}
 </table>
+</form>
 
 <hr>
 <div>

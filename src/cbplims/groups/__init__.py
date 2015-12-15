@@ -10,7 +10,7 @@ def avail_groups():
     cur = g.dbconn.cursor()
     groups = []
     sql = ('SELECT a.id, a.name, a.is_admin, a.is_view, b.name, a.is_active FROM groups a '
-           'LEFT JOIN projects b ON a.project_id = b.id '
+           'LEFT JOIN projects b ON a.project_id = b.id ORDER BY a.name'
            )
     cur.execute(sql)
     for record in cur:

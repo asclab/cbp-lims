@@ -9,8 +9,8 @@
          <td>ID</td>
          <td>Project Name</td>
          <td>Name</td>
-         <td>Is Admin</td>
-         <td>Is View</td>
+         <td>Right</td>
+         <td>username</td>
          <td>Add</td>
     </tr>
     
@@ -26,8 +26,21 @@
          <td>{{g.id}}</td>
          <td>{{g.project_name}}</td>
          <td>{{g.name}}</td>
-         <td>{{g.is_admin}}</td>
-         <td>{{g.is_view}}</td>
+         <td>
+            
+			   {% if g.is_admin == true %}
+					Admin
+			   {% elif g.is_view == true %}
+					View only
+			   {% else %}
+					Edit
+			   {% endif %}	
+            
+         </td>
+         
+         <td>{{g.username}}</td>
+         
+         
                 {% if g.is_active == true %}
                  <td>
                     <input type="radio" name="add" id="add" value="{{g.id}}">

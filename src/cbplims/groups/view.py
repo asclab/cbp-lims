@@ -33,7 +33,7 @@ def add_groups():
 @requires_admin
 def user_group():
     if request.method == "GET":
-        groups = cbplims.groups.avail_groups()
+        groups = cbplims.groups.avail_alluser()
         projects = cbplims.projects.avail_projects()
         users = cbplims.users.get_users()
         return render_template("groups/user_group.html",groups=groups, projects=projects, users=users )
@@ -41,7 +41,7 @@ def user_group():
         user = request.form.getlist('user')
         project_add = request.form.getlist('add')
         msg = cbplims.groups.add_user_groups(user[0],project_add[0])
-        groups = cbplims.groups.avail_groups()
+        groups = cbplims.groups.avail_alluser()
         projects = cbplims.projects.avail_projects()
         users = cbplims.users.get_users()
         return render_template("groups/user_group.html",groups=groups, projects=projects, users=users, msg=msg )
