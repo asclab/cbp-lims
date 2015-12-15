@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS meta;
 DROP TABLE IF EXISTS audit;
 
 DROP TABLE IF EXISTS user_groups;
+DROP TABLE IF EXISTS location;
 
 DROP TABLE IF EXISTS subject_diagnoses;
 DROP TABLE IF EXISTS subject_study;
@@ -208,9 +209,16 @@ CREATE TABLE audit (
 
 -- locations are nested
 -- not specific to any type
+-- owned by a project (top-level)
+-- can be nested to a specific row/column in a parent (shelf, rack position, etc...)
 CREATE TABLE location (
     id SERIAL PRIMARY KEY,
-    parent_id INT REFERENCES location(id),
+    parent_id INTEGER REFERENCES location(id),
+    parent_row INTEGER,
+    parent_col INTEGER,
+    project_id INTEGER NOT NULL REFERENCES project(id),
+    my_rows INTEGER DEFAULT 0,
+    my_cols INTEGER DEFAULT 0,
     name VARCHAR(255) NOT NULL,
     notes TEXT
 );
