@@ -225,3 +225,16 @@ CREATE TABLE location (
 
 -- default root password is 'password' - you should chnage that.
 INSERT INTO users (username, fullname, password, is_global_admin) VALUES ('root', 'Global Admin', 'pbkdf2$42e34a6e0e22ad2bb256b69768761e67$c1b40e85590b87bc93f1a56374c67aaf8487537799f9a534bf0baa6b556e17d8', TRUE);
+-- for demo only 
+INSERT INTO projects (name,code) VALUES ('test_p1', 't1'); 
+INSERT INTO location (project_id,name) VALUES ('1','Building1');
+INSERT INTO location (parent_id,project_id,name) VALUES ('1','1','SIM1');
+INSERT INTO location (parent_id,project_id,name) VALUES ('2','1','Fridge1');
+-- create a shelf with split into 2 rows and 4 columns
+INSERT INTO location (parent_id,project_id,name,my_rows,my_cols) VALUES ('3','1','Shelf1','2','4');
+-- create a box in row1, col1
+-- box is a 8x8 
+INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols) VALUES ('4','1','box123','1','1','8','8');
+-- insert 2 tubes
+INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode1','1','1');
+INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode2','1','2');
