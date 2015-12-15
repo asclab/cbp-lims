@@ -216,7 +216,7 @@ CREATE TABLE location (
     parent_id INTEGER REFERENCES location(id),
     parent_row INTEGER,
     parent_col INTEGER,
-    project_id INTEGER NOT NULL REFERENCES project(id),
+    project_id INTEGER NOT NULL REFERENCES projects(id),
     my_rows INTEGER DEFAULT 0,
     my_cols INTEGER DEFAULT 0,
     name VARCHAR(255) NOT NULL,
