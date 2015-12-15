@@ -25,8 +25,8 @@
          <td>Project Name</td>
          <td>Name</td>
 		 <td>Edit</td>
-         <td>Is Admin</td>
-         <td>Is View</td>
+         <td>Rights</td>
+         
          <td></td>
     </tr>
     
@@ -52,8 +52,17 @@
 		 <td></td>
 		 {% endif %}
 		 
-		 <td>{{g.is_admin}}</td>
-         <td>{{g.is_view}}</td>
+		 <td>
+			   {% if g.is_admin == true %}
+					Admin
+			   {% elif g.is_view == true %}
+					View only
+			   {% else %}
+					Edit
+			   {% endif %}	
+			
+		 </td>
+         
 		 
          <td><input type="checkbox" name="group_id" value="{{g.id}}"> </td>
     </tr>

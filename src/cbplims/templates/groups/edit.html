@@ -1,0 +1,35 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}  
+  <h2>Edit Group {{group.id}}</h2>
+   <font color="red">{{msg}} </font><br>
+   <b>Project name:</b> {{group.project_name}}
+   <br>
+   <b>Rights: </b> 
+   {% if group.is_admin == true %}
+   Admin
+   {% elif group.is_view == true %}
+   View only
+   {% else %}
+   Edit
+   {% endif %}
+
+   
+   
+  <form action="/groups/{{group.id}}/edit" method="POST">
+    <table>
+      
+      <tr><td>Name</td><td><input type="text" id="name" name="name" value="{{group.name}}"/></td></tr>
+      <tr> 
+            <td>Please select role </td>
+                    <td><select id="role" name = "role">              
+                      <option value="2">Admins</option>
+                      <option value="1">Edit</option>
+                      <option value="0">View Only</option>
+                    </select></td>
+        </tr>
+      
+      <tr><td>&nbsp;</td><td><input type="submit"/></td></tr>
+    </table>
+  </form>
+  
+  {% endblock %}

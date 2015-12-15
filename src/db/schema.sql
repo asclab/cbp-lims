@@ -23,6 +23,8 @@ DROP TABLE IF EXISTS meta_kv;
 DROP TABLE IF EXISTS logger;
 DROP TYPE IF EXISTS LOGGER_LEVEL;
 
+DROP TABLE  IF EXISTS  location CASCADE;
+
 -- meta
 -- Random information about this database e.g. schema version
 -- Also used to verify DB connection
@@ -202,6 +204,15 @@ CREATE TABLE audit (
 	entity_id INTEGER,
 	key VARCHAR(255) NOT NULL,
 	msg TEXT
+);
+
+-- locations are nested
+-- not specific to any type
+CREATE TABLE location (
+    id SERIAL PRIMARY KEY,
+    parent_id INT REFERENCES location(id),
+    name VARCHAR(255) NOT NULL,
+    notes TEXT
 );
 
 -- default root password is 'password' - you should chnage that.
