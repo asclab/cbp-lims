@@ -3,6 +3,18 @@ from cbplims import app
 from flask import g
 Location = namedtuple('Location', 'id parent_id parent_row parent_col project_id my_rows my_cols name notes project_name is_active')
 
+def dim_location(id):
+    cur = g.dbconn.cursor()
+    Dim = namedtuple('Location', 'row col')
+    if id != 0:
+        sql = 'SELECT my_rows, my_cols FROM location WHERE id = %s'
+        cur.execute(sql,(id,))
+        record = cur.fetchone()
+        cur.close()
+        dim = (Dim(*record))
+    else:
+        dim = (Dim(0,0))
+    return (dim)
 
 def child_location(pid):
     cur = g.dbconn.cursor()

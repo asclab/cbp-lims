@@ -160,3 +160,24 @@ ul.msg {
     padding:8px 12px;
 }
 
+
+
+.loc_table{
+    width:100%; 
+    border-collapse:collapse; 
+}
+
+.loc_table td{ 
+    padding:7px; border:#4e95f4 1px solid;
+}
+
+
+.cell:hover{
+background: #f0f0f5; 
+}
+
+
+
+
+
+

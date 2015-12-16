@@ -15,9 +15,9 @@
       <input type="submit" name="method" value="Enable"/>
     </div>
     <div style="float:right;">
-
+            {% if locations[0].parent_id > 0 %}
             <a href="/location/{{locations[0].parent_id - 1}}/list"> Back </a>
-            
+            {% endif %}
      
     </div>
   </div>
@@ -36,6 +36,7 @@
     <th>Name</th>
     <th>Notes</th>
     <th>Forward</th>
+    <th>Add</th>
     <th></th>
 </tr>
 
@@ -57,6 +58,7 @@
     <td>{{l.name}}</td>
     <td>{{l.notes}}</td>
     <td><a href="/location/{{locations[0].id}}/list"> Forward </a></td>
+    <td><a href="/location/{{l.id}}/add"> Add </a></td>
     <td><input type="checkbox" name="location_id" value="{{l.id}}"> </td>
 </tr>
 
