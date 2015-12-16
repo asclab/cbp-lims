@@ -7,6 +7,23 @@
     <div class="msg"> You were at the last location </div>
 {% else %}
 
+
+<form method="POST" action="/location/state">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+    <div style="float:right;">
+            {% if locations[0].parent_id > 0 %}
+            <a href="/location/{{locations[0].parent_id - 1}}/list"> Back </a>
+            {% endif %}
+     
+    </div>
+  </div>
+<br>
+
 <table id="loc_table" class="loc_table" border=1>   
 
     {% for r in range(1,dim.row+1) %}
@@ -29,6 +46,7 @@
     {% endfor %}
 
 </table>
+</form>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
 <script>
