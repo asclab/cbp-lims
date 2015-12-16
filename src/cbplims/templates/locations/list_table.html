@@ -33,7 +33,16 @@
                 {% for l in locations%}
                     {% if l.parent_row == r and  l.parent_col == c %}
                         <td id="c_{{c}}">
-                            <div class="cell">{{l.name}}</div>
+                            
+                            <div class="cell">
+                                 {% if l.is_active == true %}
+                                        {{l.name}}
+                                    {% else %}
+                                        <span class="notactive"> {{l.name}} </span>
+                                    {% endif %}
+                                
+                                <input type="checkbox" name="location_id" value="{{l.id}}">
+                            </div>
                             <div class="cell_forward"><a href="/location/{{l.id}}/list"> Forward </a></div>
                         </td>
                         {% if vars.update({'con': 1}) %}{%endif%}
@@ -49,6 +58,7 @@
     {% endfor %}
 
 </table>
+<input type="hidden" name="parent_id" value = {{locations[0].parent_id}}>
 </form>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>

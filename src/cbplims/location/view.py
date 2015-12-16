@@ -33,9 +33,12 @@ def state_locations():
                 msg = cbplims.location.change_state_location(lid, 'FALSE') 
         
         
-        locations = cbplims.location.child_location(request.form["parent_id"])
-        return render_template("locations/list.html",locations=locations,msg=msg )
-    
+        route = "/location/"+str(request.form["parent_id"])+"/list"
+        return redirect(route)
+
+
+
+
     
 @app.route("/location/<int:id>/add",methods=['GET', 'POST']) 
 @requires_user
