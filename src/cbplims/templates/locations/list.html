@@ -58,7 +58,13 @@
     <td>{{l.name}}</td>
     <td>{{l.notes}}</td>
     <td><a href="/location/{{l.id}}/list"> Forward </a></td>
-    <td><a href="/location/{{l.id}}/add"> Add </a></td>
+    <td>
+        {% if l.my_rows > 0 or l.my_cols > 0 %}
+        <a href="/location/{{l.id}}/matrix"> Add </a>
+        {% else %}
+        <a href="/location/{{l.id}}/add"> Add </a>
+        {% endif %}
+    </td>
     <td><input type="checkbox" name="location_id" value="{{l.id}}"> </td>
 </tr>
 

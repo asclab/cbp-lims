@@ -50,7 +50,7 @@
                 {% endfor %}
                 
                 {% if vars.con == 0%}
-                <td id="c_{{c}}"> <div class="cell"> ADD </div></td>
+                <td id="c_{{c}}"> <div class="cell"> <a href="/location/{{locations[0].parent_id}}/add?row={{r}}&col={{c}}"> Add </a> </div></td>
                 {% endif %}
             {% endfor %}
        </tr>

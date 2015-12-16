@@ -10,10 +10,19 @@ import cbplims.users
 def list_location(pid):
     dim = cbplims.location.dim_location(pid)
     locations = cbplims.location.child_location(pid)
+    return render_template("locations/list.html",locations=locations, dim=dim )
+
+
+@app.route("/location/<int:pid>/matrix")
+@requires_user
+def matrix_location(pid):
+    dim = cbplims.location.dim_location(pid)
+    locations = cbplims.location.child_location(pid)
     if dim.row == 0 & dim.col ==0:
         return render_template("locations/list.html",locations=locations )
     else:
         return render_template("locations/list_table.html",locations=locations,dim=dim )
+
 
 
 
@@ -39,12 +48,12 @@ def state_locations():
 
 
 
+
     
 @app.route("/location/<int:id>/add",methods=['GET', 'POST']) 
 @requires_user
 def add_location(id):
     if request.method == 'GET':
-        # two different types of add
-        # matrix or single depending on if my_row or my_col > 0 
-        locations = cbplims.location.child_location(id)
-        return render_template("locations/list.html",locations=locations )
+        location = cbplims.location.view_location(id)
+        projects = cbplims.projects.avail_projects()
+        return render_template("locations/add.html",projects=projects,location=location )

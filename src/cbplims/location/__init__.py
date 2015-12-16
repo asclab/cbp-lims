@@ -37,6 +37,18 @@ def child_location(pid):
     
     return locations
 
+def list_location(id):
+    cur = g.dbconn.cursor()
+    locations = []
+    sql = ('Select l.id, l.parent_id, l.parent_row, l.parent_col, l.project_id, l.my_rows, l.my_cols, l.name, l.notes, p.name, l.is_active '
+           'from location l Left JOIN projects p ON l.project_id = p.id where l.id = %s;'
+          )
+    cur.execute(sql,(id,))
+    for record in cur:
+        locations.append(Location(*record))
+    cur.close()    
+    return locations
+
 
 def change_state_location(id, state):
     cur = g.dbconn.cursor()
@@ -50,3 +62,14 @@ def change_state_location(id, state):
     except Exception as err:
         cur.close()
         return (str(err))
+    
+def view_location(id):
+    cur = g.dbconn.cursor()
+    sql = ('Select l.id, l.parent_id, l.parent_row, l.parent_col, l.project_id, l.my_rows, l.my_cols, l.name, l.notes, p.name, l.is_active '
+           'from location l Left JOIN projects p ON l.project_id = p.id where l.id = %s;'
+          )
+    cur.execute(sql,(id,))
+    record = cur.fetchone()
+    location=(Location(*record))
+    cur.close()    
+    return location
