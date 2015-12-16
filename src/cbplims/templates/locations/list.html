@@ -1,8 +1,12 @@
 {% extends "settings/layout.html" %}
 {% block adminbody %}
+
   <h2>Here are the locations</h2>
 <div class="msg">{{msg}}</div>
-
+{% if not locations %}
+ <div class="msg"> You were at the last location </div>
+ {% else %}
+   
 <form method="POST" action="/location/state">
 <div>
     <div style="float:left;">
@@ -11,9 +15,10 @@
       <input type="submit" name="method" value="Enable"/>
     </div>
     <div style="float:right;">
-        {% if locations[0].parent_id > 0 %}
+
             <a href="/location/{{locations[0].parent_id - 1}}/list"> Back </a>
-        {% endif %}
+            
+     
     </div>
   </div>
 <br>
@@ -60,4 +65,5 @@
 </table>
 <input type="hidden" name="parent_id" value = {{locations[0].parent_id}}>
 </form>
+{% endif %}
 {% endblock %}
