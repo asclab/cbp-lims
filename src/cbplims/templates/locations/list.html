@@ -3,7 +3,7 @@
   <h2>Here are the locations</h2>
 <div class="msg">{{msg}}</div>
 
-<form method="POST" action="">
+<form method="POST" action="/location/state">
 <div>
     <div style="float:left;">
       
@@ -31,10 +31,17 @@
     <th>Name</th>
     <th>Notes</th>
     <th>Forward</th>
+    <th></th>
 </tr>
 
 {% for l in locations %}
-<tr>
+
+    {% if l.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
+
     <td>{{l.id}}</td>
     <td>{{l.parent_id}}</td>
     <td>{{l.parent_row}}</td>
@@ -45,10 +52,12 @@
     <td>{{l.name}}</td>
     <td>{{l.notes}}</td>
     <td><a href="/location/{{locations[0].id}}/list"> Forward </a></td>
+    <td><input type="checkbox" name="location_id" value="{{l.id}}"> </td>
 </tr>
 
 {% endfor %}
 
 </table>
-
+<input type="hidden" name="parent_id" value = {{locations[0].parent_id}}>
+</form>
 {% endblock %}
