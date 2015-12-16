@@ -1,0 +1,54 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+  <h2>Here are the locations</h2>
+<div class="msg">{{msg}}</div>
+
+<form method="POST" action="">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+    <div style="float:right;">
+        {% if locations[0].parent_id > 0 %}
+            <a href="/location/{{locations[0].parent_id - 1}}/list"> Back </a>
+        {% endif %}
+    </div>
+  </div>
+<br>
+
+
+<table border="1" class="list">
+<tr>
+    <th>ID</th>
+    <th>parent_id</th>
+    <th>parent_row</th>
+    <th>parent_col</th>
+    <th>Project Name</th>
+    <th>My Row</th>
+    <th>My Col</th>
+    <th>Name</th>
+    <th>Notes</th>
+    <th>Forward</th>
+</tr>
+
+{% for l in locations %}
+<tr>
+    <td>{{l.id}}</td>
+    <td>{{l.parent_id}}</td>
+    <td>{{l.parent_row}}</td>
+    <td>{{l.parent_col}}</td>
+    <td>{{l.project_name}}</td>
+    <td>{{l.my_rows}}</td>
+    <td>{{l.my_cols}}</td>
+    <td>{{l.name}}</td>
+    <td>{{l.notes}}</td>
+    <td><a href="/location/{{locations[0].id}}/list"> Forward </a></td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}
