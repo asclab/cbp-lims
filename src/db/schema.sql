@@ -220,7 +220,8 @@ CREATE TABLE location (
     my_rows INTEGER DEFAULT 0,
     my_cols INTEGER DEFAULT 0,
     name VARCHAR(255) NOT NULL,
-    notes TEXT
+    notes TEXT,
+    is_active BOOLEAN DEFAULT TRUE
 );
 
 -- default root password is 'password' - you should chnage that.
