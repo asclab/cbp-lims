@@ -23,7 +23,6 @@ def list_location_back(pid):
     return render_template("locations/list.html",locations=locations,  )
 
 
-
 @app.route("/location/<int:pid>/matrix")
 @requires_user
 def matrix_location(pid):
