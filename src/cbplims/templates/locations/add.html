@@ -1,0 +1,45 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+  <h2>New location</h2>
+{{msg}} <br>
+
+<b> From parent: </b> {{location.name}} <br>
+<b> Parent row: </b> {{location.parent_row}} <br>
+<b> Parent col: </b> {{location.parent_col}} <br>
+<b> From Project </b> {{location.project_name}} <br>
+<b> Insert from </b> row: {{in_row}} col: {{in_col}}
+
+<hr>
+  <form action="/location/{{location.id}}/add" method="POST">
+    <table>
+        <tr><td>Choose a Project</td>
+        <td>
+        <select name = "project">  
+             {% for p in projects %}
+          <option value="{{p.id}}">{{p.name}} :: {{p.code}}</option>
+          {% endfor %}
+        </select>
+      
+        </td></tr>
+        <tr><td>Is this a matrix</td><td></td></tr>
+      <tr><td>Row(s)</td><td><input type="number" name="row" value="0"/></td></tr>
+      <tr><td>Col(s)</td><td><input type="number" name="col" value="0"/></td></tr>
+      <tr><td>Name</td><td><input type="text" name="location_name"/></td></tr>
+      <tr><td>Notes</td><td><textarea rows="4" cols="50" name="notes"/> </textarea></td></tr>
+      <tr><td>&nbsp;</td><td><input type="submit" value="Add Location"/></td></tr>
+    </table>
+  
+  
+<input type="hidden" name = "in_row" value = "{{in_row}}" >
+<input type="hidden" name = "in_col" value = "{{in_col}}" >
+
+  </form>
+
+<hr>
+<br>
+ 
+ <a href="/groups/user_group">Associate user with group</a> <br>
+<a href="/projects/add">Add Project</a> <br>
+<a href="/groups/list">List Groups</a> <br>
+<a href="/groups/add">Add Groups</a>
+{% endblock %}
