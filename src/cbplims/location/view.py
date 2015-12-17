@@ -12,6 +12,17 @@ def list_location(pid):
     locations = cbplims.location.child_location(pid)
     return render_template("locations/list.html",locations=locations, dim=dim )
 
+@app.route("/location/<int:pid>/list_back") 
+@requires_user
+def list_location_back(pid):
+    if pid == 1:
+        locations = cbplims.location.child_location(0)
+        return render_template("locations/list.html",locations=locations)
+    pid = cbplims.location.get_grand(pid)
+    locations = cbplims.location.child_location(pid)
+    return render_template("locations/list.html",locations=locations,  )
+
+
 
 @app.route("/location/<int:pid>/matrix")
 @requires_user
@@ -22,6 +33,7 @@ def matrix_location(pid):
         return render_template("locations/list.html",locations=locations )
     else:
         return render_template("locations/list_table.html",locations=locations,dim=dim )
+
 
 
 
@@ -55,5 +67,26 @@ def state_locations():
 def add_location(id):
     if request.method == 'GET':
         location = cbplims.location.view_location(id)
+        if request.args.get('row') >0 or request.args.get('col') > 0:
+            in_row = request.args.get('row')
+            in_col = request.args.get('col')
+        else:
+            in_row = 'None'
+            in_col = 'None'
         projects = cbplims.projects.avail_projects()
-        return render_template("locations/add.html",projects=projects,location=location )
+        return render_template("locations/add.html",projects=projects,location=location,in_row=in_row,in_col=in_col )
+    else:
+        in_row = request.form["in_row"]
+        in_col = request.form["in_col"]
+        project_id = request.form["project"]
+        my_row = request.form["row"]
+        my_col = request.form["col"]
+        location_name = request.form["location_name"]
+        notes = request.form["notes"]
+        msg = cbplims.location.add_location(id,in_row,in_col,project_id,my_row,my_col,location_name,notes)
+        if in_row >0 or in_col > 0:
+            route = "/location/"+str(id)+"/matrix"
+        else:
+            route = "/location/"+str(id)+"/list"
+        return redirect(route) 
+        #return render_template("locations/temp.html", msg=msg )

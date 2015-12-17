@@ -34,8 +34,16 @@ def child_location(pid):
         for record in cur:
             locations.append(Location(*record))
     cur.close()    
-    
     return locations
+
+def get_grand(id):
+     cur = g.dbconn.cursor()
+     sql = 'SELECT parent_id FROM location WHERE id = %s'
+     
+     cur.execute(sql,(id,))
+     record = cur.fetchone()
+     cur.close()
+     return (record[0])
 
 def list_location(id):
     cur = g.dbconn.cursor()
@@ -73,3 +81,26 @@ def view_location(id):
     location=(Location(*record))
     cur.close()    
     return location
+
+def add_location(parent_id,in_row,in_col,project_id,my_row,my_col,name,notes):
+    cur = g.dbconn.cursor()
+     
+    sql = ('INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols, notes) '
+           'VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ;'
+          )
+    
+    if in_row == "None":
+        in_row = None
+        in_col = None
+        
+    
+    try:
+        cur.execute(sql,(parent_id,project_id,name,in_row,in_col,my_row,my_col,notes))
+        g.dbconn.commit()
+        cur.close()
+        return ("added new location: " )
+    
+    except Exception as err:
+        cur.close()
+        return (str(err) + " " + sql)  
+    
