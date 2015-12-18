@@ -51,6 +51,9 @@
                                     <a href="/location/{{l.id}}/add"> Add </a>
                                 {% endif %}
                             </div>
+                            <div class="cell_forward">
+                                <a href="/location/{{l.id}}/edit"> Edit </a>
+                            </div>
                         </td>
                         {% if vars.update({'con': 1}) %}{%endif%}
                     {% endif %}

@@ -89,3 +89,23 @@ def add_location(id):
             route = "/location/"+str(id)+"/list"
         return redirect(route) 
         #return render_template("locations/temp.html", msg=msg )
+        
+        
+@app.route("/location/<int:id>/edit",methods=['GET', 'POST']) 
+@requires_user
+def edit_location(id):
+    if request.method == 'GET':
+        location = cbplims.location.view_location(id)
+        projects = cbplims.projects.avail_projects()
+        return render_template("locations/edit.html",msg='hi' + str(id), location=location,projects=projects)
+    else:
+        project_id = request.form["project"]
+        my_row = request.form["row"]
+        my_col = request.form["col"]
+        location_name = request.form["location_name"]
+        notes = request.form["notes"]
+        msg = cbplims.location.edit_location(id,project_id,my_row,my_col,location_name,notes)
+        location = cbplims.location.view_location(id)
+        route = "/location/"+str(location.parent_id)+"/list"
+        return redirect(route) 
+        #return render_template("locations/temp.html", msg=msg )

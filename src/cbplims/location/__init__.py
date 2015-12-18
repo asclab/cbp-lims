@@ -103,4 +103,23 @@ def add_location(parent_id,in_row,in_col,project_id,my_row,my_col,name,notes):
     except Exception as err:
         cur.close()
         return (str(err) + " " + sql)  
+
+
+def edit_location(id,project_id,my_row,my_col,location_name,notes):
+    cur = g.dbconn.cursor()
+     
+    sql = ('UPDATE location SET project_id = %s,name=%s, my_rows=%s,my_cols=%s, notes=%s '
+           ' WHERE id=%s ;'
+          )
     
+        
+    
+    try:
+        cur.execute(sql,(project_id,location_name,my_row,my_col,notes,id))
+        g.dbconn.commit()
+        cur.close()
+        return ("edited location: " )
+    
+    except Exception as err:
+        cur.close()
+        return (str(err) + " " + sql)
