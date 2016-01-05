@@ -1,0 +1,61 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Here are the research studies</h2>
+<div class="msg">{{msg}}</div>
+
+<form method="POST" action="/research_studies/state">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+
+<div style="float:right;">
+      <input type="button" name="method" value="Add Research Studies" onclick="location.href='/research_studies/add'"/>
+    </div>
+
+  </div>
+<br>
+
+
+<table border="1" class="list">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Project id</th>
+    <th>Project name</th>
+    <th>Description</th>
+    <th>Date Active</th>
+    <th>Edit</th>
+    <th></th>
+    
+</tr>
+
+{% for rs in research_studies %}
+
+    {% if rs.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
+
+    <td>{{rs.id}}</td>
+    <td>{{rs.name}}</td>
+    <td>{{rs.project_id}}</td>
+    <td>{{rs.project_name}}</td>
+    <td>{{rs.description}}</td>
+    <td>{{rs.date_active}}</td>
+    
+    <td> <a href="/research_studies/{{rs.id}}/edit"> Edit </a></td>
+    <td><input type="checkbox" name="research_studies_id" value="{{rs.id}}"> </td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+{% endblock %}

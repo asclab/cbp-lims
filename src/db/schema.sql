@@ -178,6 +178,7 @@ CREATE TABLE research_studies (
 	name VARCHAR(255) NOT NULL,
 	description TEXT,
 	date_active DATE, -- date the protocol was entered?
+    is_active BOOLEAN DEFAULT TRUE,
 	UNIQUE (project_id, name)
 );
 
@@ -243,4 +244,5 @@ INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('
 
 -- insert a test diagnosis
 INSERT INTO diagnoses (project_id,name) VALUES (1,'normal');
-
+-- insert a test diagnosis
+INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1,'universal','test insert please replace','01/01/1990');

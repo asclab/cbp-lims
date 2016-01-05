@@ -1,0 +1,47 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Editing Research Studies: {{research_studies.name}}</h2>
+ <br>
+  
+ 
+
+<hr>
+  <form action="/research_studies/{{research_studies.id}}/edit" method="POST">
+    <table>
+        <tr>
+            <td> Name </td> <td> <input type="text" name="name" id="name" value="{{research_studies.name}}"></td>
+        </tr>
+        
+        <tr><td>Choose a Project</td>
+      
+        <td>
+        <select name = "project">  
+             {% for p in projects %}
+          <option value="{{p.id}}"
+          {% if research_studies.project_id == p.id %}
+                  selected
+          {% endif %}
+          >
+          {{p.name}} :: {{p.code}}
+          </option>
+          {% endfor %}
+        </select>
+        </td></tr>
+        <tr>
+            <td>Date (yyyy-mm-dd) </td>
+            <td> <input type="text" name="date" id="date" value="{{research_studies.date_active}}"> </td>
+        </tr>
+        
+        <tr>
+            <td>Description</td>
+            <td><textarea rows="4" cols="50" name = "description"> {{research_studies.description}}  </textarea> </td>
+        </tr>
+        <tr><td>&nbsp; </td><td><br><input type="submit" value="Update Research Studies"/></td></tr>
+    </table>
+    
+    
+
+
+  
+{% endblock %}
