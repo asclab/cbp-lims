@@ -1,0 +1,32 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Editing diagnosis: {{diagnosis.name}}</h2>
+ <br>
+
+
+<hr>
+  <form action="/diagnosis/{{diagnosis.id}}/edit" method="POST">
+    <table>
+        <tr>
+            <td> Name </td> <td> <input type="text" name="name" id="name" value="{{diagnosis.name}}"></td>
+        </tr>
+        
+        <tr><td>Choose a Project</td>
+      
+        <td>
+        <select name = "project">  
+             {% for p in projects %}
+          <option value="{{p.id}}"
+          {% if diagnosis.project_id == p.id %}
+                  selected
+          {% endif %}
+          >
+          {{p.name}} :: {{p.code}}
+          </option>
+          {% endfor %}
+        </select>
+        </td></tr>
+        <tr><td>&nbsp; </td><td><br><input type="submit" value="Update Diagnosis"/></td></tr>
+    </table>    
+{% endblock %}

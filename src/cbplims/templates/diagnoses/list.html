@@ -1,0 +1,57 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Here are the diagnoses</h2>
+<div class="msg">{{msg}}</div>
+
+<form method="POST" action="/diagnoses/state">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+
+<div style="float:right;">
+      <input type="button" name="method" value="Add user" onclick="location.href='/diagnosis/add'"/>
+    </div>
+
+  </div>
+<br>
+
+
+<table border="1" class="list">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Project id</th>
+    <th>Project name</th>
+    <th>Edit</th>
+    <th></th>
+    
+</tr>
+
+{% for d in diagnoses %}
+
+    {% if d.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
+
+    <td>{{d.id}}</td>
+    <td>{{d.name}}</td>
+    <td>{{d.project_id}}</td>
+    <td>{{d.project_name}}</td>
+
+    <td> <a href="/diagnosis/{{d.id}}/edit"> Edit </a></td>
+    <td><input type="checkbox" name="diagnosis_id" value="{{d.id}}"> </td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+{% endblock %}

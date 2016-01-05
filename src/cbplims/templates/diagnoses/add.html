@@ -1,0 +1,28 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Add new diagnosis</h2>
+ <br>
+
+
+<hr>
+  <form action="/diagnosis/add" method="POST">
+    <table>
+        <tr>
+            <td> Name </td> <td> <input type="text" name="name" id="name"></td>
+        </tr>
+        
+        <tr><td>Choose a Project</td>
+      
+        <td>
+        <select name = "project">  
+             {% for p in projects %}
+          <option value="{{p.id}}">
+          {{p.name}} :: {{p.code}}
+          </option>
+          {% endfor %}
+        </select>
+        </td></tr>
+        <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Diagnosis"/></td></tr>
+    </table>    
+{% endblock %}

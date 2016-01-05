@@ -305,6 +305,7 @@ import projects.view
 import users.view
 import groups.view
 import location.view
+import diagnoses.view
 if False:
     # no-op to avoid PEP8 warning
     print auth, projects

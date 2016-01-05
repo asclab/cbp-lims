@@ -153,6 +153,7 @@ CREATE TABLE diagnoses (
 	id SERIAL PRIMARY KEY,
 	project_id INTEGER NOT NULL REFERENCES projects(id),
 	name VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
 	UNIQUE (project_id, name)
 );
 
@@ -239,3 +240,7 @@ INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my
 -- insert 2 tubes
 INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode1','1','1');
 INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode2','1','2');
+
+-- insert a test diagnosis
+INSERT INTO diagnoses (project_id,name) VALUES (1,'normal');
+

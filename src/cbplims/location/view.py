@@ -43,7 +43,7 @@ def state_locations():
     msg = ''
     if request.method == 'POST':
         location_ids = request.form.getlist("location_id")
-    
+        
         if request.form["method"] == "Enable":
             for lid in location_ids:
                 msg = cbplims.location.change_state_location(lid, 'TRUE')
@@ -52,8 +52,10 @@ def state_locations():
             for lid in location_ids:
                 msg = cbplims.location.change_state_location(lid, 'FALSE') 
         
-        
-        route = "/location/"+str(request.form["parent_id"])+"/list"
+        parent_id = request.form["parent_id"]
+        if parent_id == "None":
+            parent_id = 0
+        route = "/location/"+str(parent_id)+"/list"
         return redirect(route)
 
 
