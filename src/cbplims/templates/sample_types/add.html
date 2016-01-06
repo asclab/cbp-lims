@@ -1,0 +1,43 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Adding Sample Type</h2>
+ <br>
+  
+ 
+
+<hr>
+  <form action="/sample_types/add" method="POST">
+    <table>
+        <tr>
+            <td> Name </td> <td> <input type="text" name="name" id="name" ></td>
+        </tr>
+        
+        <tr><td>Choose a Project</td>
+      
+        <td>
+        <select name = "project">  
+             {% for p in projects %}
+          <option value="{{p.id}}">
+          {{p.name}} :: {{p.code}}
+          </option>
+          {% endfor %}
+        </select>
+        </td></tr>
+        <tr>
+            <td>Date (yyyy-mm-dd) </td>
+            <td> <input type="text" name="date" id="date"> </td>
+        </tr>
+        
+        <tr>
+            <td>Description</td>
+            <td><textarea rows="4" cols="50" name = "description">  </textarea> </td>
+        </tr>
+        <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Sample Type"/></td></tr>
+    </table>
+    
+    
+
+
+  
+{% endblock %}

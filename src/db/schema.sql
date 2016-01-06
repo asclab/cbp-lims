@@ -12,6 +12,10 @@ DROP TABLE IF EXISTS subject_status_values;
 DROP TABLE IF EXISTS subjects;
 DROP TABLE IF EXISTS subject_types;
 
+DROP TABLE IF EXISTS sample_types; 
+
+
+
 DROP TABLE IF EXISTS diagnoses;
 DROP TABLE IF EXISTS research_studies;
 
@@ -99,6 +103,7 @@ CREATE TABLE user_groups (
 	group_id INTEGER NOT NULL REFERENCES groups(id),
 	PRIMARY KEY (user_id, group_id)
 );
+
 
 
 -- subject_types
@@ -194,6 +199,19 @@ CREATE TABLE subject_study (
 	PRIMARY KEY (subject_id, study_id)
 );
 
+-- sample_type
+-- type of sample (liver, kidney, alignment, variant calling etc)
+
+CREATE TABLE sample_types (
+	id SERIAL PRIMARY KEY,
+	project_id INTEGER NOT NULL REFERENCES projects(id),
+	name VARCHAR(255) NOT NULL,
+	description TEXT,
+	date_active DATE, -- date the sample was active?
+    is_active BOOLEAN DEFAULT TRUE,
+	UNIQUE (project_id, name)
+);
+
 
 
 -- audit
@@ -249,3 +267,6 @@ INSERT INTO diagnoses (project_id,name) VALUES (1,'normal');
 INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1,'universal','test insert please replace','01/01/1990');
 -- insert a test subject type
 INSERT INTO subject_types (project_id,name,fields) VALUES (1,'cell line','extra notes');
+-- insert sample types
+INSERT INTO sample_types (project_id,name,description,date_active) VALUES (1,'liver','test','01/01/1990');
+

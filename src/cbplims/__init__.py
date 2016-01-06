@@ -308,6 +308,7 @@ import location.view
 import diagnoses.view
 import research_studies.view
 import subject_types.view
+import sample_types.view
 if False:
     # no-op to avoid PEP8 warning
     print auth, projects

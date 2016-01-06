@@ -1,0 +1,61 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Here are the Sample Types</h2>
+<div class="msg">{{msg}}</div>
+
+<form method="POST" action="/sample_types/state">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+
+<div style="float:right;">
+      <input type="button" name="method" value="Add Sample Type" onclick="location.href='/sample_types/add'"/>
+    </div>
+
+  </div>
+<br>
+
+
+<table border="1" class="list">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Project id</th>
+    <th>Project name</th>
+    <th>Description</th>
+    <th>Date Active</th>
+    <th>Edit</th>
+    <th></th>
+    
+</tr>
+
+{% for rs in sample_types %}
+
+    {% if rs.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
+
+    <td>{{rs.id}}</td>
+    <td>{{rs.name}}</td>
+    <td>{{rs.project_id}}</td>
+    <td>{{rs.project_name}}</td>
+    <td>{{rs.description}}</td>
+    <td>{{rs.date_active}}</td>
+    
+    <td> <a href="/sample_types/{{rs.id}}/edit"> Edit </a></td>
+    <td><input type="checkbox" name="sample_types_id" value="{{rs.id}}"> </td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+{% endblock %}
