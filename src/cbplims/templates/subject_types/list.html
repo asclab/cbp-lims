@@ -1,0 +1,61 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Here are the subject types</h2>
+<div class="msg">{{msg}}</div>
+
+<form method="POST" action="/subject_types/state">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+
+<div style="float:right;">
+      <input type="button" name="method" value="Add Research Studies" onclick="location.href='/subject_types/add'"/>
+    </div>
+
+  </div>
+<br>
+
+
+<table border="1" class="list">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Project id</th>
+    <th>Project name</th>
+    <th>Fields</th>
+ 
+    <th>Edit</th>
+    <th></th>
+    
+</tr>
+
+{% for st in subject_types %}
+
+    {% if st.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
+
+    <td>{{st.id}}</td>
+    <td>{{st.name}}</td>
+    <td>{{st.project_id}}</td>
+    <td>{{st.project_name}}</td>
+
+    <td>{{st.fields}}</td>
+    
+    <td> <a href="/subject_types/{{st.id}}/edit"> Edit </a></td>
+    <td><input type="checkbox" name="subject_types_id" value="{{st.id}}"> </td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+{% endblock %}

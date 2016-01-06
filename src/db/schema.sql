@@ -107,6 +107,7 @@ CREATE TABLE subject_types (
 	id SERIAL PRIMARY KEY,
 	project_id INTEGER NOT NULL REFERENCES projects(id),
 	name VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
 	fields TEXT -- what data can be stored (or needs to be) for this subject type
 );
 
@@ -246,3 +247,5 @@ INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('
 INSERT INTO diagnoses (project_id,name) VALUES (1,'normal');
 -- insert a test diagnosis
 INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1,'universal','test insert please replace','01/01/1990');
+-- insert a test subject type
+INSERT INTO subject_types (project_id,name,fields) VALUES (1,'cell line','extra notes');

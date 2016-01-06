@@ -1,0 +1,40 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Editing Subject Types: {{subject_types.name}}</h2>
+ <br>
+  
+ 
+
+<hr>
+  <form action="/subject_types/{{subject_types.id}}/edit" method="POST">
+    <table>
+        <tr>
+            <td> Name </td> <td> <input type="text" name="name" id="name" value="{{subject_types.name}}"></td>
+        </tr>
+        
+        <tr><td>Choose a Project</td>
+      
+        <td>
+        <select name = "project">  
+             {% for p in projects %}
+          <option value="{{p.id}}">
+          {{p.name}} :: {{p.code}}
+          </option>
+          {% endfor %}
+        </select>
+        </td></tr>
+      
+        
+        <tr>
+            <td>Fields</td>
+            <td><textarea rows="4" cols="50" name = "fields"> {{subject_types.fields}}  </textarea> </td>
+        </tr>
+        <tr><td>&nbsp; </td><td><br><input type="submit" value="Update Subject Types"/></td></tr>
+    </table>
+    
+    
+
+
+  
+{% endblock %}
