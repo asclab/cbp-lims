@@ -169,7 +169,7 @@ CREATE TABLE diagnoses (
 CREATE TABLE subject_diagnoses (
 	subject_id INTEGER NOT NULL REFERENCES subjects(id),
 	diagnosis_id INTEGER NOT NULL REFERENCES diagnoses(id),
-	days_from_primary DATE, -- the number of days since their primary diagnosis - this isn't PHI since it's a relative number
+	days_from_primary INTEGER, -- the number of days since their primary diagnosis - this isn't PHI since it's a relative number
 	recorded_by INTEGER NOT NULL REFERENCES users(id),
 	recorded_date DATE, -- not sure about this, we might not be able to collect this.
 	is_primary BOOLEAN DEFAULT FALSE,
@@ -272,4 +272,7 @@ INSERT INTO subject_types (project_id,name,fields) VALUES (1,'cell line','extra 
 INSERT INTO sample_types (project_id,name,description,date_active) VALUES (1,'liver','test','01/01/1990');
 -- insert test subject
 INSERT INTO subjects (project_id,subject_type_id,name,data,notes) VALUES(1,1,'1234','json','none');
-
+-- insert test subject_diagnoses
+INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,1,0,1,'01/01/1990','true')
+-- insert test subject_study
+INSERT INTO subject_study (subject_id,study_id,recorded_by,recorded_date) VALUES (1,1,1,'01/01/1990')

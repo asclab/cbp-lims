@@ -1,0 +1,61 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Here are the Subjects</h2>
+<div class="msg">{{msg}}</div>
+
+<form method="POST" action="/subjects/state">
+<div>
+    <div style="float:left;">
+      
+      <input type="submit" name="method" value="Disable"/>
+      <input type="submit" name="method" value="Enable"/>
+    </div>
+
+<div style="float:right;">
+      <input type="button" name="method" value="Add Subject" onclick="location.href='/subjects/add'"/>
+    </div>
+
+  </div>
+<br>
+
+
+<table border="1" class="list">
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Project id</th>
+    <th>Project name</th>
+    <th>Notes</th>
+    <th>Type</th>
+    <th>Edit</th>
+    <th></th>
+    
+</tr>
+
+{% for s in subjects %}
+
+    {% if s.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
+
+    <td>{{s.id}}</td>
+    <td>{{s.name}}</td>
+    <td>{{s.project_id}}</td>
+    <td>{{s.project_name}}</td>
+    <td>{{s.notes}}</td>
+    <td>{{s.subject_types_name}}</td>
+    
+    <td> <a href="/subjects/{{s.id}}/edit"> Edit </a></td>
+    <td><input type="checkbox" name="subjects_id" value="{{s.id}}"> </td>
+</tr>
+
+{% endfor %}
+
+</table>
+
+</form>
+
+{% endblock %}
