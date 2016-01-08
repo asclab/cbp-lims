@@ -49,3 +49,12 @@ def state_subjects():
     
          subjects = cbplims.subjects.list_subjects()
          return render_template("subjects/list.html", msg= msg, subjects=subjects )
+     
+     
+@app.route("/subjects/<int:sid>/view" ,methods=['GET', 'POST']) 
+@requires_user
+def view_subjects(sid):
+     subject = cbplims.subjects.view_subjects(sid)
+     diagnoses = cbplims.subjects.view_subjects_diagnoses(sid)
+     subject_study = cbplims.subjects.view_subjects_study(sid)
+     return render_template("subjects/view.html",  subject=subject, diagnoses=diagnoses, subject_study = subject_study )

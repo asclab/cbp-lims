@@ -1,0 +1,32 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>View Subject {{subject.name}} </h2>
+<div class="msg">{{msg}}</div>
+
+<br>
+
+<b>ID:</b> {{subject.id}} <br>
+<b>Project:</b> {{subject.project_name}} <br>
+<b>Notes:</b> {{subject.notes}} <br>
+
+<hr>Diagnosis <br>
+{% for d in diagnoses %}
+<b>{{d.diagnosis_name}}</b> <br>
+Is this primary? {{d.diagnosis_is_primary}} <br>
+Days from primary: {{d.diagnosis_days_from_primary}} <br>
+Diagnosis recorded by: {{d.diagnosis_recorded_by}} <br>
+Diagnosis recorded date: {{d.diagnosis_recorded_date}} <br>
+{% endfor %}
+
+<a href="/subjects/{{subject.id}}/add_diagnosis">ADD diagnosis</a> 
+
+<hr>Research Studies<br>
+{% for ss in subject_study %}
+<b>{{ss.research_study_name}}</b> <br>
+Research Study recorded by: {{ss.research_study_username}} <br>
+Research Study date: {{ss.research_study_date}} <br>
+{% endfor %}
+
+
+{% endblock %}

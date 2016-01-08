@@ -264,6 +264,7 @@ INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('
 
 -- insert a test diagnosis
 INSERT INTO diagnoses (project_id,name) VALUES (1,'normal');
+INSERT INTO diagnoses (project_id,name) VALUES (1,'skin');
 -- insert a test diagnosis
 INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1,'universal','test insert please replace','01/01/1990');
 -- insert a test subject type
@@ -274,5 +275,7 @@ INSERT INTO sample_types (project_id,name,description,date_active) VALUES (1,'li
 INSERT INTO subjects (project_id,subject_type_id,name,data,notes) VALUES(1,1,'1234','json','none');
 -- insert test subject_diagnoses
 INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,1,0,1,'01/01/1990','true')
+INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,2,90000,1,'01/01/1990','false')
+
 -- insert test subject_study
 INSERT INTO subject_study (subject_id,study_id,recorded_by,recorded_date) VALUES (1,1,1,'01/01/1990')
