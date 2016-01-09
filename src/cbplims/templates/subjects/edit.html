@@ -1,16 +1,16 @@
 {% extends "settings/layout.html" %}
 {% block adminbody %}
 
-  <h2>Adding Subjects</h2>
+  <h2>Editing Subject {{subject.id}}</h2>
  <br>
   
  
 
 <hr>
-  <form action="/subjects/add" method="POST">
+  <form action="/subjects/{{subject.id}}/edit" method="POST">
     <table>
         <tr>
-            <td> Name </td> <td> <input type="text" name="name" id="name" ></td>
+            <td> Name </td> <td> <input type="text" name="name" id="name" value="{{subject.name}}"></td>
         </tr>
         
         <tr><td>Choose a Project</td>
@@ -18,7 +18,12 @@
         <td>
         <select name = "project">  
              {% for p in projects %}
-          <option value="{{p.id}}">
+          <option value="{{p.id}}"
+          {% if subject.project_id == p.id %}
+                  selected
+          {% endif %}
+          >
+          
           {{p.name}} :: {{p.code}}
           </option>
           {% endfor %}
@@ -30,7 +35,11 @@
         <td>
         <select name = "subject_types">  
              {% for st in subject_types %}
-          <option value="{{st.id}}">
+          <option value="{{st.id}}"
+            {% if subject.subject_types_id == st.id %}
+                  selected
+          {% endif %}
+          >
           {{st.name}}
           </option>
           {% endfor %}
@@ -41,9 +50,9 @@
         
         <tr>
             <td>notes</td>
-            <td><textarea rows="4" cols="50" name = "notes">  </textarea> </td>
+            <td><textarea rows="4" cols="50" name = "notes">{{subject.notes}}</textarea> </td>
         </tr>
-        <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Subject"/></td></tr>
+        <tr><td>&nbsp; </td><td><br><input type="submit" value="Edit Subject"/></td></tr>
     </table>
     
     

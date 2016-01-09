@@ -1,0 +1,36 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Adding Subject Study to {{subject.name}}</h2>
+ <br>
+  
+ 
+
+<hr>
+  <form action="/subjects/{{subject.id}}/add_study" method="POST">
+    <table>
+    <tr>
+        <td>Subject Studies</td>
+        <td>
+            <select name = "subject_study">  
+             {% for s in subject_study %}
+            <option value="{{s.id}}">
+                {{s.name}} 
+            </option>
+            {% endfor %}
+            </select>
+            
+        </td>
+    </tr>
+        <tr>
+        <td>Recorded Date (yyyy-mm-dd)</td>
+        
+        <td><input type="text" name="recorded_date"></td>
+       </tr>
+    <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Study"/></td></tr>
+    </table>
+  
+  </form>
+  
+
+{% endblock %}

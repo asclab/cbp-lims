@@ -10,23 +10,47 @@
 <b>Project:</b> {{subject.project_name}} <br>
 <b>Notes:</b> {{subject.notes}} <br>
 
-<hr>Diagnosis <br>
+<form method="POST" action="/subjects/{{subject.id}}/delete_diagnosis">
+<hr><b>Diagnosis</b> <br>
+
+    <div style="float:left;">
+      <input type="submit" name="method" value="Delete"/>
+    </div>
+    
+    <div style="float:right;">
+      <input type="button" name="method" value="Add Diagnosis" onclick="location.href='/subjects/{{subject.id}}/add_diagnosis'"/>
+    </div>
+    
+<table border="0" class="list">
 {% for d in diagnoses %}
-<b>{{d.diagnosis_name}}</b> <br>
-Is this primary? {{d.diagnosis_is_primary}} <br>
-Days from primary: {{d.diagnosis_days_from_primary}} <br>
-Diagnosis recorded by: {{d.diagnosis_recorded_by}} <br>
-Diagnosis recorded date: {{d.diagnosis_recorded_date}} <br>
+<tr bgcolor="#C3C8C9"><td>{{d.diagnosis_name}}</td> <td><input type="checkbox" name="diagnosis_ids" value="{{d.diagnosis_id}}"> </td> </tr>
+<tr><td>Is this primary?</td><td>{{d.diagnosis_is_primary}} </td></tr>
+<tr><td>Days from primary:</td><td>{{d.diagnosis_days_from_primary}} </td></tr>
+<tr><td>Diagnosis recorded by:</td> <td>{{d.diagnosis_recorded_by}} </td></tr>
+<tr><td>Diagnosis recorded date:</td> <td>{{d.diagnosis_recorded_date}} </td></tr>
+
 {% endfor %}
 
-<a href="/subjects/{{subject.id}}/add_diagnosis">ADD diagnosis</a> 
+</table>
+</form>
 
-<hr>Research Studies<br>
+
+<hr><b>Research Studies</b><br>
+<form method="POST" action="/subjects/{{subject.id}}/delete_study">
+    <div style="float:left;">
+      <input type="submit" name="method" value="Delete"/>
+    </div>
+    
+    <div style="float:right;">
+      <input type="button" name="method" value="Add Study" onclick="location.href='/subjects/{{subject.id}}/add_study'"/>
+    </div>
+
+<table border="0" class="list">
 {% for ss in subject_study %}
-<b>{{ss.research_study_name}}</b> <br>
-Research Study recorded by: {{ss.research_study_username}} <br>
-Research Study date: {{ss.research_study_date}} <br>
+<tr bgcolor="#A8A0A1"><td>{{ss.research_study_name}} </b></td> <td><input type="checkbox" name="study_ids" value="{{ss.research_study_study_id}}"> </td> </tr>
+<tr><td>Research Study recorded by:</td><td> {{ss.research_study_username}} </td></tr>
+<tr><td>Research Study date:</td><td> {{ss.research_study_date}} </td></tr>
 {% endfor %}
-
-
+</table>
+</form>
 {% endblock %}

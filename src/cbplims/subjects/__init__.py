@@ -2,13 +2,13 @@ from collections import namedtuple
 from cbplims import app
 from flask import g
 
-Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name')
+Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_id')
 
 
 def list_subjects():
      cur = g.dbconn.cursor()
      subjects = []
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id'
           )
@@ -49,7 +49,7 @@ def state(id, state):
     
 def view_subjects(id):
      cur = g.dbconn.cursor()
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
            ' WHERE s.id = %s'
@@ -62,12 +62,12 @@ def view_subjects(id):
     
 def view_subjects_diagnoses(id):
      Diagnoses = namedtuple('Diagnoses', 'id name notes is_active diagnosis_name diagnosis_days_from_primary '
-                            ' diagnosis_recorded_by diagnosis_recorded_date diagnosis_is_primary '
+                            ' diagnosis_recorded_by diagnosis_recorded_date diagnosis_is_primary diagnosis_id'
                             )
      cur = g.dbconn.cursor()
      diagnoses = []
      sql = ('Select s.id, s.name, s.notes, s.is_active, d.name, sd.days_from_primary, u.username, '
-           ' sd.recorded_date, sd.is_primary FROM subjects s '
+           ' sd.recorded_date, sd.is_primary, sd.diagnosis_id FROM subjects s '
            ' LEFT JOIN subject_diagnoses sd ON s.id = sd.subject_id '
            ' LEFT JOIN diagnoses d ON d.id = sd.diagnosis_id '
            ' LEFT JOIN users u ON sd.recorded_by=u.id'
@@ -81,11 +81,11 @@ def view_subjects_diagnoses(id):
      return diagnoses
 
 def view_subjects_study(id):
-     Research_studies  = namedtuple('Research_studies', 'id name notes is_active research_study_name research_study_username research_study_date')
+     Research_studies  = namedtuple('Research_studies', 'id name notes is_active research_study_name research_study_username research_study_date research_study_study_id')
      cur = g.dbconn.cursor()
      research_studies = []
      sql = ('Select s.id, s.name, s.notes, s.is_active, rs.name, u.username, '
-           ' ss.recorded_date FROM subjects s '
+           ' ss.recorded_date, ss.study_id FROM subjects s '
            ' LEFT JOIN subject_study ss ON s.id = ss.subject_id '
            ' LEFT JOIN research_studies rs ON rs.id = ss.study_id '
            ' LEFT JOIN users u ON ss.recorded_by=u.id'
@@ -97,3 +97,77 @@ def view_subjects_study(id):
     
      cur.close()
      return research_studies
+
+def add_diagnosis(sid,diagnosis,days_from_primary,recorded_date,is_primary):
+     cur = g.dbconn.cursor()
+     sql = ('INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES(%s,%s,%s,%s,%s,%s)  ;') 
+     
+     try:
+         cur.execute(sql, (sid,diagnosis,days_from_primary,g.user.id,recorded_date,is_primary) )
+         g.dbconn.commit()
+         cur.close()
+         return ("add : " + str(diagnosis) )
+    
+     except Exception as err:
+         cur.close()
+         return (str(err) + " " + sql)
+        
+
+def delete_diagnosis(sid,did):
+     cur = g.dbconn.cursor()
+     sql = ('DELETE FROM subject_diagnoses WHERE subject_id = %s AND diagnosis_id = %s;') 
+     
+     try:
+         cur.execute(sql, (sid,did) )
+         g.dbconn.commit()
+         cur.close()
+         return ("deleted : " + str(did) )
+    
+     except Exception as err:
+         cur.close()
+         return (str(err) + " " + sql)
+
+
+def add_subject_study(sid,subject_study,recorded_date):
+     cur = g.dbconn.cursor()
+     sql = ('INSERT INTO subject_study (subject_id,study_id,recorded_by,recorded_date) VALUES(%s,%s,%s,%s)  ;') 
+     
+     try:
+         cur.execute(sql, (sid,subject_study,g.user.id,recorded_date) )
+         g.dbconn.commit()
+         cur.close()
+         return ("add : " + str(subject_study) )
+    
+     except Exception as err:
+         cur.close()
+         return (str(err) + " " + sql)
+        
+def delete_study(sid,study):
+     cur = g.dbconn.cursor()
+     sql = ('DELETE FROM subject_study WHERE subject_id = %s AND study_id = %s;') 
+     
+     try:
+         cur.execute(sql, (sid,study) )
+         g.dbconn.commit()
+         cur.close()
+         return ("deleted : " + str(study) )
+    
+     except Exception as err:
+         cur.close()
+         return (str(err) + " " + sql)
+        
+ 
+def edit_subjects(project_id,subject_types,name,notes,sid):
+     cur = g.dbconn.cursor()
+     
+     sql = ('UPDATE subjects SET project_id= %s, subject_type_id=%s,name=%s,notes=%s WHERE id=%s;') 
+     
+     try:
+         cur.execute(sql, (project_id,subject_types,name,notes,sid) )
+         g.dbconn.commit()
+         cur.close()
+         return ("edit : " + str(sid) )
+    
+     except Exception as err:
+         cur.close()
+         return (str(err) + " " + sql)

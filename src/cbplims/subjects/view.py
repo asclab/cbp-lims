@@ -58,3 +58,75 @@ def view_subjects(sid):
      diagnoses = cbplims.subjects.view_subjects_diagnoses(sid)
      subject_study = cbplims.subjects.view_subjects_study(sid)
      return render_template("subjects/view.html",  subject=subject, diagnoses=diagnoses, subject_study = subject_study )
+
+@app.route("/subjects/<int:sid>/add_diagnosis" ,methods=['GET', 'POST']) 
+@requires_user
+def add_diagnosis_subjects(sid):
+      if request.method == 'GET':
+          subject = cbplims.subjects.view_subjects(sid)
+          diagnoses = cbplims.diagnoses.list_diagnoses()
+          return render_template("subjects/add_diagnosis.html",  subject=subject, diagnoses=diagnoses )
+      else:
+          diagnosis = request.form["diagnosis"]
+          days_from_primary = request.form["days_from_primary"]
+          recorded_date = request.form["recorded_date"]
+          is_primary = request.form["is_primary"]
+          msg = cbplims.subjects.add_diagnosis(sid,diagnosis,days_from_primary,recorded_date,is_primary)
+          return redirect('/subjects/'+str(sid)+'/view')
+     
+
+     
+@app.route("/subjects/<int:sid>/delete_diagnosis",  methods=['POST'])
+@requires_user
+def delete_diagnosis_subjects(sid):
+      if request.method == "POST":
+        msg = '--'
+        diagnosis_ids = request.form.getlist("diagnosis_ids")
+        if request.form["method"] == "Delete":
+            for did in diagnosis_ids:
+                cbplims.subjects.delete_diagnosis(sid,did)
+      return redirect('/subjects/'+str(sid)+'/view')
+     
+     
+@app.route("/subjects/<int:sid>/add_study" ,methods=['GET', 'POST']) 
+@requires_user
+def add_subject_study_subjects(sid):
+      if request.method == 'GET':
+          subject = cbplims.subjects.view_subjects(sid)
+          subject_study = cbplims.research_studies.list_research_studies()
+          return render_template("subjects/add_subject_study.html",  subject=subject, subject_study=subject_study )
+      else:
+          subject_study = request.form["subject_study"]
+          recorded_date = request.form["recorded_date"]
+          msg = cbplims.subjects.add_subject_study(sid,subject_study,recorded_date)
+          return redirect('/subjects/'+str(sid)+'/view')
+
+@app.route("/subjects/<int:sid>/delete_study",  methods=['POST'])
+@requires_user
+def delete_study(sid):
+      if request.method == "POST":
+        msg = '--'
+        study_ids = request.form.getlist("study_ids")
+        if request.form["method"] == "Delete":
+            for study in study_ids:
+                cbplims.subjects.delete_study(sid,study)
+      return redirect('/subjects/'+str(sid)+'/view')
+     
+
+@app.route("/subjects/<int:sid>/edit" ,methods=['GET', 'POST']) 
+@requires_user
+def edit_subjects(sid):
+     if request.method == 'GET':
+         projects = cbplims.projects.avail_projects()
+         subject_types = cbplims.subject_types.list_subject_types()
+         subject = cbplims.subjects.view_subjects(sid)
+         return render_template("subjects/edit.html", subject=subject, projects=projects, subject_types=subject_types )
+     else:
+         project_id = request.form["project"]
+         name = request.form["name"]
+         notes = request.form["notes"]
+         subject_types = request.form["subject_types"]
+         
+         msg = cbplims.subjects.edit_subjects(project_id,subject_types,name,notes,sid)
+         subjects = cbplims.subjects.list_subjects()
+         return render_template("subjects/list.html",  subjects=subjects )

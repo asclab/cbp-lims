@@ -1,0 +1,49 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Adding Diagnosis to {{subject.name}}</h2>
+ <br>
+  
+ 
+
+<hr>
+  <form action="/subjects/{{subject.id}}/add_diagnosis" method="POST">
+    <table>
+    <tr>
+        <td>Diagnosis</td>
+        <td>
+            <select name = "diagnosis">  
+             {% for d in diagnoses %}
+            <option value="{{d.id}}">
+                {{d.name}} 
+            </option>
+            {% endfor %}
+            </select>
+            
+        </td>
+    </tr>
+        <tr>
+        <td>Is this Primary</td>
+        <td>
+              <input type="radio" name="is_primary" value="false" checked> NO 
+              <input type="radio" name="is_primary" value="true"> YES 
+        </td>
+       </tr>
+    
+       <tr>
+        <td>Days From Primary</td>
+        <td><input type="number" name="days_from_primary"></td>
+       </tr>
+       
+        <tr>
+        <td>Recorded Date (yyyy-mm-dd)</td>
+        
+        <td><input type="text" name="recorded_date"></td>
+       </tr>
+    <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Diagnosis"/></td></tr>
+    </table>
+  
+  </form>
+  
+
+{% endblock %}
