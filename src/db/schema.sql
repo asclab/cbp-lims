@@ -201,16 +201,17 @@ CREATE TABLE subject_study (
 );
 
 -- sample_type
--- type of sample (liver, kidney, alignment, variant calling etc)
+-- type of sample (tissue, cells, etc)
+-- subtype can be stored in extra JSON fields (liver, kidney, alignment, variant calling etc)
 
 CREATE TABLE sample_types (
 	id SERIAL PRIMARY KEY,
 	project_id INTEGER NOT NULL REFERENCES projects(id),
 	name VARCHAR(255) NOT NULL,
 	description TEXT,
-	date_active DATE, -- date the sample was active?
     is_active BOOLEAN DEFAULT TRUE,
-	UNIQUE (project_id, name)
+	data JSON,
+    UNIQUE (project_id, name)
 );
 
 
@@ -270,7 +271,7 @@ INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1
 -- insert a test subject type
 INSERT INTO subject_types (project_id,name,fields) VALUES (1,'cell line','extra notes');
 -- insert sample types
-INSERT INTO sample_types (project_id,name,description,date_active) VALUES (1,'liver','test','01/01/1990');
+INSERT INTO sample_types (project_id,name,description) VALUES (1,'Tissue','none');
 -- insert test subject
 INSERT INTO subjects (project_id,subject_type_id,name,data,notes) VALUES(1,1,'1234','json','none');
 -- insert test subject_diagnoses

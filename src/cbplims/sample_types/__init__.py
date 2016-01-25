@@ -2,16 +2,17 @@ from collections import namedtuple
 from cbplims import app
 from flask import g
 
-Sample_types = namedtuple('Sample_types', 'id project_id name description date_active is_active project_name')
+Sample_types = namedtuple('Sample_types', 'id project_id name description is_active project_name data')
 
 
 def list_sample_types():
      cur = g.dbconn.cursor()
      sample_types = []
-     sql = ('Select d.id, d.project_id, d.name, d.description, d.date_active, d.is_active, p.name '
-           'FROM sample_types d Left JOIN projects p ON d.project_id = p.id;'
+     sql = ('Select d.id, d.project_id, d.name, d.description, d.is_active, p.name, d.data '
+           'FROM sample_types d Left JOIN projects p ON d.project_id = p.id '
+           'WHERE p.id = %s; '
           )
-     cur.execute(sql)
+     cur.execute(sql,(g.project.id,) )
      for record in cur:
         sample_types.append(Sample_types(*record))
      cur.close()    
@@ -20,7 +21,7 @@ def list_sample_types():
 def view_sample_types(rid):
      cur = g.dbconn.cursor()
      sample_types = []
-     sql = ('Select d.id, d.project_id, d.name, d.description, d.date_active, d.is_active, p.name '
+     sql = ('Select d.id, d.project_id, d.name, d.description, d.is_active, p.name, d.data '
            'FROM sample_types d Left JOIN projects p ON d.project_id = p.id WHERE d.id = %s ;'
           )
      cur.execute(sql,(rid,))

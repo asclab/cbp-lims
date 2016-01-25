@@ -19,7 +19,7 @@ def list_sample_types():
 def edit_sample_types(rid):
     if request.method == 'GET':
         sample_types = cbplims.sample_types.view_sample_types(rid)
-        projects = cbplims.projects.avail_projects()
+        projects = cbplims.projects.get_available_projects(g.user.id)
         return render_template("sample_types/edit.html", sample_types = sample_types, projects=projects )
     else:
         project_id = request.form["project"]
