@@ -38,9 +38,11 @@
         <tr>
           <td> Extra </td>
           <td>
+              {% if sample_types.data %}
               {% for i in sample_types.data%}
               <b>name:</b> {{i}} <b>type: </b>{{sample_types.data[i]}} <br>
               {% endfor %}
+              {% endif %}
           </td>
         </tr>
         

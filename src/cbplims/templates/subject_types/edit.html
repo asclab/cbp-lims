@@ -25,16 +25,63 @@
         </select>
         </td></tr>
       
+      <tr>
+            <td>Description</td>
+            <td><textarea rows="4" cols="50" name = "description">{{subject_types.description}}</textarea> </td>
+        </tr>
+      
+      
+      <tr>
+          <td> Extra </td>
+          <td>
+              {% if subject_types.data %}
+              {% for i in subject_types.data%}
+              <b>name:</b> {{i}} <b>type: </b>{{subject_types.data[i]}} <br>
+              {% endfor %}
+              {% endif %}
+          </td>
+        </tr>
+      
+      <tr>
+          <td> Add Extra Data</td>
+          <td>  <input type="number" name="data" id="data"> <button type="button" onclick="loadDoc()">Add</button> </td>
+        </tr>
         
         <tr>
-            <td>Fields</td>
-            <td><textarea rows="4" cols="50" name = "fields"> {{subject_types.fields}}  </textarea> </td>
+          <td> </td>
+          <td>  <div id="extra_here"></div> </td>
         </tr>
+      
         <tr><td>&nbsp; </td><td><br><input type="submit" value="Update Subject Types"/></td></tr>
     </table>
     
     
+<script>
+function loadDoc() {
+      
+      var data_pt = document.getElementById('data').value;
+      var types = "<option value = \"file\">file</option>"+
+                  "<option value = \"text\" selected>text</option>"+
+                  "<option value = \"number\">number</option>"
 
+
+      var extra = "<table> <tr><td>Name</td><td>Type</td></tr>"
+     
+          for (i = 1; i <= data_pt; i++) {
+           var temp = "<tr><td><input type=\"text\" "
+                       + "name=\"data_"+i+"\"" +" ></td> " +  
+                       "<td><select"+   " name=\"type_"+i+"\""+ ">"+types+"</select></td></tr>"
+
+           extra +=  temp;
+             }
+
+
+      extra += "</table>"
+      document.getElementById("extra_here").innerHTML = extra;
+    
+
+}
+</script>
 
   
 {% endblock %}

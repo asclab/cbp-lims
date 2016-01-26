@@ -4,6 +4,7 @@ from cbplims import app, requires_user, requires_admin
 
 import cbplims.projects
 import cbplims.subject_types
+import cbplims.sample_types
 
 @app.route("/subject_types/list") 
 @requires_user
@@ -16,15 +17,17 @@ def list_subject_types():
 def edit_subject_types(sid):
     if request.method == 'GET':
         subject_types = cbplims.subject_types.view_subject_types(sid)
-        projects = cbplims.projects.avail_projects()
+        projects = cbplims.projects.get_available_projects(g.user.id)
         return render_template("subject_types/edit.html", subject_types = subject_types, projects=projects )
     else:
         project_id = request.form["project"]
         name = request.form["name"]
-        fields = request.form["fields"]
+        description = request.form["description"]
+        f = request.form
+        extra = cbplims.sample_types.get_extra(f)
         
-        #return render_template("locations/temp.html", msg= str(name) + " -- " + str(project_id ) )
-        msg = cbplims.subject_types.edit_subject_types(sid,project_id,name,fields)
+        #return render_template("locations/temp.html", msg= str(name) + " -- " + str(extra ) )
+        msg = cbplims.subject_types.edit_subject_types(sid,project_id,name,description,extra)
         subject_types = cbplims.subject_types.list_subject_types()
         return render_template("subject_types/list.html", subject_types = subject_types, msg=msg )
     

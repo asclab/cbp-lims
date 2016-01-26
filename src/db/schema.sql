@@ -112,8 +112,9 @@ CREATE TABLE subject_types (
 	id SERIAL PRIMARY KEY,
 	project_id INTEGER NOT NULL REFERENCES projects(id),
 	name VARCHAR(255) NOT NULL,
+    description TEXT,
     is_active BOOLEAN DEFAULT TRUE,
-	fields TEXT -- what data can be stored (or needs to be) for this subject type
+	data JSON -- what data can be stored (or needs to be) for this subject type
 );
 
 
@@ -250,7 +251,9 @@ CREATE TABLE location (
 -- default root password is 'password' - you should chnage that.
 INSERT INTO users (username, fullname, password, is_global_admin) VALUES ('root', 'Global Admin', 'pbkdf2$42e34a6e0e22ad2bb256b69768761e67$c1b40e85590b87bc93f1a56374c67aaf8487537799f9a534bf0baa6b556e17d8', TRUE);
 -- for demo only 
-INSERT INTO projects (name,code) VALUES ('test_p1', 't1'); 
+INSERT INTO projects (name,code) VALUES ('test_p1', 't1');
+INSERT INTO groups (name, project_id, is_admin, is_view) VALUES ('admin 1',1,'TRUE','FALSE') RETURNING id;
+INSERT INTO user_groups (user_id,group_id) VALUES ('1','1');
 INSERT INTO location (project_id,name) VALUES ('1','Building1');
 INSERT INTO location (parent_id,project_id,name) VALUES ('1','1','SIM1');
 INSERT INTO location (parent_id,project_id,name) VALUES ('2','1','Fridge1');
@@ -269,7 +272,7 @@ INSERT INTO diagnoses (project_id,name) VALUES (1,'skin');
 -- insert a test diagnosis
 INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1,'universal','test insert please replace','01/01/1990');
 -- insert a test subject type
-INSERT INTO subject_types (project_id,name,fields) VALUES (1,'cell line','extra notes');
+INSERT INTO subject_types (project_id,name,description) VALUES (1,'cell line', 'none');
 -- insert sample types
 INSERT INTO sample_types (project_id,name,description) VALUES (1,'Tissue','none');
 -- insert test subject
