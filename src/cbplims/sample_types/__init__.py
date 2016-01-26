@@ -1,6 +1,6 @@
 from collections import namedtuple
 from cbplims import app
-from flask import g
+from flask import g, request
 
 Sample_types = namedtuple('Sample_types', 'id project_id name description is_active project_name data')
 
@@ -30,12 +30,12 @@ def view_sample_types(rid):
      cur.close()    
      return sample_types
     
-def edit_sample_types(rid,project_id,name,description,date):
+def edit_sample_types(rid,project_id,name,description,extra):
      cur = g.dbconn.cursor()
-     sql = "UPDATE sample_types SET project_id = %s ,name=%s, description=%s, date_active=%s WHERE id= %s ;"
+     sql = "UPDATE sample_types SET project_id = %s ,name=%s, description=%s, data=%s WHERE id= %s ;"
      
      try:
-         cur.execute(sql, (project_id,name,description, date, rid) )
+         cur.execute(sql, (project_id,name,description, extra, rid) )
          g.dbconn.commit()
          cur.close()
          return ("updated : " + str(name) )
@@ -71,3 +71,19 @@ def add_sample_types(project_id,name,description,date):
      except Exception as err:
          cur.close()
          return (str(err) + " " + sql)
+     
+def get_extra(f):
+      extra = "{"
+      i = 1
+      
+      for key in f.keys():
+           for value in f.getlist(key):
+              if "data_" in key:
+                  d = request.form[key]
+                  d2 = request.form["type_"+str(i)]
+                  extra = extra+ "\"" + d + "\"" +":"+ "\"" + d2 + "\","
+                  i = i+ 1
+      if extra:
+           extra = extra[:-1]
+           extra += "}"
+      return extra

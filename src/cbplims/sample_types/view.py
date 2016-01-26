@@ -25,9 +25,11 @@ def edit_sample_types(rid):
         project_id = request.form["project"]
         name = request.form["name"]
         description = request.form["description"]
-        date = request.form["date"]
-        #return render_template("locations/temp.html", msg= str(name) + " -- " + str(project_id ) )
-        msg = cbplims.sample_types.edit_sample_types(rid,project_id,name,description,date)
+        f = request.form
+        extra = cbplims.sample_types.get_extra(f)
+                    
+        #return render_template("locations/temp.html", msg= str(extra) + " -- " + str(project_id ) )
+        msg = cbplims.sample_types.edit_sample_types(rid,project_id,name,description,extra)
         sample_types = cbplims.sample_types.list_sample_types()
         return render_template("sample_types/list.html", sample_types = sample_types, msg=msg )
     
