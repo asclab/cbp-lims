@@ -8,9 +8,10 @@ def list_diagnoses():
     cur = g.dbconn.cursor()
     diagnoses = []
     sql = ('Select d.id, d.project_id, d.name, d.is_active, p.name '
-           'FROM diagnoses d Left JOIN projects p ON d.project_id = p.id;'
+           'FROM diagnoses d Left JOIN projects p ON d.project_id = p.id '
+           ' WHERE p.id = %s;'
           )
-    cur.execute(sql)
+    cur.execute(sql , (g.project.id,) )
     for record in cur:
         diagnoses.append(Diagnoses(*record))
     cur.close()    

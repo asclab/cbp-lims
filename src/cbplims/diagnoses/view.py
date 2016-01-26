@@ -18,7 +18,7 @@ def list_diagnoses():
 def edit_diagnoses(did):
     if request.method == 'GET':
         diagnosis = cbplims.diagnoses.view_diagnosis(did)
-        projects = cbplims.projects.avail_projects()
+        projects = cbplims.projects.get_available_projects(g.user.id)
         return render_template("diagnoses/edit.html", diagnosis = diagnosis, projects=projects )
     else:
         project_id = request.form["project"]
@@ -52,7 +52,7 @@ def state_diagnoses():
 @requires_user
 def add_diagnoses():
      if request.method == 'GET':
-         projects = cbplims.projects.avail_projects()
+         projects = cbplims.projects.get_available_projects(g.user.id)
          return render_template("diagnoses/add.html", projects=projects )
      else:
          project_id = request.form["project"]

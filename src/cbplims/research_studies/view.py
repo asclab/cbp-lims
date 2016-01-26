@@ -19,7 +19,7 @@ def list_research_studies():
 def edit_research_studies(rid):
     if request.method == 'GET':
         research_studies = cbplims.research_studies.view_research_studies(rid)
-        projects = cbplims.projects.avail_projects()
+        projects = cbplims.projects.get_available_projects(g.user.id)
         return render_template("research_studies/edit.html", research_studies = research_studies, projects=projects )
     else:
         project_id = request.form["project"]
@@ -53,7 +53,7 @@ def state_research_studies():
 @requires_user
 def add_research_studies():
      if request.method == 'GET':
-         projects = cbplims.projects.avail_projects()
+         projects = cbplims.projects.get_available_projects(g.user.id)
          return render_template("research_studies/add.html", projects=projects )
      else:
          project_id = request.form["project"]

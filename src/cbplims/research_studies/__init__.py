@@ -9,9 +9,10 @@ def list_research_studies():
      cur = g.dbconn.cursor()
      research_studies = []
      sql = ('Select d.id, d.project_id, d.name, d.description, d.date_active, d.is_active, p.name '
-           'FROM research_studies d Left JOIN projects p ON d.project_id = p.id;'
+           'FROM research_studies d Left JOIN projects p ON d.project_id = p.id '
+           ' WHERE p.id = %s; '
           )
-     cur.execute(sql)
+     cur.execute(sql ,(g.project.id,) )
      for record in cur:
         research_studies.append(Research_studies(*record))
      cur.close()    
