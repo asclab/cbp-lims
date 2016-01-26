@@ -56,12 +56,12 @@ def state(id, state):
         cur.close()
         return (str(err))
     
-def add_subject_types(project_id,name,fields):
+def add_subject_types(project_id,name,description):
      cur = g.dbconn.cursor()
-     sql = ('INSERT INTO subject_types (project_id,name,fields) VALUES(%s,%s,%s)  ;') 
+     sql = ('INSERT INTO subject_types (project_id,name,description) VALUES(%s,%s,%s)  ;') 
      
      try:
-         cur.execute(sql, (project_id,name,fields) )
+         cur.execute(sql, (project_id,name,description) )
          g.dbconn.commit()
          cur.close()
          return ("add : " + str(name) )

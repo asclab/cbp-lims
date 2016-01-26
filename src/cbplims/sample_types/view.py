@@ -55,15 +55,15 @@ def state_sample_types():
 @requires_user
 def add_sample_types():
      if request.method == 'GET':
-         projects = cbplims.projects.avail_projects()
+         projects = cbplims.projects.get_available_projects(g.user.id)
          return render_template("sample_types/add.html", projects=projects )
      else:
          project_id = request.form["project"]
          name = request.form["name"]
          description = request.form["description"]
-         date = request.form["date"]
          
-         msg = cbplims.sample_types.add_sample_types(project_id,name,description,date)
+         
+         msg = cbplims.sample_types.add_sample_types(project_id,name,description)
         
          sample_types = cbplims.sample_types.list_sample_types()
          return render_template("sample_types/list.html", sample_types = sample_types, msg=msg )

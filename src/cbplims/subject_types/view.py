@@ -53,15 +53,15 @@ def state_subject_types():
 @requires_user
 def add_subject_types():
      if request.method == 'GET':
-         projects = cbplims.projects.avail_projects()
+         projects = cbplims.projects.get_available_projects(g.user.id)
          return render_template("subject_types/add.html", projects=projects )
      else:
          project_id = request.form["project"]
          name = request.form["name"]
-         fields = request.form["fields"]
+         description = request.form["description"]
          
          
-         msg = cbplims.subject_types.add_subject_types(project_id,name,fields)
+         msg = cbplims.subject_types.add_subject_types(project_id,name,description)
         
          subject_types = cbplims.subject_types.list_subject_types()
          return render_template("subject_types/list.html", subject_types = subject_types, msg=msg )

@@ -58,12 +58,12 @@ def state(id, state):
         return (str(err))
     
     
-def add_sample_types(project_id,name,description,date):
+def add_sample_types(project_id,name,description):
      cur = g.dbconn.cursor()
-     sql = ('INSERT INTO sample_types (project_id,name,description,date_active) VALUES(%s,%s,%s,%s)  ;') 
+     sql = ('INSERT INTO sample_types (project_id,name,description) VALUES(%s,%s,%s)  ;') 
      
      try:
-         cur.execute(sql, (project_id,name,description,date) )
+         cur.execute(sql, (project_id,name,description) )
          g.dbconn.commit()
          cur.close()
          return ("add : " + str(name) )
