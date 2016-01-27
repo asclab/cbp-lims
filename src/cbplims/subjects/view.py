@@ -19,7 +19,7 @@ def list_subjects():
 @requires_user
 def add_subjects():
      if request.method == 'GET':
-         projects = cbplims.projects.avail_projects()
+         projects = cbplims.projects.get_available_projects(g.user.id)
          subject_types = cbplims.subject_types.list_subject_types()
      
          return render_template("subjects/add.html", projects=projects, subject_types=subject_types )
@@ -28,8 +28,11 @@ def add_subjects():
          name = request.form["name"]
          notes = request.form["notes"]
          subject_types = request.form["subject_types"]
-         
-         msg = cbplims.subjects.add_subjects(project_id,subject_types,name,notes)
+         f = request.form
+         files = request.files
+         extra = cbplims.subjects.get_extra(f, files, subject_types)
+         #return render_template("locations/temp.html", msg= str(name) + " -- " + str(extra ) )
+         msg = cbplims.subjects.add_subjects(project_id,subject_types,name,notes,extra)
          subjects = cbplims.subjects.list_subjects()
          return render_template("subjects/list.html", msg= msg, subjects=subjects )
      
@@ -117,7 +120,7 @@ def delete_study(sid):
 @requires_user
 def edit_subjects(sid):
      if request.method == 'GET':
-         projects = cbplims.projects.avail_projects()
+         projects = cbplims.projects.get_available_projects(g.user.id)
          subject_types = cbplims.subject_types.list_subject_types()
          subject = cbplims.subjects.view_subjects(sid)
          return render_template("subjects/edit.html", subject=subject, projects=projects, subject_types=subject_types )

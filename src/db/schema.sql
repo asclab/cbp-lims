@@ -128,8 +128,9 @@ CREATE TABLE subjects (
 	project_id INTEGER NOT NULL REFERENCES projects(id),
 	subject_type_id INTEGER NOT NULL REFERENCES subject_types(id),
 	name VARCHAR(255) NOT NULL,
-	data TEXT, -- age, sex, etc...
+	
 	notes TEXT,
+    data JSON, -- describes by subject_type data fields
     is_active BOOLEAN DEFAULT TRUE,
 	UNIQUE (project_id, name)
 );
@@ -276,7 +277,7 @@ INSERT INTO subject_types (project_id,name,description) VALUES (1,'cell line', '
 -- insert sample types
 INSERT INTO sample_types (project_id,name,description) VALUES (1,'Tissue','none');
 -- insert test subject
-INSERT INTO subjects (project_id,subject_type_id,name,data,notes) VALUES(1,1,'1234','json','none');
+INSERT INTO subjects (project_id,subject_type_id,name,notes) VALUES(1,1,'1234','none');
 -- insert test subject_diagnoses
 INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,1,0,1,'01/01/1990','true')
 INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,2,90000,1,'01/01/1990','false')

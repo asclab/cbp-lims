@@ -7,7 +7,7 @@
  
 
 <hr>
-  <form action="/subjects/add" method="POST">
+  <form action="/subjects/add" method="POST" enctype="multipart/form-data">
     <table>
         <tr>
             <td> Name </td> <td> <input type="text" name="name" id="name" ></td>
@@ -28,7 +28,8 @@
         <tr><td>Choose a Subject Type</td>
       
         <td>
-        <select name = "subject_types">  
+        <select name = "subject_types" id="subject_types" >
+          <option value="">Select</option>
              {% for st in subject_types %}
           <option value="{{st.id}}">
           {{st.name}}
@@ -37,17 +38,73 @@
         </select>
         </td></tr>
         
-    
+  
         
         <tr>
             <td>notes</td>
-            <td><textarea rows="4" cols="50" name = "notes">  </textarea> </td>
+            <td><textarea rows="4" cols="50" name = "notes"></textarea> </td>
         </tr>
-        <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Subject"/></td></tr>
+      
+  
+     <tr>
+          <td> Extra </td>
+          <td>
+            <div id="extra" name="extra">
+              
+            </div>
+          </td>
+    </tr>
+  
+    <tr><td>&nbsp; </td><td><br><input type="submit" value="Add Subject"/></td></tr>
     </table>
     
-    
 
+{% for st in subject_types %}
+              {% if st.data %}
+              <div id="q1_{{st.id}}" name="q1_{{st.id}}">
+              <hr><b>Extra fields for {{st.name}} <br><br></b>
+              {% for i in st.data%}
+              {% if st.data[i] == "file" %}
+              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"> <br><br>
+              {% else %}
+              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              {% endif %}
+              {% endfor %}
+              </div>
+              {% endif %}
+              {% endfor %}
+              
+
+<script type="text/javascript">
+  
+  function hideAll (){
+    
+ // hide all extra fields 
+  var inputs = document.getElementsByTagName("div");
+  for (x = 0 ; x < inputs.length ; x++){
+    myname = inputs[x].getAttribute("name");
+    
+    if (myname !== null && myname.indexOf("q1_") >= 0){
+     document.getElementById(myname).style.visibility = "hidden";
+    }
+    
+    
+  }
+  } // end hide fucntion
+  hideAll()
+// end hiding
+// now unhide extra fields but only for the ones where the user selects.
+
+document.getElementById("subject_types").onchange = function(e) {
+  var i = "q1_"+this[this.selectedIndex].value;
+  
+  document.getElementById("extra").innerHTML = document.getElementById(i).innerHTML
+  console.log(i);
+};
+
+
+
+    </script>
 
   
 {% endblock %}

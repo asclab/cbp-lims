@@ -1,30 +1,31 @@
 from collections import namedtuple
 from cbplims import app
-from flask import g
+from flask import g, request
 
-Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_id')
+Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_id data')
 
 
 def list_subjects():
      cur = g.dbconn.cursor()
      subjects = []
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id, s.data FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
-           ' LEFT JOIN subject_types st ON s.subject_type_id = st.id'
+           ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
+           ' WHERE p.id = %s;'
           )
-     cur.execute(sql)
+     cur.execute(sql ,(g.project.id,) )
      for record in cur:
         subjects.append(Subjects(*record))
      cur.close()    
      return subjects
 
 
-def add_subjects(project_id,subject_types,name,notes):
+def add_subjects(project_id,subject_types,name,notes,extra):
      cur = g.dbconn.cursor()
-     sql = ('INSERT INTO subjects (project_id,subject_type_id,name,notes) VALUES(%s,%s,%s,%s)  ;') 
+     sql = ('INSERT INTO subjects (project_id,subject_type_id,name,notes,data) VALUES(%s,%s,%s,%s,%s)  ;') 
      
      try:
-         cur.execute(sql, (project_id,subject_types,name,notes) )
+         cur.execute(sql, (project_id,subject_types,name,notes,extra) )
          g.dbconn.commit()
          cur.close()
          return ("add : " + str(name) )
@@ -49,7 +50,7 @@ def state(id, state):
     
 def view_subjects(id):
      cur = g.dbconn.cursor()
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id, s.data FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
            ' WHERE s.id = %s'
@@ -171,3 +172,33 @@ def edit_subjects(project_id,subject_types,name,notes,sid):
      except Exception as err:
          cur.close()
          return (str(err) + " " + sql)
+     
+
+def get_extra(f,files,subject_type):
+      uploads = 'uploads/'
+      extra = "{"
+      i = 1
+      
+      for key in f.keys():
+           detect = str(subject_type)+"_extra_"
+           
+           if detect in key:
+              d = request.form[key]
+              start = key.find(detect) + len(detect)     
+              extra = extra+ "\"" + key[start:] + "\"" +":"+ "\"" + str(d) + "\","
+              i = i+ 1
+      for key in files.keys():
+           detect = str(subject_type)+"_file_"
+           
+           if detect in key:
+              file = request.files[key]
+              file.save (str(uploads)+str(file.filename))
+              start = key.find(detect) + len(detect)     
+              extra = extra+ "\"" + key[start:] + "\"" +":"+ "\"" + str(file.filename) + "\","
+              i = i+ 1 
+        
+               
+      if extra:
+           extra = extra[:-1]
+           extra += "}"
+      return extra
