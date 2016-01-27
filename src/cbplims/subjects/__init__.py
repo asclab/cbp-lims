@@ -158,13 +158,17 @@ def delete_study(sid,study):
          return (str(err) + " " + sql)
         
  
-def edit_subjects(project_id,subject_types,name,notes,sid):
+def edit_subjects(project_id,subject_types,name,notes,sid,data):
      cur = g.dbconn.cursor()
-     
-     sql = ('UPDATE subjects SET project_id= %s, subject_type_id=%s,name=%s,notes=%s WHERE id=%s;') 
-     
+     if not data:
+           sql = ('UPDATE subjects SET project_id= %s, subject_type_id=%s,name=%s,notes=%s WHERE id=%s;')
+           cur.execute(sql, (project_id,subject_types,name,notes,sid) )
+     else:
+           sql = ('UPDATE subjects SET project_id= %s, subject_type_id=%s,name=%s,notes=%s, data=%s WHERE id=%s;')
+           
+           cur.execute(sql, (project_id,subject_types,name,notes,data,sid) )
      try:
-         cur.execute(sql, (project_id,subject_types,name,notes,sid) )
+         
          g.dbconn.commit()
          cur.close()
          return ("edit : " + str(sid) )
@@ -175,8 +179,10 @@ def edit_subjects(project_id,subject_types,name,notes,sid):
      
 
 def get_extra(f,files,subject_type):
-      uploads = 'uploads/'
-      extra = "{"
+      uploads = 'uploads/' # this is just temporary and will be moved to a global variable once its decided
+      # this function used for add and edit as such the first empty string this encounters it will skip everything
+      # in otherwords extra fields are always not null for every field
+      extra = ''
       i = 1
       
       for key in f.keys():
@@ -184,6 +190,8 @@ def get_extra(f,files,subject_type):
            
            if detect in key:
               d = request.form[key]
+              if not d:
+                return ""
               start = key.find(detect) + len(detect)     
               extra = extra+ "\"" + key[start:] + "\"" +":"+ "\"" + str(d) + "\","
               i = i+ 1
@@ -200,5 +208,6 @@ def get_extra(f,files,subject_type):
                
       if extra:
            extra = extra[:-1]
+           extra = "{"+extra
            extra += "}"
       return extra

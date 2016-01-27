@@ -129,7 +129,13 @@ def edit_subjects(sid):
          name = request.form["name"]
          notes = request.form["notes"]
          subject_types = request.form["subject_types"]
+         f = request.form
+         files = request.files
          
-         msg = cbplims.subjects.edit_subjects(project_id,subject_types,name,notes,sid)
+         extra = cbplims.subjects.get_extra(f, files, subject_types)
+         
+         #return render_template("locations/temp.html", msg= str(name) + " -- " + str(extra ) )
+         
+         msg = cbplims.subjects.edit_subjects(project_id,subject_types,name,notes,sid,extra)
          subjects = cbplims.subjects.list_subjects()
-         return render_template("subjects/list.html",  subjects=subjects )
+         return render_template("subjects/list.html",  subjects=subjects,msg=msg )

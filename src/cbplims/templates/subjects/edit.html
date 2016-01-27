@@ -7,7 +7,7 @@
  
 
 <hr>
-  <form action="/subjects/{{subject.id}}/edit" method="POST">
+  <form action="/subjects/{{subject.id}}/edit" method="POST" enctype="multipart/form-data">
     <table>
         <tr>
             <td> Name </td> <td> <input type="text" name="name" id="name" value="{{subject.name}}"></td>
