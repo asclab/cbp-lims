@@ -74,15 +74,16 @@ def add_sample_types(project_id,name,description):
      
 def get_extra(f):
       extra = "{"
-      i = 1
+      
       
       for key in f.keys():
            for value in f.getlist(key):
               if "data_" in key:
                   d = request.form[key]
-                  d2 = request.form["type_"+str(i)]
+                  start = key.find("data_") + len("data_")   
+                  d2 = request.form["type_"+str(key[start:])]
                   extra = extra+ "\"" + d + "\"" +":"+ "\"" + d2 + "\","
-                  i = i+ 1
+                  
       if extra:
            extra = extra[:-1]
            extra += "}"
