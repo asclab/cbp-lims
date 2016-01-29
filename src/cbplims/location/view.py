@@ -106,7 +106,8 @@ def edit_location(id):
         my_col = request.form["col"]
         location_name = request.form["location_name"]
         notes = request.form["notes"]
-        msg = cbplims.location.edit_location(id,project_id,my_row,my_col,location_name,notes)
+        is_storable = request.form["is_storable"]
+        msg = cbplims.location.edit_location(id,project_id,my_row,my_col,location_name,notes,is_storable)
         location = cbplims.location.view_location(id)
         route = "/location/"+str(location.parent_id)+"/list"
         return redirect(route) 

@@ -1,0 +1,254 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>Adding Samples</h2>
+  <b><font color="blue"><div id="subject_selected" name="subject_selected"></div></font></b>
+ <br>
+
+<form action="/samples/add" method="POST" enctype="multipart/form-data">
+<table>    
+<tr>
+    <td><br>Subject</td>
+    <td><br><input type="text" name="subject" id="subject"></td>
+    <td>
+        <div><label for="datec">Date Collection </label></div>
+		<div><input type="text" id="datec" name="datec"></div>
+    </td>
+</tr> 
+
+<tr>
+    <td>Samples</td>
+    <td><div id="samples" name="samples" style="display: none"></div></td>
+    <td></td>
+</tr> 
+
+<tr>
+    <td>Sample Type</td>
+    <td>
+        <select id="sample_type" name="sample_type">
+            <option>Select</option>
+            {% for s in sample_types %}
+            <option value="{{s.id}}">{{s.name}}</option>
+            {% endfor %}
+        </select>
+    </td>
+    <td></td>
+</tr> 
+
+<tr>
+          <td> Extra </td>
+          <td>
+            <div id="extra" name="extra">
+              
+            </div>
+          </td>
+          <td></td>
+    </tr>
+
+
+<tr>
+    <td><br>Location</td>
+    <td><br><input type="text" name="location" id="location"></td>
+    <td>
+        
+    </td>
+</tr>
+
+<tr>
+    <td></td>
+    <td><div id = "location_display"></div></td>
+    <td>
+        
+    </td>
+</tr>
+
+<tr>
+	<td><br><br><br>
+     <input type="hidden" id="parent_location_selected" name="parent_location_selected" value="">
+	</td>
+
+
+
+<tr><td>Notes</td><td><textarea rows="4" cols="50" name="notes"/> </textarea></td><td></td></tr>
+
+
+<td><input type="submit" value="Add Sample"/></td> <td></td></tr>
+
+<!-- <div id="location_dialog" name="location_dialog" style="display: none"></div> -->
+
+</table> 
+ 
+ 
+ {% for st in sample_types %}
+              {% if st.data %}
+              <div id="q1_{{st.id}}" name="q1_{{st.id}}">
+              <hr><b>Extra fields for {{st.name}} <br><br></b>
+              {% for i in st.data%}
+              {% if st.data[i] == "file" %}
+              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"> <br><br>
+              {% else %}
+              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              {% endif %}
+              {% endfor %}
+              </div>
+              {% endif %}
+              {% endfor %}
+ 
+ 
+ <!-- will move these up to main page someday-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+ 
+ <script>
+    $('[id^="q1_"]').hide();
+    $('#datec').datepicker();
+    $('#datec').datepicker().datepicker('setDate', new Date());
+// AUTOCOMPLETE STUFF
+
+    // get subject tags
+	var subjectTags = [
+      {% for s in subjects %}
+        "id:{{s.id}} name: {{s.name}} type: {{s.subject_types_name}}",  
+      {% endfor %}
+    ];
+    
+     $( "#subject" ).autocomplete({
+      source: subjectTags
+     });
+
+     // get all locations that are storable
+     
+     var location_storableTags = [
+      {% for l in location_storable %}
+        "{{l.id}}, name: {{l.name}}",  
+      {% endfor %}
+    ];
+      var location_aval = new Array()
+	  {% for l in location_storable %}
+        location_aval[{{l.id}}]="{{l.my_rows}}"+","+"{{l.my_cols}}" 
+      {% endfor %}
+	
+     $( "#location" ).autocomplete({
+      source: location_storableTags
+     });
+     
+     
+     
+     
+// draw out extra data
+// draw extra data for sample type
+// first hide to drawn out stuff
+  
+  
+document.getElementById("sample_type").onchange = function(e) {
+  var i = "q1_"+this[this.selectedIndex].value;
+   $('[id^="q1_"]').hide();
+  document.getElementById("extra").innerHTML = document.getElementById(i).innerHTML
+  //console.log(i);
+};
+
+
+// ajax call to get more info about a selected location
+
+$('#location').bind('blur', function() {
+		// get selected location id
+		  var l =  $('#location').val();
+          l = l.split(",");
+		  // set hidden parent_location_selected to l[0]
+		  $('#parent_location_selected').val(l[0]);
+           var txt = '<table border="1">';
+		   
+        $.getJSON('/samples/get_location_matrix', {
+          location: l[0]  }, // set as variables
+          function(data) {
+					// create an associative array of all the cells that are already taken
+					taken = new Array()
+					for (var t in data.is_used)  {
+					t= data.is_used[t]
+					taken[t[1].toString()+t[2].toString()] = t[3]
+					
+					}
+					// draw row
+					
+				    for (r = 1; r <= data.dim[0]; r++) {
+					    txt += "<tr>"
+						for (c = 1; c <= data.dim[1]; c++) {
+							if (r.toString()+c.toString() in taken) {
+                                txt += "<td>"+ taken[r.toString()+c.toString()]+ "</td>"
+                            }
+							else{
+								txt+='<td><input type="checkbox" name="location_use" value="'+r+"_"+c+'"></td>'
+								//txt += "<td>" + "empty"+ "</td>"
+							}
+						}
+						txt += "</tr>"
+						//txt = txt + i	
+					}
+        txt += "</table>"
+		// display location
+        $('#location_display').html("<hr>" + txt + "<hr>" );
+	
+		
+		}); // end ajax
+  
+         
+        return false;
+      
+      
+      
+      }); // end blur subject
+
+
+
+//$(document).on('change','#sample_type',function(){
+// });
+
+
+// ajax  to get more information
+
+ $('#subject').bind('blur', function() {
+		// gets list of samples associated with samples and returns a selector if there are any
+        
+        $.getJSON('/samples/get_child_samples', {
+          subject: $( "#subject" ).val()}, // set as variables
+          function(data) {
+				var txt = "";	
+				if (data.result == 0){
+					$("#samples").html("This subject does not have any samples");
+                    }
+				else{
+                    for (var x in data.result) {
+                    txt += "<option value =" + data.result[x][0] +">" +data.result[x] + "</option>"	
+                    
+                    }
+                txt = "<select id=\"sample_id\" name = \"sample_id\" multiple>"+txt+"</select>"
+                $("#samples").html(txt);    
+				console.log(data.result)
+                    }
+        }); // end ajax
+        
+        // display popup to select
+                $("#samples").dialog({
+                        width: 800,
+                        height: 500,
+                        position: ['center', 'top'],
+                        title: "Select samples please",
+                        buttons: {
+                            "Select and close": function () {
+                                $(this).dialog('close');
+                            }
+                            } // button
+                    }); // diaglog
+        // display subject
+        $("#subject_selected").html("Subject selected: " + $( "#subject" ).val() ); 
+        return false;
+      
+      
+      
+      }); // end blur subject
+
+     
+</script>
+   
+{% endblock %}

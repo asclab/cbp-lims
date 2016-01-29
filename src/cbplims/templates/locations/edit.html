@@ -26,6 +26,11 @@
       <tr><td>Col(s)</td><td><input type="number" name="col" value="{{location.my_cols}}"/></td></tr>
       <tr><td>Name</td><td><input type="text" name="location_name"/, value="{{location.name}}"></td></tr>
       <tr><td>Notes</td><td><textarea rows="4" cols="50" name="notes" value="location.notes"/> </textarea></td></tr>
+      <tr><td>Is this Storable? </td>
+      <td>
+        No <input type="radio" name="is_storable" value="FALSE" checked="checked">  Yes  <input type="radio" name="is_storable" value="TRUE"> 
+      </td>
+      </tr>
       <tr><td>&nbsp;</td><td><input type="submit" value="Update Location"/></td></tr>
     </table>
   

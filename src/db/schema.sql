@@ -2,7 +2,9 @@ DROP TABLE IF EXISTS meta;
 DROP TABLE IF EXISTS audit;
 
 DROP TABLE IF EXISTS user_groups;
-DROP TABLE IF EXISTS location;
+
+DROP TABLE  IF EXISTS  sample_parent_child CASCADE;
+DROP TABLE IF EXISTS  sample CASCADE;
 
 DROP TABLE IF EXISTS subject_diagnoses;
 DROP TABLE IF EXISTS subject_study;
@@ -20,7 +22,7 @@ DROP TABLE IF EXISTS diagnoses;
 DROP TABLE IF EXISTS research_studies;
 
 DROP TABLE IF EXISTS groups;
-
+DROP TABLE  IF EXISTS  location CASCADE;
 DROP TABLE IF EXISTS projects;
 DROP TABLE IF EXISTS users;
 
@@ -28,7 +30,9 @@ DROP TABLE IF EXISTS meta_kv;
 DROP TABLE IF EXISTS logger;
 DROP TYPE IF EXISTS LOGGER_LEVEL;
 
-DROP TABLE  IF EXISTS  location CASCADE;
+
+
+
 
 -- meta
 -- Random information about this database e.g. schema version
@@ -246,23 +250,45 @@ CREATE TABLE location (
     my_cols INTEGER DEFAULT 0,
     name VARCHAR(255) NOT NULL,
     notes TEXT,
-    is_active BOOLEAN DEFAULT TRUE
+    is_active BOOLEAN DEFAULT TRUE,
+    is_storable BOOLEAN DEFAULT FALSE
 );
 
+-- sample
+CREATE TABLE sample(
+
+    id SERIAL PRIMARY KEY, 
+    subject_id INT  REFERENCES  subjects(id), -- has diagnosis and research studies associated  
+    sampletype_id INT NOT NULL REFERENCES  sample_types(id), -- has additional data pertinent to the type of sample 
+    time_entered TIMESTAMP(2) DEFAULT (now() at time zone 'PST'), -- default time stamp when sample was enter    
+    date_collection date, 
+    users VARCHAR NOT NULL, -- automatic from session id g.user.id 
+    location_id INT REFERENCES  location(id), 
+    notes TEXT,
+    data JSON
+    );
+
+CREATE TABLE sample_parent_child(    
+    child  INT NOT NULL REFERENCES  sample(id) ,
+    parent INT NOT NULL REFERENCES  sample(id),
+    PRIMARY KEY (child, parent)
+    );
+    
+    
 -- default root password is 'password' - you should chnage that.
 INSERT INTO users (username, fullname, password, is_global_admin) VALUES ('root', 'Global Admin', 'pbkdf2$42e34a6e0e22ad2bb256b69768761e67$c1b40e85590b87bc93f1a56374c67aaf8487537799f9a534bf0baa6b556e17d8', TRUE);
 -- for demo only 
 INSERT INTO projects (name,code) VALUES ('test_p1', 't1');
 INSERT INTO groups (name, project_id, is_admin, is_view) VALUES ('admin 1',1,'TRUE','FALSE') RETURNING id;
 INSERT INTO user_groups (user_id,group_id) VALUES ('1','1');
-INSERT INTO location (project_id,name) VALUES ('1','Building1');
+INSERT INTO location (project_id,name) VALUES ('1','Stanford');
 INSERT INTO location (parent_id,project_id,name) VALUES ('1','1','SIM1');
 INSERT INTO location (parent_id,project_id,name) VALUES ('2','1','Fridge1');
 -- create a shelf with split into 2 rows and 4 columns
 INSERT INTO location (parent_id,project_id,name,my_rows,my_cols) VALUES ('3','1','Shelf1','2','4');
 -- create a box in row1, col1
 -- box is a 8x8 
-INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols) VALUES ('4','1','box123','1','1','8','8');
+INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols,is_storable) VALUES ('4','1','box123','1','1','8','8','TRUE');
 -- insert 2 tubes
 INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode1','1','1');
 INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode2','1','2');

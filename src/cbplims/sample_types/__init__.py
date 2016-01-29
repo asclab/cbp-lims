@@ -32,10 +32,17 @@ def view_sample_types(rid):
     
 def edit_sample_types(rid,project_id,name,description,extra):
      cur = g.dbconn.cursor()
-     sql = "UPDATE sample_types SET project_id = %s ,name=%s, description=%s, data=%s WHERE id= %s ;"
+     if not extra:
+           sql = "UPDATE sample_types SET project_id = %s ,name=%s, description=%s WHERE id= %s ;"
+           cur.execute(sql, (project_id,name,description, rid) )
+     else:
+           sql = "UPDATE sample_types SET project_id = %s ,name=%s, description=%s, data=%s WHERE id= %s ;"
+           cur.execute(sql, (project_id,name,description, extra, rid) )
+     
+     
      
      try:
-         cur.execute(sql, (project_id,name,description, extra, rid) )
+         
          g.dbconn.commit()
          cur.close()
          return ("updated : " + str(name) )
@@ -73,7 +80,7 @@ def add_sample_types(project_id,name,description):
          return (str(err) + " " + sql)
      
 def get_extra(f):
-      extra = "{"
+      extra = ""
       
       
       for key in f.keys():
@@ -85,6 +92,7 @@ def get_extra(f):
                   extra = extra+ "\"" + d + "\"" +":"+ "\"" + d2 + "\","
                   
       if extra:
+           extra = "{" + extra
            extra = extra[:-1]
            extra += "}"
       return extra

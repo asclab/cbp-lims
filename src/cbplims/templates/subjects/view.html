@@ -31,7 +31,9 @@
 
 {% endfor %}
 
+
 </table>
+
 </form>
 
 
@@ -52,5 +54,27 @@
 <tr><td>Research Study date:</td><td> {{ss.research_study_date}} </td></tr>
 {% endfor %}
 </table>
+
+<table>
+<tr bgcolor="#80aaff">
+    <td>Extra info</td><td></td></tr>
+    <tr>
+    <td>
+        <div id= "og">
+                {% if subject.data %}
+              {% for i in subject.data%}
+              {% if 'ang' in subject.data[i] %}
+               <img src="http://i.imgur.com/oJzTe5R.png"> <br>
+              {% else %}
+              <b>name:</b> {{i}} <b>value: </b>{{subject.data[i]}} <br>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+              </div>
+        
+    </td>
+</tr>
+</table>
+
 </form>
 {% endblock %}

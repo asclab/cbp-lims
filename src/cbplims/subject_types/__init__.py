@@ -31,10 +31,17 @@ def view_subject_types(sid):
     
 def edit_subject_types(sid,project_id,name,description,extra):
      cur = g.dbconn.cursor()
-     sql = "UPDATE subject_types SET project_id = %s ,name=%s, description=%s, data=%s  WHERE id= %s ;"
+     if not extra:
+           sql = "UPDATE subject_types SET project_id = %s ,name=%s, description=%s WHERE id= %s ;"
+           cur.execute(sql, (project_id,name,description,sid) )
+     else:
+           sql = "UPDATE subject_types SET project_id = %s ,name=%s, description=%s, data=%s  WHERE id= %s ;"
+           cur.execute(sql, (project_id,name,description,extra,sid) )
+     
+     
      
      try:
-         cur.execute(sql, (project_id,name,description,extra,sid) )
+         
          g.dbconn.commit()
          cur.close()
          return ("updated : " + str(name) )

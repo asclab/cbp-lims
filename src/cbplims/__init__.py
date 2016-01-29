@@ -310,6 +310,7 @@ import research_studies.view
 import subject_types.view
 import sample_types.view
 import subjects.view
+import samples.view
 if False:
     # no-op to avoid PEP8 warning
     print auth, projects

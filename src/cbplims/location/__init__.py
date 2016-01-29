@@ -36,6 +36,22 @@ def child_location(pid):
     cur.close()    
     return locations
 
+
+def child_location_simple(pid):
+    cur = g.dbconn.cursor()
+    Location = namedtuple('Location', 'id parent_row parent_col name')
+    locations = []
+    
+    sql = ('Select id, parent_row, parent_col, name '
+           'FROM location WHERE parent_id = %s; '
+           )
+    cur.execute(sql,(pid,))
+    for record in cur:
+        locations.append(Location(*record))
+
+    cur.close()    
+    return locations
+
 def get_grand(id):
      cur = g.dbconn.cursor()
      sql = 'SELECT parent_id FROM location WHERE id = %s'
@@ -86,7 +102,7 @@ def add_location(parent_id,in_row,in_col,project_id,my_row,my_col,name,notes):
     cur = g.dbconn.cursor()
      
     sql = ('INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols, notes) '
-           'VALUES (%s,%s,%s,%s,%s,%s,%s,%s) ;'
+           'VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id ;'
           )
     
     if in_row == "None":
@@ -97,25 +113,27 @@ def add_location(parent_id,in_row,in_col,project_id,my_row,my_col,name,notes):
     try:
         cur.execute(sql,(parent_id,project_id,name,in_row,in_col,my_row,my_col,notes))
         g.dbconn.commit()
+        row = cur.fetchone()
+        l_id = row[0]
         cur.close()
-        return ("added new location: " )
+        return (l_id)
     
     except Exception as err:
         cur.close()
         return (str(err) + " " + sql)  
 
 
-def edit_location(id,project_id,my_row,my_col,location_name,notes):
+def edit_location(id,project_id,my_row,my_col,location_name,notes, is_storable):
     cur = g.dbconn.cursor()
      
-    sql = ('UPDATE location SET project_id = %s,name=%s, my_rows=%s,my_cols=%s, notes=%s '
-           ' WHERE id=%s ;'
+    sql = ('UPDATE location SET project_id = %s,name=%s, my_rows=%s,my_cols=%s, notes=%s, '
+           ' is_storable=%s WHERE id=%s ;'
           )
     
         
     
     try:
-        cur.execute(sql,(project_id,location_name,my_row,my_col,notes,id))
+        cur.execute(sql,(project_id,location_name,my_row,my_col,notes,is_storable,id))
         g.dbconn.commit()
         cur.close()
         return ("edited location: " )
@@ -123,3 +141,16 @@ def edit_location(id,project_id,my_row,my_col,location_name,notes):
     except Exception as err:
         cur.close()
         return (str(err) + " " + sql)
+    
+def list_location_storable():
+    cur = g.dbconn.cursor()
+    locations = []
+    sql = ('Select id, parent_id, parent_row, parent_col, my_rows, my_cols, name, notes '
+           ' FROM location WHERE is_storable = \'TRUE\' AND is_active = \'TRUE\'; '
+          )
+    cur.execute(sql)
+    Location = namedtuple('Location', 'id parent_id parent_row parent_col my_rows my_cols name notes')
+    for record in cur:
+        locations.append(Location(*record))
+    cur.close()    
+    return locations
