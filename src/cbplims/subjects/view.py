@@ -31,7 +31,7 @@ def add_subjects():
          f = request.form
          files = request.files
          extra = cbplims.subjects.get_extra(f, files, subject_types)
-         #return render_template("locations/temp.html", msg= str(name) + " -- " + str(extra ) )
+         #return render_template("locations/temp.html", msg= str(name) + " -view- " + str(extra ) )
          msg = cbplims.subjects.add_subjects(project_id,subject_types,name,notes,extra)
          subjects = cbplims.subjects.list_subjects()
          return render_template("subjects/list.html", msg= msg, subjects=subjects )

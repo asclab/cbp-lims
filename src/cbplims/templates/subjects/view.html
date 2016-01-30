@@ -63,8 +63,8 @@
         <div id= "og">
                 {% if subject.data %}
               {% for i in subject.data%}
-              {% if 'ang' in subject.data[i] %}
-               <img src="http://i.imgur.com/oJzTe5R.png"> <br>
+              {% if 'image_file' in i %}
+               <img src="data:image;base64,{{subject.data[i]}}"> <br>
               {% else %}
               <b>name:</b> {{i}} <b>value: </b>{{subject.data[i]}} <br>
               {% endif %}

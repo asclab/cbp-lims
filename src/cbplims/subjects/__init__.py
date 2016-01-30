@@ -1,6 +1,7 @@
 from collections import namedtuple
 from cbplims import app
-from flask import g, request
+from flask import g, request, render_template
+import base64
 
 Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_id data')
 
@@ -200,11 +201,20 @@ def get_extra(f,files,subject_type):
            
            if detect in key:
               file = request.files[key]
-              file.save (str(uploads)+str(file.filename))
-              start = key.find(detect) + len(detect)     
-              extra = extra+ "\"" + key[start:] + "\"" +":"+ "\"" + str(file.filename) + "\","
+              filename = file.filename
+              file.save (str(file.name))
+              #start = key.find(detect) + len(detect)
+              # store the key as the file type instead
+              filename = file.filename
+              start = filename.find(".") 
+              # encode to base64
+              with open(file.name, "rb") as imageFile:
+                    b64_str = base64.b64encode(imageFile.read())
+              # images can be used as is without decoding - let the browser do it. 
+              extra = extra+ "\"" + "image_file" + "\"" +":"+ "\"" + str(b64_str) + "\","
               i = i+ 1 
-        
+      #return render_template("locations/temp.html", msg= " -image- --" + str(extra), img=b64_str )
+   
                
       if extra:
            extra = extra[:-1]
