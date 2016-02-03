@@ -21,10 +21,13 @@
         </select>
       
         </td></tr>
-        <tr><td>Is this a matrix</td><td></td></tr>
+        <tr><td colspan="2">Fill out row(s) and col(s) if this storage is a matrix</td></tr>
       <tr><td>Row(s)</td><td><input type="number" name="row" value="0"/></td></tr>
       <tr><td>Col(s)</td><td><input type="number" name="col" value="0"/></td></tr>
       <tr><td>Name</td><td><input type="text" name="location_name"/></td></tr>
+      <tr><td>Is this a primary storage unit?</td>
+      <td>No<input type="radio" name="is_primary" value="no" checked>
+          Yes<input type="radio" name="is_primary" value="yes">   </td> </tr>
       <tr><td>Notes</td><td><textarea rows="4" cols="50" name="notes"/> </textarea></td></tr>
       <tr><td>&nbsp;</td><td><input type="submit" value="Add Location"/></td></tr>
     </table>

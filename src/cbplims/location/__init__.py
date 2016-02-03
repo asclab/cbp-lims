@@ -1,7 +1,7 @@
 from collections import namedtuple
 from cbplims import app
 from flask import g
-Location = namedtuple('Location', 'id parent_id parent_row parent_col project_id my_rows my_cols name notes project_name is_active')
+Location = namedtuple('Location', 'id parent_id parent_row parent_col project_id my_rows my_cols name notes project_name is_active is_storable')
 
 def dim_location(id):
     cur = g.dbconn.cursor()
@@ -20,17 +20,23 @@ def child_location(pid):
     cur = g.dbconn.cursor()
     locations = []
     if pid == 0:
-        sql = ('Select l.id, l.parent_id, l.parent_row, l.parent_col, l.project_id, l.my_rows, l.my_cols, l.name, l.notes, p.name, l.is_active '
-               'from location l Left JOIN projects p ON l.project_id = p.id where l.parent_id IS NULL;'
+        sql = ('SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
+               'l.is_active,is_storable  ' 
+               'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
+               'LEFT JOIN projects p ON lp.project_id = p.id '
+               'WHERE l.parent_id IS NULL AND p.id = %s;'
                )
-        cur.execute(sql)
+        cur.execute(sql, (g.project.id,))
         for record in cur:
             locations.append(Location(*record))
     else:
-        sql = ('Select l.id, l.parent_id, l.parent_row, l.parent_col, l.project_id, l.my_rows, l.my_cols, l.name, l.notes, p.name, l.is_active '
-               'from location l Left JOIN projects p ON l.project_id = p.id where l.parent_id = %s;'
+        sql = ('SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
+               'l.is_active,is_storable  ' 
+               'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
+               'LEFT JOIN projects p ON lp.project_id = p.id '
+               'WHERE l.parent_id = %s AND p.id = %s ; '
               )
-        cur.execute(sql,(pid,))
+        cur.execute(sql,(pid,g.project.id))
         for record in cur:
             locations.append(Location(*record))
     cur.close()    
@@ -64,8 +70,11 @@ def get_grand(id):
 def list_location(id):
     cur = g.dbconn.cursor()
     locations = []
-    sql = ('Select l.id, l.parent_id, l.parent_row, l.parent_col, l.project_id, l.my_rows, l.my_cols, l.name, l.notes, p.name, l.is_active '
-           'from location l Left JOIN projects p ON l.project_id = p.id where l.id = %s;'
+    sql = ('SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
+            'l.is_active,is_storable  ' 
+            'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
+            'LEFT JOIN projects p ON lp.project_id = p.id '
+            'WHERE l.id = %s;'
           )
     cur.execute(sql,(id,))
     for record in cur:
@@ -89,8 +98,11 @@ def change_state_location(id, state):
     
 def view_location(id):
     cur = g.dbconn.cursor()
-    sql = ('Select l.id, l.parent_id, l.parent_row, l.parent_col, l.project_id, l.my_rows, l.my_cols, l.name, l.notes, p.name, l.is_active '
-           'from location l Left JOIN projects p ON l.project_id = p.id where l.id = %s;'
+    sql = ( 'SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
+            'l.is_active,is_storable  ' 
+            'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
+            'LEFT JOIN projects p ON lp.project_id = p.id '   
+            ' WHERE l.id = %s;'
           )
     cur.execute(sql,(id,))
     record = cur.fetchone()
@@ -98,11 +110,11 @@ def view_location(id):
     cur.close()    
     return location
 
-def add_location(parent_id,in_row,in_col,project_id,my_row,my_col,name,notes):
+def add_location(parent_id,in_row,in_col,my_row,my_col,name,notes):
     cur = g.dbconn.cursor()
      
-    sql = ('INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols, notes) '
-           'VALUES (%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id ;'
+    sql = ('INSERT INTO location (parent_id,name,parent_row,parent_col,my_rows,my_cols, notes) '
+           'VALUES (%s,%s,%s,%s,%s,%s,%s) RETURNING id ;'
           )
     
     if in_row == "None":
@@ -111,8 +123,8 @@ def add_location(parent_id,in_row,in_col,project_id,my_row,my_col,name,notes):
         
     
     try:
-        cur.execute(sql,(parent_id,project_id,name,in_row,in_col,my_row,my_col,notes))
-        g.dbconn.commit()
+        cur.execute(sql,(parent_id,name,in_row,in_col,my_row,my_col,notes))
+        #g.dbconn.commit()
         row = cur.fetchone()
         l_id = row[0]
         cur.close()

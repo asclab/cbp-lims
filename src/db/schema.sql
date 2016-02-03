@@ -22,8 +22,10 @@ DROP TABLE IF EXISTS diagnoses;
 DROP TABLE IF EXISTS research_studies;
 
 DROP TABLE IF EXISTS groups;
+DROP TABLE IF EXISTS location_project; 
 DROP TABLE  IF EXISTS  location CASCADE;
 DROP TABLE IF EXISTS projects;
+
 DROP TABLE IF EXISTS users;
 
 DROP TABLE IF EXISTS meta_kv;
@@ -245,7 +247,6 @@ CREATE TABLE location (
     parent_id INTEGER REFERENCES location(id),
     parent_row INTEGER,
     parent_col INTEGER,
-    project_id INTEGER NOT NULL REFERENCES projects(id),
     my_rows INTEGER DEFAULT 0,
     my_cols INTEGER DEFAULT 0,
     name VARCHAR(255) NOT NULL,
@@ -273,6 +274,12 @@ CREATE TABLE sample_parent_child(
     parent INT NOT NULL REFERENCES  sample(id),
     PRIMARY KEY (child, parent)
     );
+
+CREATE TABLE location_project(
+    location_id INT NOT NULL REFERENCES  location(id),
+    project_id INT NOT NULL REFERENCES  projects(id),
+    PRIMARY KEY (location_id, project_id)
+);
     
     
 -- default root password is 'password' - you should chnage that.
@@ -281,17 +288,30 @@ INSERT INTO users (username, fullname, password, is_global_admin) VALUES ('root'
 INSERT INTO projects (name,code) VALUES ('test_p1', 't1');
 INSERT INTO groups (name, project_id, is_admin, is_view) VALUES ('admin 1',1,'TRUE','FALSE') RETURNING id;
 INSERT INTO user_groups (user_id,group_id) VALUES ('1','1');
-INSERT INTO location (project_id,name) VALUES ('1','Stanford');
-INSERT INTO location (parent_id,project_id,name) VALUES ('1','1','SIM1');
-INSERT INTO location (parent_id,project_id,name) VALUES ('2','1','Fridge1');
+
+INSERT INTO location (name) VALUES ('Stanford');
+INSERT INTO location_project (location_id,project_id) VALUES (1,1);
+
+INSERT INTO location (parent_id,name) VALUES ('1','SIM1');
+INSERT INTO location_project (location_id,project_id) VALUES (2,1);
+
+INSERT INTO location (parent_id,name) VALUES ('2','Fridge1');
+INSERT INTO location_project (location_id,project_id) VALUES (3,1);
+
+
 -- create a shelf with split into 2 rows and 4 columns
-INSERT INTO location (parent_id,project_id,name,my_rows,my_cols) VALUES ('3','1','Shelf1','2','4');
+INSERT INTO location (parent_id,name,my_rows,my_cols) VALUES ('3','Shelf1','2','4');
+INSERT INTO location_project (location_id,project_id) VALUES (4,1);
 -- create a box in row1, col1
 -- box is a 8x8 
-INSERT INTO location (parent_id,project_id,name,parent_row,parent_col,my_rows,my_cols,is_storable) VALUES ('4','1','box123','1','1','8','8','TRUE');
+INSERT INTO location (parent_id,name,parent_row,parent_col,my_rows,my_cols,is_storable) VALUES ('4','box123','1','1','8','8','TRUE');
+INSERT INTO location_project (location_id,project_id) VALUES (5,1);
 -- insert 2 tubes
-INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode1','1','1');
-INSERT INTO location (parent_id,project_id,name,parent_row,parent_col) VALUES ('5','1','barcode2','1','2');
+INSERT INTO location (parent_id,name,parent_row,parent_col) VALUES ('5','barcode1','1','1');
+INSERT INTO location_project (location_id,project_id) VALUES (6,1);
+
+INSERT INTO location (parent_id,name,parent_row,parent_col) VALUES ('5','barcode2','1','2');
+INSERT INTO location_project (location_id,project_id) VALUES (7,1);
 
 -- insert a test diagnosis
 INSERT INTO diagnoses (project_id,name) VALUES (1,'normal');

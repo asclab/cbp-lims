@@ -8,9 +8,8 @@ import cbplims.users
 @app.route("/location/<int:pid>/list") 
 @requires_user
 def list_location(pid):
-    dim = cbplims.location.dim_location(pid)
     locations = cbplims.location.child_location(pid)
-    return render_template("locations/list.html",locations=locations, dim=dim )
+    return render_template("locations/list.html",locations=locations)
 
 @app.route("/location/<int:pid>/list_back") 
 @requires_user
@@ -83,8 +82,17 @@ def add_location(id):
         my_row = request.form["row"]
         my_col = request.form["col"]
         location_name = request.form["location_name"]
+        is_primary = request.form["is_primary"]
         notes = request.form["notes"]
-        msg = cbplims.location.add_location(id,in_row,in_col,project_id,my_row,my_col,location_name,notes)
+        
+        
+        # add to location directly
+        if (is_primary == "yes"):
+            id = None
+        # now add to location_project
+        
+        msg = cbplims.location.add_location(id,in_row,in_col,my_row,my_col,location_name,notes)
+        return render_template("locations/temp.html", msg=str(msg) + " :: " + str(is_primary)   )
         if in_row >0 or in_col > 0:
             route = "/location/"+str(id)+"/matrix"
         else:
