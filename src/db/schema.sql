@@ -24,7 +24,8 @@ DROP TABLE IF EXISTS research_studies;
 DROP TABLE IF EXISTS groups;
 DROP TABLE IF EXISTS location_project; 
 DROP TABLE  IF EXISTS  location CASCADE;
-DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS projects_top; 
 
 DROP TABLE IF EXISTS users;
 
@@ -86,6 +87,14 @@ CREATE TABLE projects (
     data JSON, -- arbitrary configuration values
 	UNIQUE (parent_id, name)
  );
+
+-- keeps track of which is the top tier project
+
+CREATE TABLE projects_top (
+    top_project INTEGER REFERENCES projects(id),
+    project_id INTEGER REFERENCES projects(id),
+    UNIQUE (top_project, project_id)
+);
 
 -- groups
 -- groups are the primary unit of authorization
@@ -286,6 +295,7 @@ CREATE TABLE location_project(
 INSERT INTO users (username, fullname, password, is_global_admin) VALUES ('root', 'Global Admin', 'pbkdf2$42e34a6e0e22ad2bb256b69768761e67$c1b40e85590b87bc93f1a56374c67aaf8487537799f9a534bf0baa6b556e17d8', TRUE);
 -- for demo only 
 INSERT INTO projects (name,code) VALUES ('test_p1', 't1');
+INSERT INTO projects_top (top_project,project_id) VALUES ('1','1');
 INSERT INTO groups (name, project_id, is_admin, is_view) VALUES ('admin 1',1,'TRUE','FALSE') RETURNING id;
 INSERT INTO user_groups (user_id,group_id) VALUES ('1','1');
 

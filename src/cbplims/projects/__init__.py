@@ -67,15 +67,28 @@ def view_project(project_id):
 
 def new_project(name, code, parent_id=-1):
     cur = g.dbconn.cursor()
-    # no parents
+    
     try:
         if int(parent_id) == -1:
             cur.execute('INSERT INTO projects (name,code) VALUES (%s,%s) RETURNING id', (name, code))
+            row = cur.fetchone()
+            project_id = row[0]
+            cur.execute('INSERT INTO projects_top (top_project,project_id) VALUES (%s,%s)', (project_id,project_id) )
         else:
             cur.execute('INSERT INTO projects (name, parent_id, code) VALUES (%s, %s, %s) RETURNING id', (name, parent_id, code))
-        row = cur.fetchone()
-        project_id = row[0]
+            row = cur.fetchone()
+            project_id = row[0]
+            # get top tier project from parent
+            cur.execute('SELECT top_project FROM projects_top WHERE project_id = %s', (parent_id,) )
+            top_project = cur.fetchone()
+            cur.execute('INSERT INTO projects_top (top_project,project_id) VALUES (%s,%s)', (top_project[0],project_id) )
+        
+        # add top tier location
+        
+        
         app.logger.debug("New project: %s (%s)", project_id, name)
+        
+        # auto insert a group admin and add user 
         cur.execute('INSERT INTO groups (name, project_id, is_admin) VALUES (%s, %s, TRUE) RETURNING id', ('%s Admins' % name, project_id))
         row = cur.fetchone()
         group_id = row[0]
