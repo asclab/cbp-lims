@@ -19,6 +19,7 @@ def dim_location(id):
 def child_location(pid):
     cur = g.dbconn.cursor()
     locations = []
+    # you can only add to location
     if pid == 0:
         sql = ('SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
                'l.is_active,is_storable  ' 
