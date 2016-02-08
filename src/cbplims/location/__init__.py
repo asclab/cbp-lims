@@ -22,9 +22,8 @@ def child_location(pid):
     # you can only add to location
     if pid == 0:
         sql = ('SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
-               'l.is_active,is_storable  ' 
-               'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
-               'LEFT JOIN projects p ON lp.project_id = p.id '
+               'l.is_active,is_storable FROM location l ' 
+               'LEFT JOIN projects p ON l.project_id = p.id '
                'WHERE l.parent_id IS NULL AND p.id = %s;'
                )
         cur.execute(sql, (g.project.id,))
@@ -32,9 +31,8 @@ def child_location(pid):
             locations.append(Location(*record))
     else:
         sql = ('SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
-               'l.is_active,is_storable  ' 
-               'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
-               'LEFT JOIN projects p ON lp.project_id = p.id '
+               'l.is_active,is_storable FROM location l ' 
+               'LEFT JOIN projects p ON l.project_id = p.id '
                'WHERE l.parent_id = %s AND p.id = %s ; '
               )
         cur.execute(sql,(pid,g.project.id))
@@ -101,8 +99,8 @@ def view_location(id):
     cur = g.dbconn.cursor()
     sql = ( 'SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
             'l.is_active,is_storable  ' 
-            'FROM location l LEFT JOIN location_project lp ON l.id = lp.location_id '
-            'LEFT JOIN projects p ON lp.project_id = p.id '   
+            'FROM location l '
+            'LEFT JOIN projects p ON l.project_id = p.id '   
             ' WHERE l.id = %s;'
           )
     cur.execute(sql,(id,))
