@@ -16,7 +16,7 @@
         <td>
         <select name = "project">  
              {% for p in projects %}
-          <option value="{{p.id}}">{{p.name}} :: {{p.code}}</option>
+          <option value="{{p[0]}}">{{p[1]}}</option>
           {% endfor %}
         </select>
       
@@ -28,6 +28,12 @@
       <tr><td>Is this a primary storage unit?</td>
       <td>No<input type="radio" name="is_primary" value="no" checked>
           Yes<input type="radio" name="is_primary" value="yes">   </td> </tr>
+      
+      <tr><td>Is this a storable location?</td>
+      <td>No<input type="radio" name="is_storable" value="no" checked>
+          Yes<input type="radio" name="is_storable" value="yes">   </td> </tr>
+      
+      
       <tr><td>Notes</td><td><textarea rows="4" cols="50" name="notes"/> </textarea></td></tr>
       <tr><td>&nbsp;</td><td><input type="submit" value="Add Location"/></td></tr>
     </table>

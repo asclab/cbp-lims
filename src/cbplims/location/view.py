@@ -8,7 +8,9 @@ import cbplims.users
 @app.route("/location/<int:pid>/list") 
 @requires_user
 def list_location(pid):
-    locations = cbplims.location.child_location(pid)
+    # get id of top_tier project 
+    top_project_id = cbplims.projects.get_top_project_id(g.project.id)
+    locations = cbplims.location.child_location(pid, top_project_id)
     return render_template("locations/list.html",locations=locations)
 
 @app.route("/location/<int:pid>/list_back") 
@@ -67,13 +69,15 @@ def state_locations():
 def add_location(id):
     if request.method == 'GET':
         location = cbplims.location.view_location(id)
+        # projects that are listed will contain all projects under the top_tier project
+        projects = cbplims.projects.view_toptier(g.project.id)
         if request.args.get('row') >0 or request.args.get('col') > 0:
             in_row = request.args.get('row')
             in_col = request.args.get('col')
         else:
             in_row = 'None'
             in_col = 'None'
-        projects = cbplims.projects.avail_projects()
+        
         return render_template("locations/add.html",projects=projects,location=location,in_row=in_row,in_col=in_col )
     else:
         in_row = request.form["in_row"]
@@ -83,6 +87,7 @@ def add_location(id):
         my_col = request.form["col"]
         location_name = request.form["location_name"]
         is_primary = request.form["is_primary"]
+        is_storable = request.form["is_storable"]
         notes = request.form["notes"]
         
         
@@ -91,8 +96,8 @@ def add_location(id):
             id = None
         # now add to location_project
         
-        msg = cbplims.location.add_location(id,in_row,in_col,my_row,my_col,location_name,notes)
-        return render_template("locations/temp.html", msg=str(msg) + " :: " + str(is_primary)   )
+        msg = cbplims.location.add_location(id,in_row,in_col,my_row,my_col,location_name,notes,project_id,is_storable)
+        #return render_template("locations/temp.html", msg=str(msg) + " :: " + str(is_storable)   )
         if in_row >0 or in_col > 0:
             route = "/location/"+str(id)+"/matrix"
         else:

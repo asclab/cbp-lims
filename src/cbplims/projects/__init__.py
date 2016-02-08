@@ -63,7 +63,32 @@ def view_project(project_id):
         return (Project2(*record))
     
     return None
-    
+
+
+# get top_tier project for current project only
+
+def get_top_project_id(project_id):
+    cur = g.dbconn.cursor()
+    sql = 'SELECT top_project, project_id FROM projects_top WHERE project_id = %s '
+    cur.execute (sql,(project_id,))
+    p = cur.fetchone()
+    return p[0]
+# gets all top_tier project for current project and returns all the projects associated with it.
+
+def view_toptier (project_id):
+    cur = g.dbconn.cursor()
+    sql = 'SELECT top_project, project_id FROM projects_top WHERE project_id = %s '
+    cur.execute (sql,(project_id,))
+    p = cur.fetchone()
+    sql = ('SELECT t.top_project, p.name, t.project_id FROM projects_top t ' 
+               'LEFT JOIN projects p ON t.project_id = p.id '
+               'WHERE top_project = %s ; '
+              )
+    cur.execute (sql,(p[0],))
+    projects =[]
+    for record in cur:
+        projects.append([record[2],record[1]])
+    return projects
 
 def new_project(name, code, parent_id=-1):
     cur = g.dbconn.cursor()
