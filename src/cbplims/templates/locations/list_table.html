@@ -3,7 +3,7 @@
 
   <h2>Here are the locations</h2>
 <div class="msg">{{msg}}</div>
-{% if not locations %}
+{% if not dim %}
     <div class="msg"> You were at the last location </div>
 {% else %}
 
@@ -16,7 +16,7 @@
       <input type="submit" name="method" value="Enable"/>
     </div>
     <div style="float:right;">
-
+       <a href="/location/{{back}}/list_back"> Back </a>
     </div>
   </div>
 <br>
