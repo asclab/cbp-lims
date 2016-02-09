@@ -260,6 +260,7 @@ CREATE TABLE location (
     my_rows INTEGER DEFAULT 0,
     my_cols INTEGER DEFAULT 0,
     name VARCHAR(255) NOT NULL,
+    barcode VARCHAR(35),
     notes TEXT,
     is_active BOOLEAN DEFAULT TRUE,
     is_storable BOOLEAN DEFAULT FALSE
@@ -298,16 +299,16 @@ INSERT INTO user_groups (user_id,group_id) VALUES ('1','1');
 -- location
 INSERT INTO location (name,project_id) VALUES ('Stanford','1');
 INSERT INTO location (parent_id,name,project_id) VALUES ('1','SIM1','1');
-INSERT INTO location (parent_id,name,project_id) VALUES ('2','Fridge1','1');
+INSERT INTO location (parent_id,name,project_id,barcode) VALUES ('2','Fridge1','1', md5('1'));
 
 -- create a shelf with split into 2 rows and 4 columns
-INSERT INTO location (parent_id,name,project_id,my_rows,my_cols) VALUES ('3','Shelf1','1','2','4');
+INSERT INTO location (parent_id,name,project_id,my_rows,my_cols,barcode) VALUES ('3','Shelf1','1','2','4', md5('te'));
 -- create a box in row1, col1
 -- box is a 8x8 
-INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,my_rows,my_cols,is_storable) VALUES ('4','box123','1','1','1','8','8','TRUE');
+INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,my_rows,my_cols,is_storable,barcode) VALUES ('4','box123','1','1','1','8','8','TRUE', md5(now()::text));
 -- insert 2 tubes
-INSERT INTO location (parent_id,name,project_id,parent_row,parent_col) VALUES ('5','barcode1','1','1','1');
-INSERT INTO location (parent_id,name,project_id,parent_row,parent_col) VALUES ('5','barcode2','1','1','2');
+INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,barcode) VALUES ('5','barcode1','1','1','1', md5('la'));
+INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,barcode) VALUES ('5','barcode2','1','1','2', md5('da'));
 
 
 -- insert a test diagnosis
