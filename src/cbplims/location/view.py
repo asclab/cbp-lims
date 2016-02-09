@@ -11,16 +11,17 @@ def list_location(pid):
     # get id of top_tier project 
     top_project_id = cbplims.projects.get_top_project_id(g.project.id)
     locations = cbplims.location.child_location(pid, top_project_id)
-    return render_template("locations/list.html",locations=locations)
+    return render_template("locations/list.html",locations=locations,back=pid)
 
 @app.route("/location/<int:pid>/list_back") 
 @requires_user
 def list_location_back(pid):
+    top_project_id = cbplims.projects.get_top_project_id(g.project.id)
     if pid == 1:
-        locations = cbplims.location.child_location(0)
+        locations = cbplims.location.child_location(0,top_project_id)
         return render_template("locations/list.html",locations=locations)
     pid = cbplims.location.get_grand(pid)
-    locations = cbplims.location.child_location(pid)
+    locations = cbplims.location.child_location(pid,top_project_id)
     return render_template("locations/list.html",locations=locations,  )
 
 
@@ -28,11 +29,10 @@ def list_location_back(pid):
 @requires_user
 def matrix_location(pid):
     dim = cbplims.location.dim_location(pid)
-    locations = cbplims.location.child_location(pid)
-    if dim.row == 0 & dim.col ==0:
-        return render_template("locations/list.html",locations=locations )
-    else:
-        return render_template("locations/list_table.html",locations=locations,dim=dim )
+    top_project_id = cbplims.projects.get_top_project_id(g.project.id)
+    locations = cbplims.location.child_location_simple(pid)
+    #return render_template("locations/temp.html", msg=str(top_project_id) + " :: " + str(pid) + " :: " + str(locations) )
+    return render_template("locations/list_table.html",locations=locations,dim=dim,back=pid )
 
 
 

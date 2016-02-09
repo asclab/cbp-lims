@@ -49,10 +49,10 @@ def child_location(pid,top_project_id):
 
 def child_location_simple(pid):
     cur = g.dbconn.cursor()
-    Location = namedtuple('Location', 'id parent_row parent_col name')
+    Location = namedtuple('Location', 'id parent_row parent_col name my_rows my_cols is_active')
     locations = []
     
-    sql = ('Select id, parent_row, parent_col, name '
+    sql = ('Select id, parent_row, parent_col, name, my_rows, my_cols, is_active '
            'FROM location WHERE parent_id = %s; '
            )
     cur.execute(sql,(pid,))
@@ -101,6 +101,7 @@ def change_state_location(id, state):
         return (str(err))
     
 def view_location(id):
+    #id parent_id parent_row parent_col project_id my_rows my_cols name notes project_name is_active is_storable
     cur = g.dbconn.cursor()
     sql = ( 'SELECT l.id, l.parent_id, l.parent_row, l.parent_col, p.id, l.my_rows, l.my_cols, l.name, l.notes, p.name,'
             'l.is_active,is_storable  ' 

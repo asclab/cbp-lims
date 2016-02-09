@@ -16,10 +16,7 @@
       <input type="submit" name="method" value="Enable"/>
     </div>
     <div style="float:right;">
-            {% if locations[0].parent_id > 0 %}
-            <a href="/location/{{locations[0].parent_id - 1}}/list"> Back </a>
-            {% endif %}
-     
+
     </div>
   </div>
 <br>
@@ -36,7 +33,7 @@
                             
                             <div class="cell">
                                  {% if l.is_active == true %}
-                                        {{l.name}}
+                                        {{l.name}} 
                                     {% else %}
                                         <span class="notactive"> {{l.name}} </span>
                                     {% endif %}
@@ -60,7 +57,7 @@
                 {% endfor %}
                 
                 {% if vars.con == 0%}
-                <td id="c_{{c}}"> <div class="cell"> <a href="/location/{{locations[0].parent_id}}/add?row={{r}}&col={{c}}"> Add </a> </div></td>
+                <td id="c_{{c}}"> <div class="cell"> <a href="/location/{{back}}/add?row={{r}}&col={{c}}"> Add </a> </div></td>
                 {% endif %}
             {% endfor %}
        </tr>
@@ -68,7 +65,7 @@
     {% endfor %}
 
 </table>
-<input type="hidden" name="parent_id" value = {{locations[0].parent_id}}>
+<input type="hidden" name="parent_id" value = {{back}}>
 </form>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"> </script>
