@@ -73,11 +73,13 @@
               
               {% elif st.data[i] == "enum" %}
                   {% set list1 = i.split(',') %}
+                  <b> {{i}}  </b>
                   <select name = "{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}">
                   {% for x in list1 %}
                   <option value="{{x}}"> {{x}} </option>    
                   {% endfor %}
                   </select>
+                  <br><br>
               {% elif st.data[i] == "binary" %}
               <b>{{i}}: </b>
               Yes <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="yes">

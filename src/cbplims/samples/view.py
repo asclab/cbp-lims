@@ -27,32 +27,29 @@ def list_samples():
         date = request.form["datec"]
         subject = subject.split(",")
         subject= subject[0]
-        sample_ids = request.form.getlist("sample_id")
+        parent_sample_ids = request.form.getlist("sample_id")
         # get extra information 
         f = request.form
         files = request.files
         extra = cbplims.subjects.get_extra(f, files, sampletype_id)
         
-        return render_template("locations/temp.html", msg= str(sample_ids) +  ":<hr>:" + str(f)   )
+        #return render_template("locations/temp.html", msg= str(parent_sample_ids ) +  ":<hr>:" + str(f)   )
         # multiple locations are allow
         # for each location a new entry will be submitted
         # a new name for the sample will be created automatically
         # subject#_sample#_tissue_type
-        
-        ##
-        barcode,name = cbplims.samples.add_sample(sampletype_name,sampletype_id,subject,date,notes,locations,parent_location_selected,extra)
-        return render_template("locations/temp.html", msg= str(barcode) +  "::" + str(name)   )
+        barcode,name = cbplims.samples.add_sample(sampletype_name,sampletype_id,subject,date,notes,locations,parent_location_selected,extra,parent_sample_ids )
+        return redirect('/samples/'+str(subject)+'/list_by_subject')
+        #return render_template("locations/temp.html", msg= str(barcode) +  "::" + str(name)   )
 #
 
 @app.route("/samples/get_child_samples" , methods=["GET"])
 @requires_user
 def get_child_samples():
      subject = request.args.get('subject')
-     #start = subject.find('id:')+3
-     #end = subject.find(' n',start)
-     # write a function to get all child samples here and return it. 
+     children = cbplims.samples.get_children(subject)
      
-     return jsonify(result=[subject,'test'])
+     return jsonify(result=children)
     
 
 @app.route("/samples/get_location_matrix" , methods=["GET"])
@@ -62,4 +59,14 @@ def get_location_matrix():
      dim = cbplims.location.dim_location(lid)
      locations = cbplims.location.child_location_simple(lid)
      return jsonify(dim=dim,is_used=locations)
+    
+@app.route("/samples/<int:sid>/list_by_subject" ,methods=['GET', 'POST']) 
+@requires_user
+def list_by_subject(sid):
+     samples = cbplims.samples.view_samples_by_subject(sid)
+     subject = cbplims.subjects.view_subjects(sid)
+     
+     #return render_template("locations/temp.html", msg= str(subject) +  "::"    )
+    
+     return render_template("samples/view_by_subject.html",  subject=subject, samples=samples )
     

@@ -8,7 +8,7 @@
 
 <table>    
 <tr>
-    <td><br>Subject</td>
+    <td><br>For Primary samples select a single subject</td>
     <td><br><input type="text" name="subject" id="subject"></td>
     <td>
         <div><label for="datec">Date Collection </label></div>
@@ -18,11 +18,7 @@
 
 <tr>
     <td>Samples</td>
-    <td><div id="samples" name="samples" >
-	<select id="sample_id" name = "sample_id" multiple>
-		<option value="1">test</option>
-	</select>
-	</div></td>
+    <td><div id="samples" name="samples">    </div></td>
     <td><div id = "sample_selected" name="sample_selected"></div></td>
 </tr> 
 
@@ -247,7 +243,9 @@ $('#location').bind('blur', function() {
                     }
 				else{
                     for (var x in data.result) {
-                    txt += "<option value =" + data.result[x][0] +">" +data.result[x] + "</option>"	
+					// split with , first to get id
+					var info = data.result[x][0].split("_")
+                    txt += "<option value =" + data.result[x][1] +">" +info[1] + "," + info[2] + "</option>"	
                     
                     }
                 txt = "<select id=\"sample_id\" name = \"sample_id\" multiple>"+txt+"</select>"
@@ -256,20 +254,8 @@ $('#location').bind('blur', function() {
                     }
         }); // end ajax
         
-        // display popup to select
-                $("#samples").dialog({
-                        width: 800,
-                        height: 500,
-                        position: ['center', 'top'],
-                        title: "Select samples please",
-                        buttons: {
-                            "Select and close": function () {
-                                $(this).dialog('close');
-                            }
-                            } // button
-                    }); // diaglog
-        // display subject
-        $("#subject_selected").html("Subject selected: " + $( "#subject" ).val() ); 
+     
+        
         return false;
       
       

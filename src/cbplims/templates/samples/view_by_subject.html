@@ -1,0 +1,68 @@
+{% extends "settings/layout.html" %}
+{% block adminbody %}
+
+  <h2>View Subject {{subject.name}} </h2>
+<div class="msg">{{msg}}</div>
+
+<br>
+<b><font color="blue">ID:</b></font> <a href="../../subjects/{{subject.id}}/view">{{subject.id}}</a> <br>
+<b><font color="blue">Project:</b> </font>{{subject.project_name}} <br>
+<b><font color="blue">Notes:</b></font> {{subject.notes}} <br>
+<hr>
+<table>
+<tr bgcolor="#80aaff">
+    <td>Extra info</td><td></td></tr>
+    <tr>
+    <td>
+        <div id= "og">
+                {% if subject.data %}
+              {% for i in subject.data%}
+              {% if 'image_file' in i %}
+               <img src="data:image;base64,{{subject.data[i]}}"> <br>
+              {% else %}
+              <b>name:</b> {{i}} <b>value: </b>{{subject.data[i]}} <br>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+              </div>
+        
+    </td>
+</tr>
+</table>
+<hr>
+
+{%for s in samples %}
+<b> Sample name </b>: {{s.name}} <br>
+<b> Sample ID </b>: {{s.id}} <br>
+<b> Barcode </b>: {{s.barcode}} <br>
+<b> Date </b>: {{s.date_collection}} <br>
+<b> Located in:  </b>:  <br>
+<b> Notes </b>: {{s.notes}} <br>
+
+
+
+<table>
+<tr bgcolor="#80aaff">
+    <td>Extra info</td><td></td></tr>
+    <tr>
+    <td>
+        <div id= "og">
+                {% if s.extra %}
+              {% for i in s.extra%}
+              {% if 'image_file' in i %}
+               <img src="data:image;base64,{{s.extra[i]}}"> <br>
+              {% else %}
+              <b>name:</b> {{i}} <b>value: </b>{{s.extra[i]}} <br>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+              </div>
+        
+    </td>
+</tr>
+</table>
+
+<hr>
+{% endfor %}
+
+{% endblock %}

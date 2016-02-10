@@ -269,7 +269,9 @@ CREATE TABLE location (
 -- sample
 CREATE TABLE sample(
 
-    id SERIAL PRIMARY KEY, 
+    id SERIAL PRIMARY KEY,
+    name VARCHAR,
+    barcode VARCHAR(35),
     subject_id INT  REFERENCES  subjects(id), -- has diagnosis and research studies associated  
     sampletype_id INT NOT NULL REFERENCES  sample_types(id), -- has additional data pertinent to the type of sample 
     time_entered TIMESTAMP(2) DEFAULT (now() at time zone 'PST'), -- default time stamp when sample was enter    

@@ -5,10 +5,36 @@ import random
 import string
 import cbplims.location
 
-Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_id data')
+Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes extra')
 
+def get_children(subject):
+     cur=g.dbconn.cursor()
+     children = []
+     sql = ('SELECT sa.name, sa.id  FROM sample sa '
+            ' LEFT JOIN subjects sb ON sb.id = sa.subject_id '
+            ' WHERE sb.id = %s'
+            )
+     cur.execute(sql,(subject,))
+     for record in cur:
+          children.append(record)
+     cur.close()
+     
+     return children
 
-def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,parent_location_selected,data):
+def view_samples_by_subject(subject):
+     cur = g.dbconn.cursor()
+     sample = []
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data '
+             ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
+             ' WHERE s.subject_id = %s '
+           )
+     cur.execute(sql,(subject,))
+     for record in cur:
+               
+           sample.append(   Sample(*record)   )
+     cur.close()
+     return sample
+def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,parent_location_selected,data,parent_samples):
      cur = g.dbconn.cursor()
      # insert into location first
      # follow by sample
@@ -46,7 +72,13 @@ def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,par
                cur.execute(sql_update_s,(name,sid))
                barcode_all.append(barcode)
                name_all.append(name)
-               # still need to add sample_child relation here 
+               # still need to add sample_child relation here
+               sql_cp = ('INSERT INTO sample_parent_child (child,parent) VALUES(%s,%s)')
+               if not parent_samples:
+                    cur.execute(sql_cp,(sid,sid))
+               else:
+                    for p in parent_samples:
+                         cur.execute(sql_cp,(sid,p))
             except Exception as err:
                 cur.close()
                 return str(err),''
