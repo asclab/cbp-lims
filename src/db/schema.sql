@@ -302,13 +302,13 @@ INSERT INTO location (parent_id,name,project_id) VALUES ('1','SIM1','1');
 INSERT INTO location (parent_id,name,project_id,barcode) VALUES ('2','Fridge1','1', md5('1'));
 
 -- create a shelf with split into 2 rows and 4 columns
-INSERT INTO location (parent_id,name,project_id,my_rows,my_cols,barcode) VALUES ('3','Shelf1','1','2','4', md5('te'));
+INSERT INTO location (parent_id,name,project_id,my_rows,my_cols,barcode) VALUES ('3','Shelf1','1','2','4', md5(random()::text));
 -- create a box in row1, col1
 -- box is a 8x8 
-INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,my_rows,my_cols,is_storable,barcode) VALUES ('4','box123','1','1','1','8','8','TRUE', md5(now()::text));
+INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,my_rows,my_cols,is_storable,barcode) VALUES ('4','box123','1','1','1','8','8','TRUE', md5(random()::text));
 -- insert 2 tubes
-INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,barcode) VALUES ('5','barcode1','1','1','1', md5('la'));
-INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,barcode) VALUES ('5','barcode2','1','1','2', md5('da'));
+INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,barcode) VALUES ('5','barcode1','1','1','1', md5(random()::text));
+INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,barcode) VALUES ('5','barcode2','1','1','2', md5(random()::text));
 
 
 -- insert a test diagnosis

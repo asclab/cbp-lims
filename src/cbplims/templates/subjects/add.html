@@ -66,6 +66,23 @@
               {% for i in st.data%}
               {% if st.data[i] == "file" %}
               <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"> <br><br>
+              {% elif st.data[i] == "date_full" %}
+              <b>{{i}}: </b><input type="date" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              {% elif st.data[i] == "date_year" %}
+              <b>{{i}}: </b><input type="number" min="1900" max="2999" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              
+              {% elif st.data[i] == "enum" %}
+                  {% set list1 = i.split(',') %}
+                  <select name = "{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}">
+                  {% for x in list1 %}
+                  <option value="{{x}}"> {{x}} </option>    
+                  {% endfor %}
+                  </select>
+              {% elif st.data[i] == "binary" %}
+              <b>{{i}}: </b>
+              Yes <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="yes">
+              No <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="no">
+              <br><br>
               {% else %}
               <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
               {% endif %}

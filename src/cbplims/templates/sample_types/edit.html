@@ -65,9 +65,14 @@
 function loadDoc() {
       
       var data_pt = document.getElementById('data').value;
+      
       var types = "<option value = \"file\">file</option>"+
                   "<option value = \"text\" selected>text</option>"+
-                  "<option value = \"number\">number</option>"
+                  "<option value = \"number\">number</option>"+
+                  "<option value = \"binary\">Binary</option>" +
+                  "<option value = \"enum\">Selection</option>" + 
+                  "<option value = \"date_full\">Date (dd-mm-yyyy)</option>"+
+                  "<option value = \"date_year\">Year only</option>"
 
 
       var extra = "<table> <tr><td>Name</td><td>Type</td></tr>"
