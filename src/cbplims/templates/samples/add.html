@@ -1,5 +1,15 @@
 {% extends "settings/layout.html" %}
 {% block adminbody %}
+
+
+
+ <!-- will move these up to main page someday-->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='select2.css') }}">
+<script src="{{url_for('static', filename='select2.js')}}"></script>
+
 <form action="/samples/add" method="POST" enctype="multipart/form-data">
   <h2>Adding Samples</h2>
   <b><font color="blue"><div id="subject_selected" name="subject_selected"></div></font></b>
@@ -8,8 +18,8 @@
 
 <table>    
 <tr>
-    <td><br>For Primary samples select a single subject</td>
-    <td><br><input type="text" name="subject" id="subject"></td>
+    <td width="40%"><br>For Primary samples select a single subject      </td>
+    <td width="20%"><br><input type="text" name="subject" id="subject"></td>
     <td>
         <div><label for="datec">Date Collection </label></div>
 		<div><input type="text" id="datec" name="datec"></div>
@@ -17,10 +27,34 @@
 </tr> 
 
 <tr>
-    <td>Samples</td>
+	<td>Select a previous sample: </td>
+	<td>
+		<script>
+    $(function(){
+      // turn the element to select2 select style
+      $('#samples_m').select2();
+    });
+  </script>
+		<select id="samples_m"  style="width:400px" multiple>
+			{% for s in samples %}
+			<option value="">{{s[1]}},{{s[2]}}</option>
+			{% endfor %}
+		</select>
+	</td>
+	<td> </td>
+</tr>
+
+<tr>
+    <td></td>
     <td><div id="samples" name="samples">    </div></td>
-    <td><div id = "sample_selected" name="sample_selected"></div></td>
+    <td><br><div id = "sample_selected" name="sample_selected"></div></td>
 </tr> 
+
+<tr bgcolor="#c0c0c0">
+	<td></td>
+	<td></td>
+	<td></td>
+</tr>
 
 <tr>
     <td>Sample Type</td>
@@ -115,10 +149,7 @@
               {% endfor %}
  
  
- <!-- will move these up to main page someday-->
-<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-<script src="//code.jquery.com/jquery-1.10.2.js"></script>
-<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+
  
  <script>
     $('[id^="q1_"]').hide();
@@ -248,7 +279,8 @@ $('#location').bind('blur', function() {
                     txt += "<option value =" + data.result[x][1] +">" +info[1] + "," + info[2] + "</option>"	
                     
                     }
-                txt = "<select id=\"sample_id\" name = \"sample_id\" multiple>"+txt+"</select>"
+                txt = "<select id=\"sample_id\" name = \"sample_id\">"+txt+"</select>"
+				txt = "<br><b>Please select a sample: </b><br>" + txt + "<br><br>"
                 $("#samples").html(txt);    
 				console.log(data.result)
                     }

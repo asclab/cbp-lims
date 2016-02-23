@@ -16,7 +16,8 @@ def list_samples():
         subjects = cbplims.subjects.list_subjects()
         sample_types = cbplims.sample_types.list_sample_types()
         location_storable = cbplims.location.list_location_storable()
-        return render_template("samples/add.html", subjects = subjects, sample_types = sample_types, location_storable=location_storable )
+        samples = cbplims.samples.list_small_sample()
+        return render_template("samples/add.html", subjects = subjects, sample_types = sample_types, location_storable=location_storable, samples=samples )
     else:
         locations = request.form.getlist("location_use")
         parent_location_selected = request.form["parent_location_selected"]

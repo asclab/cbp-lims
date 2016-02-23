@@ -1,6 +1,7 @@
 from collections import namedtuple
 from cbplims import app
 from flask import g, request
+import uuid
 
 Sample_types = namedtuple('Sample_types', 'id project_id name description is_active project_name data')
 
@@ -80,17 +81,40 @@ def add_sample_types(project_id,name,description):
          return (str(err) + " " + sql)
      
 def get_extra(f):
-      extra = ""
+      extra = "" # create JSON object
+      
+      
       
       
       for key in f.keys():
-           for value in f.getlist(key):
-              if "data_" in key:
-                  d = request.form[key]
-                  start = key.find("data_") + len("data_")   
-                  d2 = request.form["type_"+str(key[start:])]
-                  extra = extra+ "\"" + d + "\"" +":"+ "\"" + d2 + "\","
-                  
+          if "ogdata_" in key:
+               name = request.form[key]
+               
+               start = key.find("ogdata_") + len("ogdata_")   
+               e_type = request.form["ogtype_"+str(key[start:])]
+               e_description = request.form["ogdescription_"+ str(key[start:]) ]
+               e_name = request.form["ogname_"+ str(key[start:]) ]
+               e_enum = request.form["ogenum_"+ str(key[start:]) ]
+               name = str(uuid.uuid4())
+               extra = extra+ '"' + name + '"' +':{'+ '"type":' + '"'+ e_type + '",'
+               extra = extra+ '"name":' + '"'+ e_name + '",'
+               extra = extra+ '"description":' + '"'+ e_description + '",'
+               extra = extra+ '"enum":' + '"'+ e_enum + '"},'
+               
+            
+          elif "data_" in key:
+              e_name = request.form[key]
+              
+              start = key.find("data_") + len("data_")   
+              e_type = request.form["type_"+str(key[start:])]
+              e_description = request.form["description_"+ str(key[start:]) ]
+              e_enum = request.form["enum_"+ str(key[start:]) ]
+              name = str(uuid.uuid4())
+              extra = extra+ '"' + name + '"' +':{'+ '"type":' + '"'+ e_type + '",'
+              extra = extra+ '"name":' + '"'+ e_name + '",'
+              extra = extra+ '"description":' + '"'+ e_description + '",'
+              extra = extra+ '"enum":' + '"'+ e_enum + '"},'
+             
       if extra:
            extra = "{" + extra
            extra = extra[:-1]

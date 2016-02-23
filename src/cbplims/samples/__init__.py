@@ -21,6 +21,16 @@ def get_children(subject):
      
      return children
 
+def list_small_sample():
+     cur=g.dbconn.cursor()
+     samples = []
+     # need to add project_id to table sample
+     sql = 'SELECT s.id, s.name, subjects.name FROM sample s LEFT JOIN subjects ON subjects.id  = s.subject_id'
+     cur.execute(sql)
+     for record in cur:
+          samples.append(record)
+     return samples
+
 def view_samples_by_subject(subject):
      cur = g.dbconn.cursor()
      sample = []
@@ -38,7 +48,6 @@ def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,par
      cur = g.dbconn.cursor()
      # insert into location first
      # follow by sample
-     
       # multiple locations are allow
       # multiple locations are allow
       # for each location a new entry will be submitted
@@ -50,6 +59,10 @@ def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,par
      for l in locations:
             location = l.split("_")
             barcode = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.digits) for _ in range(24))
+            
+            # check if parent_row and parent_col exists
+            sql_c = ('SELECT id FROM location WHERE parent_id = %s AND ')
+            
             sql_loc = ('INSERT INTO location (parent_id,name,project_id,parent_row,parent_col,my_rows,my_cols,notes,is_storable,barcode) '
                    'VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id ;'
                   )

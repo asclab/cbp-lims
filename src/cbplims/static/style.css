@@ -180,7 +180,15 @@ background: #f0f0f5;
     background: #f2f2f2; 
 }
 
-
+.textb {
+background-color: #f2f2f2;
+}
+.textb:hover  {
+   background-color:	#f2ffe5;
+  }
+.textb:focus  {
+   background-color:	#ffffff;
+  }
 
 
 

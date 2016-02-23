@@ -35,9 +35,29 @@
           <td> Extra </td>
           <td>
               {% if subject_types.data %}
+              
+              <table border="1" class="list">
+              <tr><th>Name</th><th>Description</th><th>Type</th><th>Selection Options</th></tr>
+              {% set count = 1 %}
               {% for i in subject_types.data%}
-              <b>name:</b> {{i}} <b>type: </b>{{subject_types.data[i]}} <br>
+              <tr>  
+              <td><input type="hidden" value="{{i}}" class="textb" name="ogdata_{{count}}">
+              <input type="text" value="{{subject_types.data[i].name}}" class="textb" name="ogname_{{count}}">
+              </td>
+              <td><input type="text" value="{{subject_types.data[i].description}}" class="textb" name="ogdescription_{{count}}"> </td>
+              <td>{{subject_types.data[i].type}}  <input type="hidden" value="{{subject_types.data[i].type}}" name="ogtype_{{count}}"> </td>
+              <td>
+                  {% if subject_types.data[i].enum %}
+                <input type="text" value="{{subject_types.data[i].enum}}" class="textb" name="ogenum_{{count}}">
+                  {% else %}
+                  <input type="hidden" value="{{subject_types.data[i].enum}}" class="textb" name="ogenum_{{count}}">
+                  {% endif %}
+              </td>
+              
+              </tr>
+              {% set count = count+1 %}
               {% endfor %}
+              </table>
               {% endif %}
           </td>
         </tr>
@@ -68,12 +88,15 @@ function loadDoc() {
                   "<option value = \"date_full\">Date (dd-mm-yyyy)</option>"+
                   "<option value = \"date_year\">Year only</option>"
 
-      var extra = "<table> <tr><td>Name</td><td>Type</td></tr>"
+      var extra = "<table> <tr><td>Name</td><td>Description</td><td>Type</td><td>Selection</td></tr>"
      
           for (i = 1; i <= data_pt; i++) {
-           var temp = "<tr><td><input type=\"text\" "
-                       + "name=\"data_"+i+"\"" +" ></td> " +  
-                       "<td><select"+   " name=\"type_"+i+"\""+ ">"+types+"</select></td></tr>"
+           var temp = "<tr>" +
+                      "<td><input type=\"text\" name=\"data_"+i+"\"" +" ></td> " +
+                      "<td><input type=\"text\" name=\"description_"+i+"\"" +" ></td> " + 
+                       "<td><select"+   " name=\"type_"+i+"\""+ ">"+types+"</select></td>"+
+                       "<td><input type=\"text\" name=\"enum_"+i+"\"" +" ></td> " +
+                       "<tr>"
 
            extra +=  temp;
              }

@@ -63,32 +63,43 @@
               {% if st.data %}
               <div id="q1_{{st.id}}" name="q1_{{st.id}}">
               <hr><b>Extra fields for {{st.name}} <br><br></b>
-              {% for i in st.data%}
-              {% if st.data[i] == "file" %}
-              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"> <br><br>
-              {% elif st.data[i] == "date_full" %}
-              <b>{{i}}: </b><input type="date" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
-              {% elif st.data[i] == "date_year" %}
-              <b>{{i}}: </b><input type="number" min="1900" max="2999" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              <table class="list" border=1>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Value</th>
+                </tr> 
               
-              {% elif st.data[i] == "enum" %}
-                  {% set list1 = i.split(',') %}
-                  <b> {{i}}  </b>
-                  <select name = "{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}">
+              {% for i in st.data %}
+              <tr>
+                <td>{{st.data[i].name}}</td>
+                <td>{{st.data[i].description}}</td>
+                
+              {% if st.data[i].type == "file" %}
+                <td><input type="file" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"></td> 
+              {% elif st.data[i].type == "date_full" %}
+                <td><input type="date" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
+              {% elif st.data[i].type == "date_year" %}
+                <td><input type="number" min="1900" max="2999" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
+              {% elif st.data[i].type == "enum" %}
+                  {% set list1 = st.data[i].enum.split(',') %}
+                   <td> 
+                  <select name = "{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb">
                   {% for x in list1 %}
                   <option value="{{x}}"> {{x}} </option>    
                   {% endfor %}
                   </select>
-                  <br><br>
-              {% elif st.data[i] == "binary" %}
-              <b>{{i}}: </b>
-              Yes <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="yes">
-              No <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="no">
-              <br><br>
+                   </td>
+              {% elif st.data[i].type == "binary" %}
+                <td>Yes <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="yes">
+                No <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="no">
+                 </td>
               {% else %}
-              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              <td><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
+              </tr>
               {% endif %}
               {% endfor %}
+              </table>
               </div>
               {% endif %}
               {% endfor %}

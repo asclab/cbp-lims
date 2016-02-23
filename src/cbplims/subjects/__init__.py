@@ -184,7 +184,7 @@ def get_extra(f,files,subject_type):
       # this function used for add and edit as such the first empty string this encounters it will skip everything
       # in otherwords extra fields are always not null for every field
       extra = ''
-      i = 1
+   
       
       for key in f.keys():
            detect = str(subject_type)+"_extra_"
@@ -195,29 +195,24 @@ def get_extra(f,files,subject_type):
                 return ""
               start = key.find(detect) + len(detect)     
               extra = extra+ "\"" + key[start:] + "\"" +":"+ "\"" + str(d) + "\","
-              i = i+ 1
+              
+              
       for key in files.keys():
            detect = str(subject_type)+"_file_"
-           
            if detect in key:
-              file = request.files[key]
-              filename = file.filename
-              file.save (str(file.name))
-              #start = key.find(detect) + len(detect)
-              # store the key as the file type instead
-              filename = file.filename
-              start = filename.find(".") 
+              ufile = request.files[key]
+              filename = ufile.filename 
               # encode to base64
-              with open(file.name, "rb") as imageFile:
-                    b64_str = base64.b64encode(imageFile.read())
-              # images can be used as is without decoding - let the browser do it. 
-              extra = extra+ "\"" + "image_file" + "\"" +":"+ "\"" + str(b64_str) + "\","
-              i = i+ 1 
-      #return render_template("locations/temp.html", msg= " -image- --" + str(extra), img=b64_str )
-   
-               
+              b64_str = base64.b64encode(ufile.read())
+              start = key.find(detect) + len(detect) 
+              extra = extra+ '"' + key[start:] + '":{'
+              extra = extra+ '"filename":' + '"'+ str(filename) + '",'
+              extra = extra+ '"mime":' + '"'+ str(ufile.mimetype) + '",'
+              extra = extra+ '"base64":' + '"'+ str(b64_str) + '"},'
+              
       if extra:
            extra = extra[:-1]
            extra = "{"+extra
            extra += "}"
+      #return render_template("locations/temp.html", msg= str(extra) )
       return extra
