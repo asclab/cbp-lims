@@ -1,4 +1,4 @@
-from flask import redirect, request, render_template, session, g
+from flask import redirect, request, render_template, session, g, make_response
 from cbplims import app, requires_user, requires_admin
 
 import cbplims.groups
@@ -6,7 +6,7 @@ import cbplims.projects
 import cbplims.users
 import cbplims.diagnoses
 import cbplims.sample_types
-
+import base64
 
 @app.route("/subjects/list") 
 @requires_user
@@ -139,3 +139,16 @@ def edit_subjects(sid):
          msg = cbplims.subjects.edit_subjects(project_id,subject_types,name,notes,sid,extra)
          subjects = cbplims.subjects.list_subjects()
          return render_template("subjects/list.html",  subjects=subjects,msg=msg )
+        
+@app.route("/subjects/<int:sid>/link") 
+@requires_user
+def make_link(sid):
+    subject = cbplims.subjects.view_subjects(sid)
+    id = request.args.get('id')
+    data = subject.data[id]['base64']
+    b64_str = base64.b64decode(data)
+    response = make_response(b64_str)
+    response.headers["Content-Disposition"] = "attachment; filename=" + str(subject.data[id]['filename'])  
+    response.headers["Content-Type"] = subject.data[id]['mime'] 
+    #return render_template("locations/temp.html", msg= b64_str )
+    return response

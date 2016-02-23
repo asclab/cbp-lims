@@ -61,15 +61,20 @@
     <tr>
     <td>
         <div id= "og">
-                {% if subject.data %}
+            {% if subject.data %}
               {% for i in subject.data%}
-              {% if 'image_file' in i %}
-               <img src="data:image;base64,{{subject.data[i]}}"> <br>
-              {% else %}
-              <b>name:</b> {{i}} <b>value: </b>{{subject.data[i]}} <br>
-              {% endif %}
+                {% if subject.data[i].mime %}
+                     {% if 'image' in subject.data[i].mime %}
+                        <img src="data:image;base64,{{subject.data[i].base64}}" height="100" width="100"> <br>
+                        <a href="./link?id={{i}}">link</a><br> 
+                     {% else %}
+                         link to file here. 
+                     {% endif %}
+                {% else %}
+                    <b>name:</b> {{subject.subject_types_data[i].name}} -- <b>value: </b>{{subject.data[i]}} <br>
+                {% endif %}
               {% endfor %}
-              {% endif %}
+            {% endif %}
               </div>
         
     </td>

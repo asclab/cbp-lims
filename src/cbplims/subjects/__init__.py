@@ -3,13 +3,13 @@ from cbplims import app
 from flask import g, request, render_template
 import base64
 
-Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_id data')
+Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_data data')
 
 
 def list_subjects():
      cur = g.dbconn.cursor()
      subjects = []
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id, s.data FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.data, s.data FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
            ' WHERE p.id = %s;'
@@ -51,7 +51,7 @@ def state(id, state):
     
 def view_subjects(id):
      cur = g.dbconn.cursor()
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.id, s.data FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.data, s.data FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
            ' WHERE s.id = %s'
