@@ -84,8 +84,6 @@ def get_extra(f):
       extra = "" # create JSON object
       
       
-      
-      
       for key in f.keys():
           if "ogdata_" in key:
                name = request.form[key]
@@ -95,7 +93,7 @@ def get_extra(f):
                e_description = request.form["ogdescription_"+ str(key[start:]) ]
                e_name = request.form["ogname_"+ str(key[start:]) ]
                e_enum = request.form["ogenum_"+ str(key[start:]) ]
-               name = str(uuid.uuid4())
+               
                extra = extra+ '"' + name + '"' +':{'+ '"type":' + '"'+ e_type + '",'
                extra = extra+ '"name":' + '"'+ e_name + '",'
                extra = extra+ '"description":' + '"'+ e_description + '",'
