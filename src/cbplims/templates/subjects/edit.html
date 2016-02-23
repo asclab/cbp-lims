@@ -2,6 +2,8 @@
 {% block adminbody %}
 
   <h2>Editing Subject {{subject.id}}</h2>
+  
+
  <br>
   
  
@@ -30,15 +32,13 @@
         </select>
         </td></tr>
         
-        <tr><td>Choose a Subject Type</td>
+        <tr><td>Subject Type</td>
       
         <td>
         <select name = "subject_types" id="subject_types" > 
              {% for st in subject_types %}
           <option value="{{st.id}}"
-            {% if subject.subject_types_id == st.id %}
-                  selected
-          {% endif %}
+            {% if subject.subject_types_id == st.id %}selected{% endif %}
           >
           {{st.name}}
           </option>
@@ -57,18 +57,78 @@
  <tr>
           <td> Extra </td>
           <td>
-            <div id= "og">
-                {% if subject.data %}
-              {% for i in subject.data%}
-              <b>name:</b> {{i}} <b>value: </b>{{subject.data[i]}} <br>
-              {% endfor %}
-              {% endif %}
-              </div>
+            
             
             <div id="extra" name="extra">
             </div>
           </td>
     </tr>
+  
+  
+<tr>
+          <td> Extra    
+			  </td>
+          <td>
+              {% if subject.data %}
+              
+              <table border="1" class="list">
+              <tr><th>Name</th><th>Description</th><th>Type</th><th>Value</th></tr>
+              {% set count = 1 %}
+              {% for i in subject.data%}
+              <tr>  
+              <td>{{subject.subject_types_data[i].name}}</td>
+              <td>{{subject.subject_types_data[i].description}}</td>
+              <td>{{subject.subject_types_data[i].type}} </td>
+              
+                {% if subject.data[i].mime %}
+                <td>
+                  {% if subject.data[i].filename %}
+                  <a href="./link?id={{i}}">{{subject.data[i].filename}}</a> <br>
+                  <input type="hidden" name="{{subject.subject_types_id}}_extraBase64_{{i}}" value="{{subject.data[i].base64}}">
+                  <input type="hidden" name="{{subject.subject_types_id}}_extraFileName_{{i}}" value="{{subject.data[i].filename}}">
+                  <input type="hidden" name="{{subject.subject_types_id}}_extraMime_{{i}}" value="{{subject.data[i].mime}}">
+                  {% endif %}
+                  <input type="file" name="{{subject.subject_types_id}}_file_{{i}}" id="{{subject.subject_types_id}}_file_{{i}}">
+                </td> 
+                {% else %}
+                <!-- here we need to fill in the older values but allow for the correct data type to be entered !-->
+                    {% if subject.subject_types_data[i].type == "date_full" %}
+                    <td><input type="date" value="{{subject.data[i]}}" name="{{subject.subject_types_id}}_extra_{{i}}" id="{{subject.subject_types_id}}_extra_{{i}}" class="textb"></td>
+                    {% elif subject.subject_types_data[i].type == "date_year" %}
+                    <td><input type="number" value="{{subject.data[i]}}" min="1900" max="2999" name="{{subject.subject_types_id}}_extra_{{i}}" id="{{subject.subject_types_id}}_extra_{{i}}" class="textb"></td>
+                    {% elif subject.subject_types_data[i].type == "enum" %}
+                      {% set list1 = subject.subject_types_data[i].enum.split(',') %}
+                       <td> 
+                      <select name = "{{subject.subject_types_id}}_extra_{{i}}" id="{{subject.subject_types_id}}_extra_{{i}}" class="textb">
+                      {% for x in list1 %}
+                      <option value="{{x}}" {% if subject
+                              .data[i] == x %}selected{% endif %} > {{x}} </option>    
+                      {% endfor %}
+                      </select>
+                       </td>
+                    {% elif subject.subject_types_data[i].type == "binary" %}
+                    <td>Yes <input type="radio" name="{{subject.subject_types_id}}_extra_{{i}}" id="{{subject.subject_types_id}}_extra_{{i}}" value="yes" {% if subject.data[i] == "yes" %}checked = selected{% endif %}>
+                    No <input type="radio" name="{{subject.subject_types_id}}_extra_{{i}}" id="{{subject.subject_types_id}}_extra_{{i}}" value="no" {% if subject.data[i] == "no" %}checked =selected{% endif %}>
+                    
+                    </td>
+                    {% else %}
+                    <td><input type="text" value="{{subject.data[i]}}" name="{{subject.subject_types_id}}_extra_{{i}}" id="{{subject.subject_types_id}}_extra_{{i}}" class="textb"></td>
+                    </tr>
+                  {% endif %} <!-- checking for types !-->
+                
+                
+                
+                
+                {% endif %} <!-- checks if extra data exists !-->
+          
+              </tr>
+              {% set count = count+1 %}
+              {% endfor %}
+              </table>
+              {% endif %}
+          </td>
+        </tr>  
+  
   
     <tr><td>&nbsp; </td><td><br><input type="submit" value="Edit Subject"/></td></tr>
     </table>
@@ -78,13 +138,43 @@
               {% if st.data %}
               <div id="q1_{{st.id}}" name="q1_{{st.id}}">
               <hr><b>Extra fields for {{st.name}} <br><br></b>
-              {% for i in st.data%}
-              {% if st.data[i] == "file" %}
-              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"> <br><br>
+              <table class="list" border=1>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Value</th>
+                </tr> 
+              
+              {% for i in st.data %}
+              <tr>
+                <td>{{st.data[i].name}}</td>
+                <td>{{st.data[i].description}}</td>
+                
+              {% if st.data[i].type == "file" %}
+                <td><input type="file" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"></td> 
+              {% elif st.data[i].type == "date_full" %}
+                <td><input type="date" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
+              {% elif st.data[i].type == "date_year" %}
+                <td><input type="number" min="1900" max="2999" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
+              {% elif st.data[i].type == "enum" %}
+                  {% set list1 = st.data[i].enum.split(',') %}
+                   <td> 
+                  <select name = "{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb">
+                  {% for x in list1 %}
+                  <option value="{{x}}"> {{x}} </option>    
+                  {% endfor %}
+                  </select>
+                   </td>
+              {% elif st.data[i].type == "binary" %}
+                <td>Yes <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="yes">
+                No <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="no">
+                 </td>
               {% else %}
-              <b>{{i}}: </b><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}"> <br><br>
+              <td><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
+              </tr>
               {% endif %}
               {% endfor %}
+              </table>
               </div>
               {% endif %}
               {% endfor %}

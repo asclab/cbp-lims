@@ -3,13 +3,13 @@ from cbplims import app
 from flask import g, request, render_template
 import base64
 
-Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_data data')
+Subjects = namedtuple('Subjects', 'id name notes is_active project_id project_name subject_types_name subject_types_data data subject_types_id')
 
 
 def list_subjects():
      cur = g.dbconn.cursor()
      subjects = []
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.data, s.data FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.data, s.data, st.id FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
            ' WHERE p.id = %s;'
@@ -51,7 +51,7 @@ def state(id, state):
     
 def view_subjects(id):
      cur = g.dbconn.cursor()
-     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.data, s.data FROM subjects s '
+     sql = ('Select s.id, s.name, s.notes, s.is_active,p.id, p.name, st.name, st.data, s.data, st.id FROM subjects s '
            ' LEFT JOIN projects p ON s.project_id = p.id '
            ' LEFT JOIN subject_types st ON s.subject_type_id = st.id '
            ' WHERE s.id = %s'
@@ -200,16 +200,26 @@ def get_extra(f,files,subject_type):
       for key in files.keys():
            detect = str(subject_type)+"_file_"
            if detect in key:
+              start = key.find(detect) + len(detect)  
+              
+              
               ufile = request.files[key]
               filename = ufile.filename 
               # encode to base64
               b64_str = base64.b64encode(ufile.read())
-              start = key.find(detect) + len(detect) 
-              extra = extra+ '"' + key[start:] + '":{'
-              extra = extra+ '"filename":' + '"'+ str(filename) + '",'
-              extra = extra+ '"mime":' + '"'+ str(ufile.mimetype) + '",'
-              extra = extra+ '"base64":' + '"'+ str(b64_str) + '"},'
-              
+              if filename == "":
+                    base64_old = request.form[str(subject_type)+"_extraBase64_"+str(key[start:])]
+                    mime_old = request.form[str(subject_type)+"_extraMime_"+str(key[start:])]
+                    filename_old = request.form[str(subject_type)+"_extraFileName_"+str(key[start:])]
+                    extra = extra+ '"' + key[start:] + '":{'
+                    extra = extra+ '"filename":' + '"'+ str(filename_old) + '",'
+                    extra = extra+ '"mime":' + '"'+ str(mime_old) + '",'
+                    extra = extra+ '"base64":' + '"'+ str(base64_old) + '"},'
+              else:
+                    extra = extra+ '"' + key[start:] + '":{'
+                    extra = extra+ '"filename":' + '"'+ str(filename) + '",'
+                    extra = extra+ '"mime":' + '"'+ str(ufile.mimetype) + '",'
+                    extra = extra+ '"base64":' + '"'+ str(b64_str) + '"},'
       if extra:
            extra = extra[:-1]
            extra = "{"+extra

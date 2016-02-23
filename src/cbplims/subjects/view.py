@@ -122,6 +122,7 @@ def edit_subjects(sid):
      if request.method == 'GET':
          projects = cbplims.projects.get_available_projects(g.user.id)
          subject_types = cbplims.subject_types.list_subject_types()
+         
          subject = cbplims.subjects.view_subjects(sid)
          return render_template("subjects/edit.html", subject=subject, projects=projects, subject_types=subject_types )
      else:
@@ -133,7 +134,6 @@ def edit_subjects(sid):
          files = request.files
          
          extra = cbplims.subjects.get_extra(f, files, subject_types)
-         
          #return render_template("locations/temp.html", msg= str(name) + " -- " + str(extra ) )
          
          msg = cbplims.subjects.edit_subjects(project_id,subject_types,name,notes,sid,extra)
