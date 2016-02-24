@@ -1,6 +1,6 @@
 {% extends "settings/layout.html" %}
 {% block adminbody %}
-
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
   <h2>View Subject {{subject.name}} </h2>
 <div class="msg">{{msg}}</div>
 
@@ -9,7 +9,7 @@
 <b>ID:</b> {{subject.id}} <br>
 <b>Project:</b> {{subject.project_name}} <br>
 <b>Notes:</b> {{subject.notes}} <br>
-
+<a href="./edit"> Edit {{subject.name}}</a>
 <form method="POST" action="/subjects/{{subject.id}}/delete_diagnosis">
 <hr><b>Diagnosis</b> <br>
 
@@ -91,4 +91,65 @@
 </table>
 
 </form>
+<hr>
+<a href="../../samples/{{subject.id}}/add_from_subject"> ADD Sample</a>
+<hr>
+<h2>View Samples </h2>
+<table class="list">
+<tr><th>Sample Name</th><th>Sample ID</th><th>Barcode</th><th>Date</th><th>Location</th><th>Notes</th><th>Extra</th></tr>    
+{% for s in samples %}
+<tr>
+    <td>{{s.name}}</td>
+    <td>{{s.id}}</td>
+    <td>{{s.barcode}}</td>
+    <td>{{s.date_collection}}</td>
+    <td>{{s.location_id}}</td>
+    <td>{{s.notes}}</td>
+    <td><a href="javascript:toggleDiv('d_{{s.id}}');">extra</a></td>
+</tr>
+<tr>
+    <td colspan="6">
+        <div id="d_{{s.id}}" name="d_{{s.id}}" class="hExtra">
+            
+             {% if s.extra %}
+            <table class="list" border="1">
+                <tr><th>Name</th><th>Value</th></tr>
+              {% for i in s.extra%}
+                <tr>
+                {% if s.extra[i].mime %}
+                     {% if 'image' in s.extra[i].mime %}
+                        <td><a href="./link?id={{i}}">{{s.extra[i].filename}}</a></td> 
+                        <td><img src="data:image;base64,{{s.extra[i].base64}}" height="100" width="100"> </tr>
+                        
+                     {% else %}
+                         <td>{{s.extra[i].mime}}</td>
+                         <td><a href="./link?id={{i}}">{{s.extra[i].filename}}</a></td> 
+                     {% endif %}
+                {% else %}
+                    <td>{{s.sample_types_data[i].name}} </td> <td>{{s.extra[i]}} </td>
+                {% endif %}
+                
+                </tr>
+              {% endfor %}
+              </table>
+            {% endif %}
+            
+        </div>
+   
+    </td>
+</tr>
+{% endfor %} <!-- end samples !--> 
+    
+</table>
+
+
+<script text="text/javascript">
+    $('.hExtra').hide();
+    
+   function toggleDiv(divId) {
+    $('.hExtra').hide();
+      $("#"+divId).toggle();
+   }
+ </script>
+
 {% endblock %}

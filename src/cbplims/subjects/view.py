@@ -60,7 +60,9 @@ def view_subjects(sid):
      subject = cbplims.subjects.view_subjects(sid)
      diagnoses = cbplims.subjects.view_subjects_diagnoses(sid)
      subject_study = cbplims.subjects.view_subjects_study(sid)
-     return render_template("subjects/view.html",  subject=subject, diagnoses=diagnoses, subject_study = subject_study )
+     samples = cbplims.samples.view_samples_by_subject(sid)
+     
+     return render_template("subjects/view.html",  subject=subject, diagnoses=diagnoses, subject_study = subject_study, samples=samples )
 
 @app.route("/subjects/<int:sid>/add_diagnosis" ,methods=['GET', 'POST']) 
 @requires_user
@@ -152,3 +154,6 @@ def make_link(sid):
     response.headers["Content-Type"] = subject.data[id]['mime'] 
     #return render_template("locations/temp.html", msg= b64_str )
     return response
+
+
+

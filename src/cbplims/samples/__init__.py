@@ -5,7 +5,7 @@ import random
 import string
 import cbplims.location
 
-Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes extra')
+Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes extra sample_types_data')
 
 def get_children(subject):
      cur=g.dbconn.cursor()
@@ -34,7 +34,7 @@ def list_small_sample():
 def view_samples_by_subject(subject):
      cur = g.dbconn.cursor()
      sample = []
-     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data '
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data, st.data '
              ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
              ' WHERE s.subject_id = %s '
            )
