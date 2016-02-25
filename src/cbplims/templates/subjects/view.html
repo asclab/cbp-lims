@@ -1,155 +1,263 @@
-{% extends "settings/layout.html" %}
+
 {% block adminbody %}
+
 <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-  <h2>View Subject {{subject.name}} </h2>
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+<div class="container">
+<h2>View Subject: {{subject.name}} </h2>
 <div class="msg">{{msg}}</div>
 
-<br>
+ <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#home">{{subject.name}}</a></li>
+    <li><a href="../../samples/{{subject.id}}/add_from_subject">Add sample</a></li>
+    <li><a data-toggle="tab" href="#Diagnosis">Diagnosis</a></li>
+    <li><a data-toggle="tab" href="#Research_Studies">Research Studies</a></li>
+    <li><a data-toggle="tab"  href="#Samples">Samples</a></li>
+    <li><a href="./edit">Edit</a></li>
+    <li><a href="../../subjects/list">View Subjects</a></li>
+  </ul>
 
-<b>ID:</b> {{subject.id}} <br>
-<b>Project:</b> {{subject.project_name}} <br>
-<b>Notes:</b> {{subject.notes}} <br>
-<a href="./edit"> Edit {{subject.name}}</a>
-<form method="POST" action="/subjects/{{subject.id}}/delete_diagnosis">
-<hr><b>Diagnosis</b> <br>
-
-    <div style="float:left;">
-      <input type="submit" name="method" value="Delete"/>
-    </div>
+<div class="tab-content">
     
-    <div style="float:right;">
-      <input type="button" name="method" value="Add Diagnosis" onclick="location.href='/subjects/{{subject.id}}/add_diagnosis'"/>
-    </div>
-    
-<table border="0" class="list">
-{% for d in diagnoses %}
-<tr bgcolor="#C3C8C9"><td>{{d.diagnosis_name}}</td> <td><input type="checkbox" name="diagnosis_ids" value="{{d.diagnosis_id}}"> </td> </tr>
-<tr><td>Is this primary?</td><td>{{d.diagnosis_is_primary}} </td></tr>
-<tr><td>Days from primary:</td><td>{{d.diagnosis_days_from_primary}} </td></tr>
-<tr><td>Diagnosis recorded by:</td> <td>{{d.diagnosis_recorded_by}} </td></tr>
-<tr><td>Diagnosis recorded date:</td> <td>{{d.diagnosis_recorded_date}} </td></tr>
-
-{% endfor %}
-
-
-</table>
-
-</form>
-
-
-<hr><b>Research Studies</b><br>
-<form method="POST" action="/subjects/{{subject.id}}/delete_study">
-    <div style="float:left;">
-      <input type="submit" name="method" value="Delete"/>
-    </div>
-    
-    <div style="float:right;">
-      <input type="button" name="method" value="Add Study" onclick="location.href='/subjects/{{subject.id}}/add_study'"/>
-    </div>
-
-<table border="0" class="list">
-{% for ss in subject_study %}
-<tr bgcolor="#A8A0A1"><td>{{ss.research_study_name}} </b></td> <td><input type="checkbox" name="study_ids" value="{{ss.research_study_study_id}}"> </td> </tr>
-<tr><td>Research Study recorded by:</td><td> {{ss.research_study_username}} </td></tr>
-<tr><td>Research Study date:</td><td> {{ss.research_study_date}} </td></tr>
-{% endfor %}
-</table>
-
-<table>
-<tr bgcolor="#80aaff">
-    <td>Extra info</td><td></td></tr>
-    <tr>
-    <td>
-        <div id= "og">
-            
-            {% if subject.data %}
-            <table class="list" border="1">
-                <tr><th>Name</th><th>Value</th></tr>
-              {% for i in subject.data%}
-                <tr>
-                {% if subject.data[i].mime %}
-                     {% if 'image' in subject.data[i].mime %}
-                        <td><a href="./link?id={{i}}">{{subject.data[i].filename}}</a></td> 
-                        <td><img src="data:image;base64,{{subject.data[i].base64}}" height="100" width="100"> </tr>
-                        
-                     {% else %}
-                         <td>{{subject.data[i].mime}}</td>
-                         <td><a href="./link?id={{i}}">{{subject.data[i].filename}}</a></td> 
-                     {% endif %}
-                {% else %}
-                    <td>{{subject.subject_types_data[i].name}} </td> <td>{{subject.data[i]}} </td>
-                {% endif %}
-                </tr>
-              {% endfor %}
-              </table>
-            {% endif %}
-            
-              </div>
+    <div id="home" class="tab-pane fade in active">
+        <br>
+        <b>ID:</b> {{subject.id}} <br>
+        <b>Project:</b> {{subject.project_name}} <br>
+        <b>Notes:</b> {{subject.notes}} <br> <br>
         
-    </td>
-</tr>
-</table>
+<h2> Extra Data </h2>
 
-</form>
-<hr>
-<a href="../../samples/{{subject.id}}/add_from_subject"> ADD Sample</a>
-<hr>
-<h2>View Samples </h2>
-<table class="list">
-<tr><th>Sample Name</th><th>Sample ID</th><th>Barcode</th><th>Date</th><th>Location</th><th>Notes</th><th>Extra</th></tr>    
-{% for s in samples %}
-<tr>
-    <td>{{s.name}}</td>
-    <td>{{s.id}}</td>
-    <td>{{s.barcode}}</td>
-    <td>{{s.date_collection}}</td>
-    <td>{{s.location_id}}</td>
-    <td>{{s.notes}}</td>
-    <td><a href="javascript:toggleDiv('d_{{s.id}}');">extra</a></td>
-</tr>
-<tr>
-    <td colspan="6">
-        <div id="d_{{s.id}}" name="d_{{s.id}}" class="hExtra">
-            
-             {% if s.extra %}
-            <table class="list" border="1">
-                <tr><th>Name</th><th>Value</th></tr>
-              {% for i in s.extra%}
-                <tr>
-                {% if s.extra[i].mime %}
-                     {% if 'image' in s.extra[i].mime %}
-                        <td><a href="./link?id={{i}}">{{s.extra[i].filename}}</a></td> 
-                        <td><img src="data:image;base64,{{s.extra[i].base64}}" height="100" width="100"> </tr>
+                        <div id= "og">
+                            
+                            {% if subject.data %}
+                            <table class="table table-hover">
+                                <tr><th>Name</th><th>Value</th></tr>
+                              {% for i in subject.data%}
+                                <tr>
+                                {% if subject.data[i].mime %}
+                                     {% if 'image' in subject.data[i].mime %}
+                                        <td><a href="./link?id={{i}}">{{subject.data[i].filename}}</a></td> 
+                                        <td><img src="data:image;base64,{{subject.data[i].base64}}" height="100" width="100"> </tr>
+                                        
+                                     {% else %}
+                                         <td>{{subject.data[i].mime}}</td>
+                                         <td><a href="./link?id={{i}}">{{subject.data[i].filename}}</a></td> 
+                                     {% endif %}
+                                {% else %}
+                                    <td>{{subject.subject_types_data[i].name}} </td> <td>{{subject.data[i]}} </td>
+                                {% endif %}
+                                </tr>
+                              {% endfor %}
+                              </table>
+                            {% endif %}
+                            
+                              </div>
                         
-                     {% else %}
-                         <td>{{s.extra[i].mime}}</td>
-                         <td><a href="./link?id={{i}}">{{s.extra[i].filename}}</a></td> 
-                     {% endif %}
-                {% else %}
-                    <td>{{s.sample_types_data[i].name}} </td> <td>{{s.extra[i]}} </td>
-                {% endif %}
+
+                <br>
+                <a href="./edit"> Edit {{subject.name}}</a>
+                <br>
+                <a href="../../samples/{{subject.id}}/add_from_subject"> ADD Sample</a>
                 
-                </tr>
-              {% endfor %}
-              </table>
-            {% endif %}
-            
-        </div>
-   
-    </td>
-</tr>
-{% endfor %} <!-- end samples !--> 
+    </div>
     
-</table>
+    <div id="Diagnosis" class="tab-pane fade">
+        
+        <form method="POST" action="/subjects/{{subject.id}}/delete_diagnosis">
+        <hr><b>Diagnosis</b> <br>
+        
+            <div style="float:left;">
+              <input type="submit" name="method" value="Delete"/>
+            </div>
+            
+            <div style="float:right;">
+              <input type="button" name="method" value="Add Diagnosis" onclick="location.href='/subjects/{{subject.id}}/add_diagnosis'"/>
+            </div>
+           
+        <table class="table table-hover">
+        {% for d in diagnoses %}
+        
+        <tr bgcolor="#A8A0A1"><td>{{d.diagnosis_name}}</td> <td><input type="checkbox" name="diagnosis_ids" value="{{d.diagnosis_id}}"> </td> </tr>
+        <tr><td>Is this primary?</td><td>{{d.diagnosis_is_primary}} </td></tr>
+        <tr><td>Days from primary:</td><td>{{d.diagnosis_days_from_primary}} </td></tr>
+        <tr><td>Diagnosis recorded by:</td> <td>{{d.diagnosis_recorded_by}} </td></tr>
+        <tr><td>Diagnosis recorded date:</td> <td>{{d.diagnosis_recorded_date}} </td></tr>
+        
+        {% endfor %}
+        
+        
+        </table>
+        
+        </form>
+    </div>
+    
+    <div id="Research_Studies" class="tab-pane fade">
+
+        <hr><b>Research Studies</b><br>
+        <form method="POST" action="/subjects/{{subject.id}}/delete_study">
+            <div style="float:left;">
+              <input type="submit" name="method" value="Delete"/>
+            </div>
+            
+            <div style="float:right;">
+              <input type="button" name="method" value="Add Study" onclick="location.href='/subjects/{{subject.id}}/add_study'"/>
+            </div>
+        
+        <table class="table table-hover">
+        {% for ss in subject_study %}
+        <tr bgcolor="#A8A0A1"><td>{{ss.research_study_name}} </b></td> <td><input type="checkbox" name="study_ids" value="{{ss.research_study_study_id}}"> </td> </tr>
+        <tr><td>Research Study recorded by:</td><td> {{ss.research_study_username}} </td></tr>
+        <tr><td>Research Study date:</td><td> {{ss.research_study_date}} </td></tr>
+        {% endfor %}
+        </table>
+        </form>
+    </div>    
+        
+
+ <div id="Samples" class="tab-pane fade">
+        <h2>View Samples </h2>
+        <table class="table table-hover">
+        <tr>
+            <th>Add Sample</th><th>Name</th>
+            <th>ID</th><th>Barcode</th><th>Date</th><th>Location</th>
+            <th>Notes</th><th>Extra</th>
+            <th>Child</th>
+        </tr>    
+        {% for s in samples %}
+        <tr>
+            <td><a href="../../samples/{{subject.id}}/add_from_subject?sample={{s.id}}"> Add </a></td>
+            <td>{{s.name}}</td>
+            <td>{{s.id}}</td>
+            <td>{{s.barcode}}</td>
+            <td>{{s.date_collection}}</td>
+            <td>{{s.location_id}}</td>
+            <td>{{s.notes}}</td>
+            <td><a href="javascript:showDiv('d_{{s.id}}');">show</a>/<a href="javascript:hideDiv('d_{{s.id}}');">hide</a></td>
+            <td> <a href="javascript:cLink('child_{{s.id}}');">child</a> </td>
+        </tr>
+        <!-- show child tr subseqeunt children will all be in div tags-->
+        <tr class = "dchild"><td colspan="9"><div id="child_{{s.id}}"></div></td></tr>
+        <tr id="d_{{s.id}}" name="d_{{s.id}}" class="hExtra">
+            <td colspan="6">
+                <div>
+                    
+                     {% if s.extra %}
+                    <table class="table table-hover">
+                        <tr><th>Name</th><th>Value</th></tr>
+                      {% for i in s.extra%}
+                        <tr>
+                        {% if s.extra[i].mime %}
+                             {% if 'image' in s.extra[i].mime %}
+                                <td><a href="./link?id={{i}}">{{s.extra[i].filename}}</a></td> 
+                                <td><img src="data:image;base64,{{s.extra[i].base64}}" height="100" width="100"> </tr>
+                                
+                             {% else %}
+                                 <td>{{s.extra[i].mime}}</td>
+                                 <td><a href="./link?id={{i}}">{{s.extra[i].filename}}</a></td> 
+                             {% endif %}
+                        {% else %}
+                            <td>{{s.sample_types_data[i].name}} </td> <td>{{s.extra[i]}} </td>
+                        {% endif %}
+                        
+                        </tr>
+                      {% endfor %}
+                      </table>
+                    {% endif %}
+                    
+                </div>
+           
+            </td>
+        </tr>
+        
+        <tr id="d_{{s.id}}" name="d_{{s.id}}" class="hExtra">
+            <td colspan="6">
+            </td>    
+        </tr>
+        
+        {% endfor %} <!-- end samples !--> 
+            
+        </table>
+     </div>
+ 
+    </div>  
+</div> <!-- end container !-->
 
 
 <script text="text/javascript">
     $('.hExtra').hide();
+    //$('.dchild').hide();
     
-   function toggleDiv(divId) {
+   function showDiv(divId) {
     $('.hExtra').hide();
-      $("#"+divId).toggle();
+      $("#"+divId).show();
    }
+   
+   function hideDiv(divId) {
+    $('.hExtra').hide();
+   }
+   
+   function childDiv(divId) {
+    //$('.dchild').hide();
+     $("#"+divId).show();
+     var newstuff = '<div id="child_22"><a href="javascript:childDiv(\'child_22\');">child</a>' + divId +  '</div>'
+     var oldstuff = document.getElementById(divId);
+     
+     //alert(oldstuff.innerHTML)
+     
+     $("#"+divId).html(oldstuff.innerHTML+newstuff);
+     
+   }
+   
+   
+   // ---------------------------------------------------------------
+      
+   
+  function cLink(c) {
+		// gets list of samples associated with samples and returns a selector if there are any
+        $("#"+c).show();
+        var oldStuff = document.getElementById(c);
+        var newstuff = '<div id="child_22"><a href="javascript:childDiv(\'child_22\');">child</a>' + c +  '</div>'
+		c1 = c.substring(6, c.length);  
+        $.getJSON('/samples/get_child_sample', {
+          sample: c1  }, // set as variables
+          function(data) {
+				var txt = ''
+				if (jQuery.isEmptyObject(data.result)){
+                console.log("notthing return " + c)
+                }
+                else{
+                  txt = '<div class="container-fluid">  <div class="row">    <div class="col-sm-1" style="background-color:#65bef3;">add</div>    <div class="col-sm-1" style="background-color:#65bef3;">name</div>    <div class="col-sm-1" style="background-color:#65bef3;">id</div>    <div class="col-sm-2" style="background-color:#65bef3;">barcode</div>    <div class="col-sm-1" style="background-color:#65bef3;">date</div>    <div class="col-sm-1" style="background-color:#65bef3;">location</div>    <div class="col-sm-2" style="background-color:#65bef3;">notes</div><div class="col-sm-1" style="background-color:#65bef3;">data </div><div class="col-sm-2" style="background-color:#65bef3;">child</div>  </div></div>';
+                    
+                     for (var t in data.result)  {
+                        t = data.result[t]
+                        txt = txt + '<div class="row">'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;"><a href="../../samples/{{subject.id}}/add_from_subject?sample=' + t[0] +'">add</a></div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +t[1]+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +t[0]+'</div>'
+                        txt = txt + '<div class="col-sm-2" style="background-color:white;">' +t[2]+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +''+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +t[4]+'</div>'
+                        txt = txt + '<div class="col-sm-2" style="background-color:white;">' +t[5]+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +""+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +""+'</div>'
+                        //txt = txt  + '<div id="child_22"><a href="javascript:childDiv(\'child_22\');">child</a>' + t[1] +  '</div>'
+                        txt = txt + '</div>'                      
+                     console.log(t)
+                     }
+                }
+                
+               $("#"+c).html(oldStuff.innerHTML+txt); 
+                
+                    } )
+        }; // end ajax
+        
+   
+   //-----------------------------------------------------------------
+   
+   
+   
  </script>
 
 {% endblock %}

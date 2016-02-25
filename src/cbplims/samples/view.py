@@ -17,7 +17,8 @@ def add_from_subject(sid):
         subject = cbplims.subjects.view_subjects(sid)
         sample_types = cbplims.sample_types.list_sample_types()
         location_storable = cbplims.location.list_location_storable()
-        samples = cbplims.samples.list_small_sample()
+        #samples = cbplims.samples.list_small_sample()
+        samples = request.args.get('sample')
         return render_template("samples/add_from_subject.html", subject = subject, sample_types = sample_types, location_storable=location_storable, samples=samples )
     else:
         locations = request.form.getlist("location_use")
@@ -27,32 +28,44 @@ def add_from_subject(sid):
         subject = sid
         notes = request.form["notes"]
         date = request.form["datec"]
-        
+        sample = request.form["samples"]
         #parent_sample_ids = request.form.getlist("sample_id")
-        parent_sample_ids=[] # since this is directly from a subject there are sample parents. 
+        parent_sample_ids=[] # since this is directly from a subject there are sample parents.
+        if sample != "None":
+            parent_sample_ids.append(sample)
         # get extra information 
         f = request.form
         files = request.files
         extra = cbplims.subjects.get_extra(f, files, sampletype_id)
         
-        #return render_template("locations/temp.html", msg= str(extra ) +  ":<hr>:" + str("")   )
+        #return render_template("locations/temp.html", msg= str(parent_sample_ids ) +  ":<hr>:" + str("")   )
         # multiple locations are allow
         # for each location a new entry will be submitted
         # a new name for the sample will be created automatically
         # subject#_sample#_tissue_type
         barcode,name = cbplims.samples.add_sample(sampletype_name,sampletype_id,subject,date,notes,locations,parent_location_selected,extra,parent_sample_ids )
-        return redirect('/samples/'+str(subject)+'/list_by_subject')
+        
+        return redirect('/subjects/'+str(subject)+'/view')
         #return render_template("locations/temp.html", msg= str(barcode) +  "::" + str(name)   )
 #
 
 @app.route("/samples/get_child_samples" , methods=["GET"])
 @requires_user
 def get_child_samples():
-     subject = request.args.get('subject')
-     children = cbplims.samples.get_children(subject)
+     sample = request.args.get('sample')
+     #children = cbplims.samples.get_children(subject)
+     
+     return jsonify(result="cccc")
+    
+
+@app.route("/samples/get_child_sample" , methods=["GET"])
+@requires_user
+def get_child_sample():
+     sample = request.args.get('sample')
+     children = cbplims.samples.view_child_sample(sample)
      
      return jsonify(result=children)
-    
+
 
 @app.route("/samples/get_location_matrix" , methods=["GET"])
 @requires_user

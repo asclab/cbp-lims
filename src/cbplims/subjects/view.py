@@ -60,7 +60,7 @@ def view_subjects(sid):
      subject = cbplims.subjects.view_subjects(sid)
      diagnoses = cbplims.subjects.view_subjects_diagnoses(sid)
      subject_study = cbplims.subjects.view_subjects_study(sid)
-     samples = cbplims.samples.view_samples_by_subject(sid)
+     samples = cbplims.samples.view_samples_by_subject_primary(sid)
      
      return render_template("subjects/view.html",  subject=subject, diagnoses=diagnoses, subject_study = subject_study, samples=samples )
 

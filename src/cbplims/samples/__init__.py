@@ -44,6 +44,41 @@ def view_samples_by_subject(subject):
            sample.append(   Sample(*record)   )
      cur.close()
      return sample
+
+def view_child_sample(sample_id):
+     Sample2 = namedtuple('Samples', 'id name barcode time_entered location_id notes extra sample_types_data')
+     cur = g.dbconn.cursor()
+     sample = []
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.location_id, s.notes, s.data, st.data '
+             ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id  '
+             ' INNER JOIN sample_parent_child spc ON spc.child = s.id  '
+             ' WHERE  spc.parent = %s AND spc.parent <> spc.child '
+           )
+     cur.execute(sql,(sample_id,))
+     for record in cur:
+               
+           sample.append(   Sample2(*record)   )
+     cur.close()
+     return sample
+
+
+
+def view_samples_by_subject_primary(subject):
+     cur = g.dbconn.cursor()
+     sample = []
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data, st.data '
+             ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
+             ' INNER JOIN sample_parent_child spc ON spc.child = s.id '
+             ' WHERE (s.subject_id = %s) AND (spc.parent = spc.child)'
+           )
+      # AND (spc.parent = spc.child)
+     cur.execute(sql,(subject,))
+     for record in cur:
+               
+           sample.append(   Sample(*record)   )
+     cur.close()
+     return sample
+
 def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,parent_location_selected,data,parent_samples):
      cur = g.dbconn.cursor()
      # insert into location first
