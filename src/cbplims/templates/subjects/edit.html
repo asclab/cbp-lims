@@ -134,85 +134,8 @@
     </table>
     
 
-{% for st in subject_types %}
-              {% if st.data %}
-              <div id="q1_{{st.id}}" name="q1_{{st.id}}">
-              <hr><b>Extra fields for {{st.name}} <br><br></b>
-              <table class="list" border=1>
-                <tr>
-                  <th>Name</th>
-                  <th>Description</th>
-                  <th>Value</th>
-                </tr> 
-              
-              {% for i in st.data %}
-              <tr>
-                <td>{{st.data[i].name}}</td>
-                <td>{{st.data[i].description}}</td>
-                
-              {% if st.data[i].type == "file" %}
-                <td><input type="file" name="{{st.id}}_file_{{i}}" id="{{st.id}}_file_{{i}}"></td> 
-              {% elif st.data[i].type == "date_full" %}
-                <td><input type="date" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
-              {% elif st.data[i].type == "date_year" %}
-                <td><input type="number" min="1900" max="2999" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
-              {% elif st.data[i].type == "enum" %}
-                  {% set list1 = st.data[i].enum.split(',') %}
-                   <td> 
-                  <select name = "{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb">
-                  {% for x in list1 %}
-                  <option value="{{x}}"> {{x}} </option>    
-                  {% endfor %}
-                  </select>
-                   </td>
-              {% elif st.data[i].type == "binary" %}
-                <td>Yes <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="yes">
-                No <input type="radio" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" value="no">
-                 </td>
-              {% else %}
-              <td><input type="{{st.data[i]}}" name="{{st.id}}_extra_{{i}}" id="{{st.id}}_extra_{{i}}" class="textb"></td>
-              </tr>
-              {% endif %}
-              {% endfor %}
-              </table>
-              </div>
-              {% endif %}
-              {% endfor %}
               
 
-<script type="text/javascript">
-  
-  function hideAll (){
-    
- // hide all extra fields 
-  var inputs = document.getElementsByTagName("div");
-  for (x = 0 ; x < inputs.length ; x++){
-    myname = inputs[x].getAttribute("name");
-    
-    if (myname !== null && myname.indexOf("q1_") >= 0){
-     document.getElementById(myname).style.visibility = "hidden";
-    }
-    
-    
-  }
-  } // end hide fucntion
-  hideAll()
-// end hiding
-// now unhide extra fields but only for the ones where the user selects.
-
-document.getElementById("subject_types").onchange = function(e) {
-  var i = "q1_"+this[this.selectedIndex].value;
-  console.log(i);
-  document.getElementById("extra").innerHTML = ""
-  document.getElementById("extra").innerHTML = document.getElementById(i).innerHTML
-  
-  
-  
-};
-
-
-
-    </script>
 
   
 {% endblock %}

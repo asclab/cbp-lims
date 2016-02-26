@@ -240,10 +240,13 @@
                         txt = txt + '<div class="col-sm-1" style="background-color:white;">' +''+'</div>'
                         txt = txt + '<div class="col-sm-1" style="background-color:white;">' +t[4]+'</div>'
                         txt = txt + '<div class="col-sm-2" style="background-color:white;">' +t[5]+'</div>'
-                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +""+'</div>'
-                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +""+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +'<a href="javascript:showDiv(\'d_'+t[0]+'\');">show</a>/<a href="javascript:hideDiv(\'d_'+ t[0] + '\');">hide</a>'+'</div>'
+                        txt = txt + '<div class="col-sm-1" style="background-color:white;">' +'<a href="javascript:cLink(\'child_'+t[0]+'\');">child</a>'+'</div>'
                         //txt = txt  + '<div id="child_22"><a href="javascript:childDiv(\'child_22\');">child</a>' + t[1] +  '</div>'
-                        txt = txt + '</div>'                      
+                        txt = txt + '</div>'
+                        extra = makeExtra(t[6],t[0])
+                        txt=txt + extra
+                        txt = txt + '<div id="child_'+t[0]+'"></div>'
                      console.log(t)
                      }
                 }
@@ -256,7 +259,12 @@
    
    //-----------------------------------------------------------------
    
-   
+   function makeExtra(e,c) {
+       
+    extra = '<div id="d_'+c+'" name="d_'+c+'" class="hExtra"> show extra here: ' + e['60491c40-281e-4149-9b99-a0e67b67a012'] + '</div>'
+    extra = extra + '<script>$("#d_'+c+'").hide(); <\/script>'
+    return extra; 
+   }
    
  </script>
 

@@ -190,9 +190,10 @@ def get_extra(f,files,subject_type):
            detect = str(subject_type)+"_extra_"
            
            if detect in key:
+              
               d = request.form[key]
               if not d:
-                return ""
+                return  ""
               start = key.find(detect) + len(detect)     
               extra = extra+ "\"" + key[start:] + "\"" +":"+ "\"" + str(d) + "\","
               
