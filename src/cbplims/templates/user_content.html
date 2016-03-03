@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block side %}
+<div class="sidebar">
+<div class="title">Contents</div>
+
+<ul>
+<li class="header">Projects</li>
+
+
+
+<li><a href="/subjects/list">Subjects</a></li>
+
+<li class="sep">&nbsp;</li>
+<li><a href="/subject_types/list">Subject types</a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/diagnoses/list">Diagnoses</a></li>
+<li class="sep">&nbsp;</li>
+<li> <a href="/research_studies/list"> Research Studies </a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/location/0/list">Locations</a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/sample_types/list">Sample types</a></li>
+<li class="sep">&nbsp;</li>
+
+</ul>
+
+</div>
+{% endblock %}
+
+{% block body %}
+<div class="sidebody">
+{% block content_body %}{% endblock %}
+</div>
+
+{% endblock %}
