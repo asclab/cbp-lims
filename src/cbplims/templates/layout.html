@@ -2,7 +2,13 @@
 <html>
 <head>
 <title>CBP-LIMS{% if g.project %} :: {{g.project.name}} {% endif %}</title>
+<script src="http://code.jquery.com/jquery-1.10.2.js"></script>
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+
+
 </head>
 <body>
 <div class="topbar">
@@ -34,7 +40,20 @@
     <div class=flash>{{ message }}</div>
   {% endfor %}
 <div class="body">
-  {% block body %}{% endblock %}
+  
+  
+  <div class="container-fluid">
+
+  <div class="row">
+    <div class="col-lg-2" style="border-right: 2px solid #ccc;">{% block side %}{% endblock %}</div>
+    <div class="col-lg-10" ">{% block body %}{% endblock %}</div>
+   
+    
+  </div>
+
+</div>
+  
+  
 </div>
 <div class="footer">
 {% if g.debug %}

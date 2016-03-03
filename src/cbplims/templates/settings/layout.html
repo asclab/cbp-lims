@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{% block body %}
+{% block side %}
 <div class="sidebar">
 <div class="title">Settings</div>
 
@@ -41,6 +41,9 @@
 </ul>
 
 </div>
+{% endblock %}
+
+{% block body %}
 <div class="sidebody">
 {% block adminbody %}{% endblock %}
 </div>

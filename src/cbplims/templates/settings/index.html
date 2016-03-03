@@ -1,6 +1,54 @@
 {% extends "settings/layout.html" %}
-{% block adminbody %}
+{% block side %}
+<div class="sidebar">
+<div class="title">Settings</div>
 
-Settings page...
+<ul>
+<li class="header">User settings</li>
+<li><a href="/settings/profile">Profile</a></li>
+
+
+{% if g.user.is_global_admin or g.is_project_admin %}
+<li class="header">Project settings</li>
+
+
+<li><a href="/subjects/list">Subjects</a></li>
+
+<li class="sep">&nbsp;</li>
+<li><a href="/subject_types/list">Subject types</a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/diagnoses/list">Diagnoses</a></li>
+<li class="sep">&nbsp;</li>
+<li> <a href="/research_studies/list"> Research Studies </a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/location/0/list">Locations</a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/sample_types/list">Sample types</a></li>
+<li class="sep">&nbsp;</li>
+<li>Audit log</li>
+{% endif %}
+
+
+{% if g.user.is_global_admin %}
+<li class="header">Global settings</li>
+<li class="sep">&nbsp;</li>
+<li><a href="/settings/global/users">Users</a></li>
+<li class="sep">&nbsp;</li>
+<li><a href="/projects/list">Projects</a></li>
+<li class="sep">&nbsp;</li>
+<li>Global audit log</li>
+{% endif %}
+</ul>
+
+</div>
+{% endblock %}
+
+
+{% block body %}
+<div class="sidebody">
+{% block stuff %}{% endblock %}
+</div>
 
 {% endblock %}
+
+

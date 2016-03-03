@@ -29,7 +29,7 @@ body {
     margin-top:24px;
 }
 
-.modal {
+.modal_s {
     border: 1px solid #555;
     background-color: #ddd;
     padding: 8px 12px;
@@ -39,7 +39,7 @@ body {
     width: 320px;
 }
 
-.modal .title {
+.modal_s .title {
     font-weight: bold;
     font-size: 14pt;
 
@@ -47,10 +47,8 @@ body {
 
 
 .sidebar {
-    width: 250px;
+    
     float:left;
-    border-right: 1px solid #ccc;
-    padding: 24px;
 }
 
 .sidebar .title {
@@ -84,9 +82,9 @@ body {
 
 
 .sidebody {
-    border-left: 1px solid #ccc;
-    margin-left: 298px;
-    padding: 24px 36px;
+    
+    margin-left: 1px;
+    padding: 24px 5px;
 }
 
 .sidebody .title {
