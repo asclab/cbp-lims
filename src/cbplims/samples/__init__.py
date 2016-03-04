@@ -61,6 +61,22 @@ def view_child_sample(sample_id):
      cur.close()
      return sample
 
+def list_all():
+      Sample2 = namedtuple('Samples', 'id name barcode subject_id subject_name parent_id')
+      cur=g.dbconn.cursor()
+      sample = []
+      sql =  ('SELECT s.id, s.name, s.barcode, subjects.id, subjects.name, pivot.parent '
+             ' FROM sample s LEFT JOIN subjects ON subjects.id = s.subject_id  '
+             ' LEFT JOIN sample_parent_child pivot ON pivot.child = subjects.id  '
+           )
+      cur.execute(sql)
+      for record in cur:
+           sample.append(   Sample2(*record)   )
+      cur.close()
+    
+      return sample
+
+
 
 
 def view_samples_by_subject_primary(subject):

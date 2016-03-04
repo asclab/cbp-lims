@@ -80,8 +80,15 @@ def get_location_matrix():
 def list_by_subject(sid):
      samples = cbplims.samples.view_samples_by_subject(sid)
      subject = cbplims.subjects.view_subjects(sid)
-     
      #return render_template("locations/temp.html", msg= str(subject) +  "::"    )
-    
      return render_template("samples/view_by_subject.html",  subject=subject, samples=samples )
+
+@app.route("/samples/list" ,methods=['GET', 'POST']) 
+@requires_user
+def list_samples():
+     samples = cbplims.samples.list_all()
+     
+     
+     #return render_template("locations/temp.html", msg= str(samples) +  "::"    )
     
+     return render_template("samples/list.html",  samples=samples )

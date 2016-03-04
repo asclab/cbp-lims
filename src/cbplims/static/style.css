@@ -196,4 +196,7 @@ overflow: hidden;
  text-indent: 100%;
 }
 
-
+th {
+    background-color: #999999;
+    color: white;
+} 

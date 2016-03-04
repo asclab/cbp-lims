@@ -57,22 +57,10 @@
 
 </table>
 
-<div id="newSearchPlace"> SEARCH HERE </div>
+
 </form>
 
-<script>
-$(document).ready(function() {
 
-$('#subject_table').dataTable( {
-  "searching": true,
-"pageLength": 50,
-"paging": false
-} );
-
-$("#newSearchPlace").html($(".dataTables_filter"));
-   
-} );
-</script>
 
 
 {% endblock %}
