@@ -1,0 +1,44 @@
+{% extends "user_content.html" %}
+{% block content_body %}
+
+<h2>View Sample: {{sample.name}} </h2>
+
+<b>ID: </b> {{sample.id}} <br>
+<b>Name: </b> {{sample.name}} <br>
+<b>Subject: </b>{{sample.subject}} <br>
+<b>Tissue Type: </b>{{sample.sample_type}} <br>
+<b>Notes: </b> {{sample.notes}} <br> <br>
+
+
+<h2> Extra Data </h2>
+
+                        <div id= "og">
+                            
+                            {% if sample.data %}
+                            <table id="extra_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+                                <thead><tr><th>Name</th><th>Value</th></tr></thead>
+                              {% for i in sample.data%}
+                                <tr>
+                                {% if sample.data[i].mime %}
+                                     {% if 'image' in sample.data[i].mime %}
+                                        <td><a href="../../samples/{{sample.id}}/link?id={{i}}">{{sample.data[i].filename}}</a></td> 
+                                        <td><img src="data:image;base64,{{sample.data[i].base64}}" height="100" width="100"> </tr>
+                                        
+                                     {% else %}
+                                         <td>{{sample.data[i].mime}}</td>
+                                         <td><a href="../../samples/{{sample.id}}/link?id={{i}}">{{sample.data[i].filename}}</a></td> 
+                                     {% endif %}
+                                {% else %}
+                                    <td>{{sample.sample_types_data[i].name}} </td> <td>{{sample.data[i]}} </td>
+                                {% endif %}
+                                </tr>
+                              {% endfor %}
+                              </table>
+                            {% endif %}
+                            
+                              </div>
+
+
+
+{% endblock %}
+

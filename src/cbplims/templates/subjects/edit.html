@@ -1,5 +1,5 @@
-{% extends "settings/layout.html" %}
-{% block adminbody %}
+{% extends "user_content.html" %}
+{% block content_body %}
 
   <h2>Editing Subject {{subject.id}}</h2>
   
@@ -15,7 +15,7 @@
             <td> Name </td> <td> <input type="text" name="name" id="name" value="{{subject.name}}"></td>
         </tr>
         
-        <tr><td>Choose a Project</td>
+        <tr><td>Change a Project</td>
       
         <td>
         <select name = "project">  
@@ -35,15 +35,9 @@
         <tr><td>Subject Type</td>
       
         <td>
-        <select name = "subject_types" id="subject_types" > 
-             {% for st in subject_types %}
-          <option value="{{st.id}}"
-            {% if subject.subject_types_id == st.id %}selected{% endif %}
-          >
-          {{st.name}}
-          </option>
-          {% endfor %}
-        </select>
+        <input type="hidden" name = "subject_types" id="subject_types" value = "{{subject.subject_types_id}}"> 
+    {{subject.subject_types_name}}
+          
         </td></tr>
         
     

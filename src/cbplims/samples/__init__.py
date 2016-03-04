@@ -45,6 +45,22 @@ def view_samples_by_subject(subject):
      cur.close()
      return sample
 
+
+def view_sample(sid):
+     cur = g.dbconn.cursor()
+     Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes data sample_types_data subject sample_type')
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes,'
+             ' s.data, st.data, subjects.name, st.name '
+             ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
+             ' LEFT JOIN subjects ON subjects.id = s.subject_id '
+             ' WHERE s.id = %s '
+           )
+     cur.execute(sql,(sid,))
+     row = cur.fetchone()
+     sample = Sample(*row) 
+     cur.close()
+     return sample
+
 def view_child_sample(sample_id):
      Sample2 = namedtuple('Samples', 'id name barcode time_entered location_id notes extra sample_types_data')
      cur = g.dbconn.cursor()
@@ -62,14 +78,17 @@ def view_child_sample(sample_id):
      return sample
 
 def list_all():
-      Sample2 = namedtuple('Samples', 'id name barcode subject_id subject_name parent_id')
+      Sample2 = namedtuple('Samples', 'id name barcode subject_id subject_name parent_id parent_name')
       cur=g.dbconn.cursor()
       sample = []
-      sql =  ('SELECT s.id, s.name, s.barcode, subjects.id, subjects.name, pivot.parent '
+      sql =  ('SELECT s.id, s.name, s.barcode, subjects.id, subjects.name, pivot.parent, s2.name '
              ' FROM sample s LEFT JOIN subjects ON subjects.id = s.subject_id  '
-             ' LEFT JOIN sample_parent_child pivot ON pivot.child = subjects.id  '
+             ' LEFT JOIN sample_parent_child pivot ON pivot.child = s.id '
+             ' LEFT JOIN sample s2 ON s2.id = pivot.parent '
+             ' LEFT JOIN projects ON projects.id = subjects.project_id '
+             ' WHERE projects.id = %s ; '
            )
-      cur.execute(sql)
+      cur.execute(sql, (g.project.id, ))
       for record in cur:
            sample.append(   Sample2(*record)   )
       cur.close()

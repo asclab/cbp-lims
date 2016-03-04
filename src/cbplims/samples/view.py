@@ -1,6 +1,6 @@
-from flask import redirect, request, render_template, session, g, jsonify
+from flask import redirect, request, render_template, session, g, jsonify, make_response
 from cbplims import app, requires_user, requires_admin
-
+import base64
 import cbplims.groups
 import cbplims.projects
 import cbplims.users
@@ -74,7 +74,32 @@ def get_location_matrix():
      dim = cbplims.location.dim_location(lid)
      locations = cbplims.location.child_location_simple(lid)
      return jsonify(dim=dim,is_used=locations)
-    
+
+
+@app.route("/samples/<int:sid>/view") 
+@requires_user
+def view_sample(sid):
+     sample = cbplims.samples.view_sample(sid)
+     subject = cbplims.subjects.view_subjects('7')
+
+     return render_template("samples/view.html", sample=sample, subject=subject) 
+     #return render_template("locations/temp.html", msg= str(sample) +  "::"    )
+
+
+@app.route("/samples/<int:sid>/link") 
+@requires_user
+def make_link_sample(sid):
+    sample = cbplims.samples.view_sample(sid)
+    id = request.args.get('id')
+    data = sample.data[id]['base64']
+    b64_str = base64.b64decode(data)
+    response = make_response(b64_str)
+    response.headers["Content-Disposition"] = "attachment; filename=" + str(sample.data[id]['filename'])  
+    response.headers["Content-Type"] = sample.data[id]['mime'] 
+    #return render_template("locations/temp.html", msg= b64_str )
+    return response
+
+
 @app.route("/samples/<int:sid>/list_by_subject" ,methods=['GET', 'POST']) 
 @requires_user
 def list_by_subject(sid):
