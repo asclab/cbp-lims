@@ -1,0 +1,124 @@
+{% extends "user_content.html" %}
+{% block content_body %}
+
+  <h2>Editing Sample {{sample.id}}</h2>
+  
+
+ <br>
+  
+ 
+
+<hr>
+  <form action="/samples/{{sample.id}}/edit" method="POST" enctype="multipart/form-data">
+    <table>
+        <tr>
+            <td> Name </td> <td> <input type="text" name="name" id="name" value="{{sample.name}}"></td>
+        </tr>
+        
+        <tr><td>Subject Name &nbsp;&nbsp;</td>
+      
+        <td> {{sample.subject}}</td>
+        
+        </tr>
+        
+        <tr><td>Sample Type</td>
+      
+        <td>
+        <input type="hidden" name = "sample_types" id="sample_types" value = "{{sample.sample_types_id}}"> 
+    {{sample.sample_types_name}}
+          
+        </td></tr>
+        
+    
+        
+        <tr>
+            <td>notes</td>
+            <td><textarea rows="4" cols="50" name = "notes">{{sample.notes}}</textarea> </td>
+        </tr>
+ 
+ 
+ <tr>
+          <td> Extra </td>
+          <td>
+            
+            
+            <div id="extra" name="extra">
+            </div>
+          </td>
+    </tr>
+  
+  
+<tr>
+          <td> Extra    
+			  </td>
+          <td>
+              {% if sample.data %}
+              
+              <table border="1" class="list">
+              <tr><th>Name</th><th>Description</th><th>Type</th><th>Value</th></tr>
+              {% set count = 1 %}
+              {% for i in sample.data%}
+              <tr>  
+              <td>{{sample.sample_types_data[i].name}}</td>
+              <td>{{sample.sample_types_data[i].description}}</td>
+              <td>{{sample.sample_types_data[i].type}} </td>
+              
+                {% if sample.data[i].mime %}
+                <td>
+                  {% if sample.data[i].filename %}
+                  <a href="./link?id={{i}}">{{sample.data[i].filename}}</a> <br>
+                  <input type="hidden" name="{{sample.sample_types_id}}_extraBase64_{{i}}" value="{{sample.data[i].base64}}">
+                  <input type="hidden" name="{{sample.sample_types_id}}_extraFileName_{{i}}" value="{{sample.data[i].filename}}">
+                  <input type="hidden" name="{{sample.sample_types_id}}_extraMime_{{i}}" value="{{sample.data[i].mime}}">
+                  {% endif %}
+                  <input type="file" name="{{sample.sample_types_id}}_file_{{i}}" id="{{sample.sample_types_id}}_file_{{i}}">
+                </td> 
+                {% else %}
+                <!-- here we need to fill in the older values but allow for the correct data type to be entered !-->
+                    {% if sample.sample_types_data[i].type == "date_full" %}
+                    <td><input type="date" value="{{sample.data[i]}}" name="{{sample.sample_types_id}}_extra_{{i}}" id="{{sample.sample_types_id}}_extra_{{i}}" class="textb"></td>
+                    {% elif sample.sample_types_data[i].type == "date_year" %}
+                    <td><input type="number" value="{{sample.data[i]}}" min="1900" max="2999" name="{{sample.sample_types_id}}_extra_{{i}}" id="{{sample.sample_types_id}}_extra_{{i}}" class="textb"></td>
+                    {% elif sample.sample_types_data[i].type == "enum" %}
+                      {% set list1 = sample.sample_types_data[i].enum.split(',') %}
+                       <td> 
+                      <select name = "{{sample.sample_types_id}}_extra_{{i}}" id="{{sample.sample_types_id}}_extra_{{i}}" class="textb">
+                      {% for x in list1 %}
+                      <option value="{{x}}" {% if sample
+                              .data[i] == x %}selected{% endif %} > {{x}} </option>    
+                      {% endfor %}
+                      </select>
+                       </td>
+                    {% elif sample.sample_types_data[i].type == "binary" %}
+                    <td>Yes <input type="radio" name="{{sample.sample_types_id}}_extra_{{i}}" id="{{sample.sample_types_id}}_extra_{{i}}" value="yes" {% if sample.data[i] == "yes" %}checked = selected{% endif %}>
+                    No <input type="radio" name="{{sample.sample_types_id}}_extra_{{i}}" id="{{sample.sample_types_id}}_extra_{{i}}" value="no" {% if sample.data[i] == "no" %}checked =selected{% endif %}>
+                    
+                    </td>
+                    {% else %}
+                    <td><input type="text" value="{{sample.data[i]}}" name="{{sample.sample_types_id}}_extra_{{i}}" id="{{sample.sample_types_id}}_extra_{{i}}" class="textb"></td>
+                    </tr>
+                  {% endif %} <!-- checking for types !-->
+                
+                
+                
+                
+                {% endif %} <!-- checks if extra data exists !-->
+          
+              </tr>
+              {% set count = count+1 %}
+              {% endfor %}
+              </table>
+              {% endif %}
+          </td>
+        </tr>  
+  
+  
+    <tr><td>&nbsp; </td><td><br><input type="submit" value="Edit Subject"/></td></tr>
+    </table>
+    
+
+              
+
+
+  
+{% endblock %}

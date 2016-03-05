@@ -79,13 +79,29 @@ def get_location_matrix():
 @app.route("/samples/<int:sid>/view") 
 @requires_user
 def view_sample(sid):
-     sample = cbplims.samples.view_sample(sid)
-     subject = cbplims.subjects.view_subjects('7')
-
-     return render_template("samples/view.html", sample=sample, subject=subject) 
+     if request.method == 'GET':
+        sample = cbplims.samples.view_sample(sid)
+        return render_template("samples/view.html", sample=sample) 
      #return render_template("locations/temp.html", msg= str(sample) +  "::"    )
 
 
+@app.route("/samples/<int:sid>/edit", methods=['GET', 'POST']) 
+@requires_user
+def edit_sample(sid):
+     if request.method == 'GET':
+        sample = cbplims.samples.view_sample(sid)
+        return render_template("samples/edit.html", sample=sample) 
+     else:
+        name = request.form["name"]
+        notes = request.form["notes"]
+        
+        f = request.form
+        files = request.files
+        extra = cbplims.subjects.get_extra(f, files, '')
+        msg = cbplims.samples.edit_sample(sid,name,notes,extra)
+        samples = cbplims.samples.list_all()
+        return render_template("samples/list.html",  samples=samples )
+    
 @app.route("/samples/<int:sid>/link") 
 @requires_user
 def make_link_sample(sid):
@@ -112,8 +128,4 @@ def list_by_subject(sid):
 @requires_user
 def list_samples():
      samples = cbplims.samples.list_all()
-     
-     
-     #return render_template("locations/temp.html", msg= str(samples) +  "::"    )
-    
      return render_template("samples/list.html",  samples=samples )

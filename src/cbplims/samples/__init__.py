@@ -48,9 +48,9 @@ def view_samples_by_subject(subject):
 
 def view_sample(sid):
      cur = g.dbconn.cursor()
-     Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes data sample_types_data subject sample_type')
+     Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes data sample_types_data subject sample_type sample_types_name')
      sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes,'
-             ' s.data, st.data, subjects.name, st.name '
+             ' s.data, st.data, subjects.name, st.name, st.name '
              ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
              ' LEFT JOIN subjects ON subjects.id = s.subject_id '
              ' WHERE s.id = %s '
@@ -171,3 +171,22 @@ def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,par
      #
          
      return barcode_all,name_all
+
+def edit_sample(sid,name,notes,extra):
+     cur = g.dbconn.cursor()
+     if not extra:
+           sql = ('UPDATE sample SET name= %s, notes=%s WHERE id=%s;')
+           cur.execute(sql, (name,notes,sid) )
+     else:
+           sql = ('UPDATE sample SET name= %s, notes=%s, data=%s WHERE id=%s;')
+           cur.execute(sql, (name,notes,extra,sid) )
+           
+     try:
+         
+         g.dbconn.commit()
+         cur.close()
+         return ("edit : " + str(sid) )
+    
+     except Exception as err:
+         cur.close()
+         return (str(err) + " " + sql)
