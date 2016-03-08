@@ -5,7 +5,7 @@ import random
 import string
 import cbplims.location
 
-Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes extra sample_types_data')
+Sample = namedtuple('Samples', 'id name barcode time_entered date_collection location_id notes extra sample_types_data is_active')
 
 def get_children(subject):
      cur=g.dbconn.cursor()
@@ -34,7 +34,7 @@ def list_small_sample():
 def view_samples_by_subject(subject):
      cur = g.dbconn.cursor()
      sample = []
-     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data, st.data '
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data, st.data, s.is_active '
              ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
              ' WHERE s.subject_id = %s '
            )
@@ -52,7 +52,8 @@ def view_sample(sid):
      sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes,'
              ' s.data, st.data, subjects.name, st.name, st.name '
              ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
-             ' LEFT JOIN subjects ON subjects.id = s.subject_id '
+             ' LEFT JOIN sample_subject ON sample_subject.sample = s.id  '
+             ' LEFT JOIN subjects ON subjects.id = sample_subject.subject '
              ' WHERE s.id = %s '
            )
      cur.execute(sql,(sid,))
@@ -78,13 +79,14 @@ def view_child_sample(sample_id):
      return sample
 
 def list_all():
-      Sample2 = namedtuple('Samples', 'id name barcode subject_id subject_name parent_id parent_name')
+      Sample2 = namedtuple('Samples', 'id name barcode subject_id subject_name parent_id parent_name is_active')
       cur=g.dbconn.cursor()
       sample = []
-      sql =  ('SELECT s.id, s.name, s.barcode, subjects.id, subjects.name, pivot.parent, s2.name '
-             ' FROM sample s LEFT JOIN subjects ON subjects.id = s.subject_id  '
+      sql =  ('SELECT s.id, s.name, s.barcode, subjects.id, subjects.name, pivot.parent, s2.name, s.is_active '
+             ' FROM sample s LEFT JOIN sample_subject ON sample_subject.sample = s.id  '
              ' LEFT JOIN sample_parent_child pivot ON pivot.child = s.id '
              ' LEFT JOIN sample s2 ON s2.id = pivot.parent '
+             ' LEFT JOIN subjects ON subjects.id = sample_subject.subject '
              ' LEFT JOIN projects ON projects.id = subjects.project_id '
              ' WHERE projects.id = %s ; '
            )
@@ -101,10 +103,11 @@ def list_all():
 def view_samples_by_subject_primary(subject):
      cur = g.dbconn.cursor()
      sample = []
-     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data, st.data '
+     sql =  ('SELECT s.id, s.name, s.barcode, s.time_entered, s.date_collection, s.location_id, s.notes, s.data, st.data, s.is_active '
              ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
              ' INNER JOIN sample_parent_child spc ON spc.child = s.id '
-             ' WHERE (s.subject_id = %s) AND (spc.parent = spc.child)'
+             ' LEFT JOIN sample_subject ON sample_subject.sample = s.id '
+             ' WHERE (sample_subject.subject = %s) AND (spc.parent = spc.child)'
            )
       # AND (spc.parent = spc.child)
      cur.execute(sql,(subject,))
@@ -143,8 +146,8 @@ def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,par
                cur.execute(sql_loc,(parent_location_selected,'name',g.project.id,location[0],location[1],0,0,notes,False,barcode))
                row = cur.fetchone()
                lid = row[0]               
-               sql = ('INSERT INTO sample (barcode,subject_id,sampletype_id,date_collection,users,location_id,notes,data) VALUES(%s,%s,%s,%s,%s,%s,%s,%s) RETURNING id  ;')
-               cur.execute(sql,(barcode,subject_id,sampletype_id,date,g.user.id,lid,notes,data))
+               sql = ('INSERT INTO sample (barcode,sampletype_id,date_collection,users,location_id,notes,data) VALUES(%s,%s,%s,%s,%s,%s,%s) RETURNING id  ;')
+               cur.execute(sql,(barcode,sampletype_id,date,g.user.id,lid,notes,data))
                row = cur.fetchone()
                sid = row[0]
                name = str(subject_id)+"_"+str(sid)+"_"+ sampletype_name
@@ -162,6 +165,10 @@ def add_sample(sampletype_name,sampletype_id,subject_id,date,notes,locations,par
                else:
                     for p in parent_samples:
                          cur.execute(sql_cp,(sid,p))
+               # add to pivot table
+               # subject_id
+               ss = ('INSERT INTO sample_subject (sample,subject) VALUES(%s,%s)')
+               cur.execute(ss,(sid,subject_id))
             except Exception as err:
                 cur.close()
                 return str(err),''
@@ -190,3 +197,56 @@ def edit_sample(sid,name,notes,extra):
      except Exception as err:
          cur.close()
          return (str(err) + " " + sql)
+     
+     
+     
+def state(id, state):
+    cur = g.dbconn.cursor()
+    sql = "UPDATE sample SET is_active = %s WHERE id = %s;"
+    
+    try:
+        cur.execute(sql, (state,id))
+        g.dbconn.commit()
+        cur.close()
+        return ("state was changed: " + id)
+    except Exception as err:
+        cur.close()
+        return (str(err))
+
+
+def r_sampless():
+      cur = g.dbconn.cursor()
+      
+      primaries_q = ('SELECT parent FROM sample_parent_child WHERE parent = child ')
+      cur.execute(primaries_q)
+      primaries=[]
+      for record in cur:
+          primaries.append(record[0])
+      cur.close()
+      return primaries
+     
+def r_samples(parent_id=None, indent=0, project_list=None):
+    Project = namedtuple('Project', 'child parent indent')
+    indent += 1
+    if not project_list:
+        project_list = []
+
+    cur = g.dbconn.cursor()
+
+    if parent_id:
+        sql = "SELECT child, parent FROM sample_parent_child WHERE parent = %s AND parent <> child;"
+        args = [parent_id, ]
+        cur.execute(sql, args)
+    else:
+        sql = "SELECT child, parent FROM sample_parent_child WHERE parent = child ;"
+        cur.execute(sql)
+
+    
+
+    for record in cur:
+        record = record + (indent,)
+        project_list.append(Project(*record))
+        r_samples(record[0], indent, project_list)
+
+    cur.close()
+    return project_list

@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS audit;
 DROP TABLE IF EXISTS user_groups;
 
 DROP TABLE  IF EXISTS  sample_parent_child CASCADE;
+DROP TABLE  IF EXISTS sample_subject CASCADE; 
 DROP TABLE IF EXISTS  sample CASCADE;
 
 DROP TABLE IF EXISTS subject_diagnoses;
@@ -272,12 +273,12 @@ CREATE TABLE sample(
     id SERIAL PRIMARY KEY,
     name VARCHAR,
     barcode VARCHAR(35),
-    subject_id INT  REFERENCES  subjects(id), -- has diagnosis and research studies associated  
     sampletype_id INT NOT NULL REFERENCES  sample_types(id), -- has additional data pertinent to the type of sample 
     time_entered TIMESTAMP(2) DEFAULT (now() at time zone 'PST'), -- default time stamp when sample was enter    
     date_collection date, 
     users VARCHAR NOT NULL, -- automatic from session id g.user.id 
-    location_id INT REFERENCES  location(id), 
+    location_id INT REFERENCES  location(id),
+    is_active BOOLEAN DEFAULT TRUE,
     notes TEXT,
     data JSON
     );
@@ -288,6 +289,12 @@ CREATE TABLE sample_parent_child(
     PRIMARY KEY (child, parent)
     );
 
+
+CREATE TABLE sample_subject(
+    sample INT NOT NULL REFERENCES sample(id),
+    subject INT NOT NULL REFERENCES subjects(id),
+    PRIMARY KEY (sample,subject)
+);
 
     
 -- default root password is 'password' - you should chnage that.
@@ -321,12 +328,18 @@ INSERT INTO research_studies (project_id,name,description,date_active) VALUES (1
 -- insert a test subject type
 INSERT INTO subject_types (project_id,name,description) VALUES (1,'cell line', 'none');
 -- insert sample types
-INSERT INTO sample_types (project_id,name,description) VALUES (1,'Tissue','none');
+INSERT INTO sample_types (project_id,name,description,data) VALUES (1,'Tissue_auto','none','{"9c8973a8-e806-4a46-9b29-dfeb05c12627": {"enum": "", "type": "number", "name": "weight", "description": ""}, "48ca5e86-0256-4ea6-9e1b-d11691855620": {"enum": "a,b,c", "type": "enum", "name": "grade", "description": ""}, "f039dffb-bacd-4a11-babb-afa12239f923": {"enum": "", "type": "binary", "name": "frozen", "description": "is this from frozen?"}}');
 -- insert test subject
 INSERT INTO subjects (project_id,subject_type_id,name,notes) VALUES(1,1,'1234','none');
 -- insert test subject_diagnoses
-INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,1,0,1,'01/01/1990','true')
-INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,2,90000,1,'01/01/1990','false')
+INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,1,0,1,'01/01/1990','true');
+INSERT INTO subject_diagnoses (subject_id,diagnosis_id,days_from_primary,recorded_by,recorded_date,is_primary) VALUES (1,2,90000,1,'01/01/1990','false');
 
 -- insert test subject_study
-INSERT INTO subject_study (subject_id,study_id,recorded_by,recorded_date) VALUES (1,1,1,'01/01/1990')
+INSERT INTO subject_study (subject_id,study_id,recorded_by,recorded_date) VALUES (1,1,1,'01/01/1990');
+
+-- insert test samples
+INSERT INTO sample (name,barcode,sampletype_id,date_collection,users,location_id,notes,data) VALUES ('test_input',md5(random()::text),1,'01/01/1990','root',6,'none','{"f039dffb-bacd-4a11-babb-afa12239f923": "no", "48ca5e86-0256-4ea6-9e1b-d11691855620": "b", "9c8973a8-e806-4a46-9b29-dfeb05c12627": "23"}');
+
+INSERT INTO sample_parent_child(child,parent) VALUES (1,1); 
+INSERT INTO sample_subject VALUES (1,1); 

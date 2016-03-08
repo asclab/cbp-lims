@@ -37,7 +37,11 @@
 </thead>
 
 {% for sample in samples %}
-<tr>
+        {% if sample.is_active == true %}
+            <tr>
+        {% else %}
+            <tr class="notactive">
+        {% endif %}
     <td>{{sample.id}}</td>
     <td><a href="../../samples/{{sample.id}}/view">{{sample.name}}</a></td>
     <td>{{sample.barcode}}</td>
@@ -45,7 +49,7 @@
     <td>{{sample.subject_name}}</td>
     <td>{{sample.parent_id}}</td>
     <td>{{sample.parent_name}}</td>
-    <td><input type="checkbox" name="subjects_id" value="{{sample.id}}"> </td>
+    <td><input type="checkbox" name="samples_id" value="{{sample.id}}"> </td>
 </tr>
 {% endfor %}
 </table>

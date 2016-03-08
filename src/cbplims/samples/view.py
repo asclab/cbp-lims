@@ -129,3 +129,30 @@ def list_by_subject(sid):
 def list_samples():
      samples = cbplims.samples.list_all()
      return render_template("samples/list.html",  samples=samples )
+    
+
+@app.route("/samples/state", methods=['POST'])
+@requires_user
+def state_samples():
+     msg = ''
+     if request.method == 'POST':
+         samples_ids = request.form.getlist("samples_id")
+         if request.form["method"] == "Enable":
+            for sid in samples_ids:
+                msg = cbplims.samples.state(sid, 'TRUE')
+
+         if request.form["method"] == "Disable":
+             for sid in samples_ids:
+                 msg = cbplims.samples.state(sid, 'FALSE') 
+    
+         samples = cbplims.samples.list_all()
+         return render_template("samples/list.html",  samples=samples )
+
+
+@app.route("/samples/tree") 
+@requires_user
+def tree():
+     #samples = cbplims.samples.view_samples_by_subject(sid)
+     samples = cbplims.samples.r_samples(); 
+     return render_template("locations/temp.html", msg= str(samples) +  "::"    )
+     return render_template("samples/view_by_subject.html",  subject=subject, samples=samples )
