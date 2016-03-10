@@ -62,6 +62,23 @@ def view_sample(sid):
      cur.close()
      return sample
 
+
+def a_sample_view(sid):
+     cur = g.dbconn.cursor()
+     Sample = namedtuple('Samples', 'id name barcode location_id notes data sample_types_data subject sample_type sample_types_name')
+     sql =  ('SELECT s.id, s.name, s.barcode, s.location_id, s.notes,'
+             ' s.data, st.data, subjects.name, st.name, st.name '
+             ' FROM sample s LEFT JOIN sample_types st ON st.id = s.sampletype_id '
+             ' LEFT JOIN sample_subject ON sample_subject.sample = s.id  '
+             ' LEFT JOIN subjects ON subjects.id = sample_subject.subject '
+             ' WHERE s.id = %s '
+           )
+     cur.execute(sql,(sid,))
+     row = cur.fetchone()
+     sample = Sample(*row) 
+     cur.close()
+     return sample
+
 def view_child_sample(sample_id):
      Sample2 = namedtuple('Samples', 'id name barcode time_entered location_id notes extra sample_types_data')
      cur = g.dbconn.cursor()
@@ -214,39 +231,34 @@ def state(id, state):
         return (str(err))
 
 
-def r_sampless():
-      cur = g.dbconn.cursor()
-      
-      primaries_q = ('SELECT parent FROM sample_parent_child WHERE parent = child ')
-      cur.execute(primaries_q)
-      primaries=[]
-      for record in cur:
-          primaries.append(record[0])
-      cur.close()
-      return primaries
+
      
-def r_samples(parent_id=None, indent=0, project_list=None):
-    Project = namedtuple('Project', 'child parent indent')
+def r_samples(parent_id=None, indent=0, sample_list=None,subject=1):
+    Sample = namedtuple('Sample', 'child parent name indent')
     indent += 1
-    if not project_list:
-        project_list = []
+    if not sample_list:
+        sample_list = []
 
     cur = g.dbconn.cursor()
 
     if parent_id:
-        sql = "SELECT child, parent FROM sample_parent_child WHERE parent = %s AND parent <> child;"
+        sql = ('SELECT spc.child, spc.parent, sample.name FROM sample_parent_child spc '
+               ' LEFT JOIN sample_subject ON sample_subject.sample=spc.child'
+               ' LEFT JOIN sample ON sample.id=spc.child WHERE spc.parent = %s AND spc.parent <> spc.child AND sample_subject.subject=%s ')
+               
         args = [parent_id, ]
-        cur.execute(sql, args)
+        cur.execute(sql, (parent_id,subject))
     else:
-        sql = "SELECT child, parent FROM sample_parent_child WHERE parent = child ;"
+        sql = ('SELECT spc.child, spc.parent, sample.name FROM sample_parent_child spc LEFT JOIN sample ON sample.id=spc.child WHERE spc.parent = spc.child  ')
+        
         cur.execute(sql)
 
     
 
     for record in cur:
         record = record + (indent,)
-        project_list.append(Project(*record))
-        r_samples(record[0], indent, project_list)
+        sample_list.append(Sample(*record))
+        r_samples(record[0], indent, sample_list,subject)
 
     cur.close()
-    return project_list
+    return sample_list

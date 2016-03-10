@@ -3,7 +3,12 @@
 <head>
 <title>CBP-LIMS{% if g.project %} :: {{g.project.name}} {% endif %}</title>
 <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+
 <link rel=stylesheet type=text/css href="{{ url_for('static', filename='style.css') }}">
+<link rel=stylesheet type=text/css href="{{ url_for('static', filename='bootstrap-treeview.css') }}">
+<script src="{{ url_for('static', filename='bootstrap-treeview.js') }}"></script>
+
+
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 

@@ -49,13 +49,14 @@ def add_from_subject(sid):
         #return render_template("locations/temp.html", msg= str(barcode) +  "::" + str(name)   )
 #
 
-@app.route("/samples/get_child_samples" , methods=["GET"])
+@app.route("/samples/a_sample" , methods=["GET"])
 @requires_user
-def get_child_samples():
+def a_sample():
      sample = request.args.get('sample')
-     #children = cbplims.samples.get_children(subject)
-     
-     return jsonify(result="cccc")
+     sample = sample.split(" ")
+     e = cbplims.samples.a_sample_view(sample[0])
+     #e = cbplims.samples.view_sample('3')
+     return jsonify(result=e)
     
 
 @app.route("/samples/get_child_sample" , methods=["GET"])
@@ -154,5 +155,5 @@ def state_samples():
 def tree():
      #samples = cbplims.samples.view_samples_by_subject(sid)
      samples = cbplims.samples.r_samples(); 
-     return render_template("locations/temp.html", msg= str(samples) +  "::"    )
+     return render_template("locations/temp.html", msg= samples    )
      return render_template("samples/view_by_subject.html",  subject=subject, samples=samples )
