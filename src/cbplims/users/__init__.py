@@ -59,11 +59,11 @@ def edit_user(user_id, full_name, passwd, is_admin=None, allow_password_change=N
 
     cur = g.dbconn.cursor()
 
-    sql = 'UPDATE users SET fullname=%s, '
+    sql = 'UPDATE users SET fullname=%s '
     args = [full_name, ]
 
     if is_admin is not None:
-        sql += 'is_global_admin=%s, allow_password_change=%s'
+        sql += ', is_global_admin=%s, allow_password_change=%s'
         args.append(is_admin)
         args.append(allow_password_change)
 
